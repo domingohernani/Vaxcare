@@ -1,0 +1,136 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* font-family: 'Inter', sans-serif; */
+  /* font-family: "Poppins", sans-serif; */
+  /* font-family: 'Syne', sans-serif; */
+  font-family: 'Montserrat', sans-serif;
+  /* font-family: 'Be Vietnam Pro', sans-serif; */
+  font-size: 0.84rem;
+  line-height: 1.5;
+  font-weight: 400;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-text-size-adjust: 100%;
+}
+
+a {
+  font-weight: 500;
+  color: #646cff;
+  text-decoration: inherit;
+}
+a:hover {
+  color: #535bf2;
+}
+
+h1 {
+  font-size: 3.2em;
+  line-height: 1.1;
+}
+
+button {
+  border-radius: 8px;
+  border: 1px solid transparent;
+  padding: 0.6em 1.2em;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  background-color: #1a1a1a;
+  cursor: pointer;
+  transition: border-color 0.25s;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    color: #213547;
+  }
+  a:hover {
+    color: #747bff;
+  }
+  button {
+    background-color: blue;
+  }
+}
+
+.main-content {
+  width: 80.5%;
+}
+
+/* Dashboard */
+.welcomeText {
+  font-family: "Manrope", sans-serif;
+}
+
+.loginHeader {
+  font-family: "Alfa Slab One", serif;
+}
+
+.logInContainer {
+  box-shadow: rgba(9, 111, 255, 0.274) 0px 7px 29px 0px;
+}
+
+td,
+th {
+  margin: 5rem;
+  padding: 0.5rem 1rem;
+}
+.loginHr {
+  height: 0.1px;
+  border: none;
+}
+.prescriptionHr {
+  border: 0.1px solid rgb(222, 203, 203);
+}
+
+/* para doon sa Medical History & Records */
+.medicalhistoryrecords > li {
+  margin: 0 0 1rem 0;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+}
+
+.bmiHistory > li {
+  margin: 0 0 1rem 0;
+  padding: 0.5rem 1rem;
+  width: max-content;
+  border-radius: 0.5rem;
+  background-color: white;
+  font-size: smaller;
+}
+
+textarea {
+  resize: none;
+}
+
+.logo {
+  font-family: "Pacifico", cursive;
+  font-size: 1.5rem;
+}
+.logoPublic {
+  font-size: 3rem;
+}
+
+.reminderScreen {
+  height: 36rem;
+  position: fixed;
+  width: 80vw;
+}
+
+.textInputMessage {
+  width: 67rem;
+}
+
+.bg {
+  background-position: center;
+  position: fixed;
+  z-index: -30;
+}
+
+::placeholder {
+  font-weight: 300;
+}
