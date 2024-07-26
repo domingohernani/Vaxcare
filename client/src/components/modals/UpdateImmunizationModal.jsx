@@ -89,7 +89,11 @@ export default function UpdateImmunizationModal({ onClose, childId }) {
   };
 
   return ReactDOM.createPortal(
-    <div className="fixed flex items-center justify-center w-full h-full bg-opacity-50 alertModal bg-CD9D9D9">
+    <div 
+    className="fixed top-0 z-10 flex items-center justify-center w-full h-full bg-opacity-50 alertModal bg-CD9D9D9"
+
+    // className="flex items-center justify-center w-full h-full bg-opacity-50 alertModal bg-CD9D9D9"
+    >
       <div className="flex flex-col w-1/2 px-12 py-16 bg-white rounded-lg">
         <span className="mb-5 text-xl font-semibold">
           Update Immunization Record
