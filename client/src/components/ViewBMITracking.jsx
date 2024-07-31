@@ -463,10 +463,10 @@ export default function ViewBMITracking() {
           </div>
         </div>
         <div className="pb-3 text-center rounded-lg max-h-80">
-          <h4 className="px-4 py-4 text-base text-center text-blue-600 bg-white rounded-md">
-            Medical History & Records
+          <h4 className="px-4 py-4 text-base font-semibold text-center text-black bg-white rounded-md">
+            Medical History
           </h4>
-          <ul className="py-2 my-auto mt-4 ml-1 text-left text-black bg-white border-2 rounded-lg px-9 medicalhistoryrecords">
+          <ul className="py-2 my-auto mt-4 ml-1 text-left text-black bg-white border px-9 medicalhistoryrecords">
             {historyRecords.length === 0 ? (
               <span className="text-gray-500">No records</span>
             ) : (
@@ -536,7 +536,7 @@ export default function ViewBMITracking() {
                 bmiHistory.map((bmi, element) => {
                   return (
                     <div className="flex p-3 mb-5 rounded-md hover:bg-slate-100">
-                      <h3 className="mr-2">{element + 1}).</h3> <br/>
+                      <h3 className="mr-2">{element + 1}).</h3> <br />
                       <div className="flex-1">
                         {calculateBMI(bmi.weight, bmi.height)}
                       </div>

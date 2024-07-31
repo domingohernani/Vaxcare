@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import NavBar from "./components/NavBar";
 import SideBar from "./components/SideBar";
@@ -28,6 +28,10 @@ const isAdmin = () => {
 };
 
 function App() {
+  useEffect(() => {
+    isAdmin();
+  }, []);
+
   return (
     <BrowserRouter>
       <Routes>
