@@ -1435,6 +1435,7 @@ app.delete("/deleteChild/:childId", (req, res) => {
   });
 });
 
+// vaccines
 app.get("/getAllVaccines", (req, res) => {
   const query = `SELECT * FROM vaccine`;
 
@@ -1443,6 +1444,46 @@ app.get("/getAllVaccines", (req, res) => {
       return res.status(500).json({ error: "Internal Server Error" });
     }
     return res.json(data);
+  });
+});
+
+app.post("/addVaccine", (req, res) => {
+  const { name, doses_required, recommended_schedule } = req.body;
+
+  const getMaxIdQuery = "SELECT MAX(vaccine_id) AS max_id FROM vaccine";
+
+  db.query(getMaxIdQuery, (error, result) => {
+    if (error) {
+      return res.status(500).json({ error: "Internal Server Error" });
+    }
+
+    const newVaccineId = result[0].max_id ? result[0].max_id + 1 : 1;
+
+    const insertQuery = `INSERT INTO vaccine (vaccine_id, name, doses_required, recommended_schedule) VALUES (?, ?, ?, ?)`;
+
+    db.query(
+      insertQuery,
+      [newVaccineId, name, doses_required, recommended_schedule],
+      (error, insertResult) => {
+        if (error) {
+          return res.status(500).json({ error: "Internal Server Error" });
+        }
+        return res.json({ success: true, result: insertResult });
+      }
+    );
+  });
+});
+
+app.delete("/deleteVaccine/:id", (req, res) => {
+  const { id } = req.params;
+  const query = `DELETE FROM vaccine WHERE vaccine_id = ?`;
+
+  db.query(query, [id], (error, result) => {
+    if (error) {
+      return res.status(500).json({ error: "Internal Server Error" });
+    }
+
+    return res.json({ success: true, message: "Vaccine deleted successfully" });
   });
 });
 
