@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import NavBar from "./components/NavBar";
 import SideBar from "./components/SideBar";
@@ -24,12 +24,13 @@ import ViewMessage from "./components/ViewMessage";
 import AddMessage from "./components/modals/AddMessage";
 
 const isAdmin = () => {
-  return localStorage.getItem("role") === "president" ? true : false;
+  return localStorage.getItem("role") === "president";
 };
 
 function App() {
+  const [isAdminState, setIsAdminState] = useState(false);
   useEffect(() => {
-    isAdmin();
+    setIsAdminState(isAdmin());
   }, []);
 
   return (
@@ -96,7 +97,7 @@ function App() {
                     />
 
                     {/* Manage Accounts */}
-                    {isAdmin() ? (
+                    {isAdminState ? (
                       <>
                         <Route
                           path="/manageaccounts"
