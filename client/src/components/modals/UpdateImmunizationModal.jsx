@@ -12,8 +12,21 @@ export default function UpdateImmunizationModal({ onClose, childId }) {
   const [doseLeft, setDoseLeft] = useState(0);
   const [doseMax, setDoseMax] = useState(0);
   const [doseTaken, setDoseTaken] = useState(0);
+  const [vaccines, setVaccines] = useState([]);
 
   useEffect(() => {
+    // Fetch all vaccines when component mounts
+    const fetchVaccines = async () => {
+      try {
+        const response = await axios.get(
+          "http://localhost:8800/getAllVaccines"
+        );
+        setVaccines(response.data);
+      } catch (error) {
+        console.log("Error fetching vaccines:", error);
+      }
+    };
+
     const fetchDate = async () => {
       const vaccine = "BCG Vaccine";
       try {
@@ -28,8 +41,10 @@ export default function UpdateImmunizationModal({ onClose, childId }) {
         console.log(error);
       }
     };
+
+    fetchVaccines();
     fetchDate();
-  }, []);
+  }, [childId]);
 
   const handleVaccineSelect = async (e) => {
     setSelectedVaccine(e.target.value);
@@ -89,10 +104,7 @@ export default function UpdateImmunizationModal({ onClose, childId }) {
   };
 
   return ReactDOM.createPortal(
-    <div
-      className="fixed top-0 z-10 flex items-center justify-center w-full h-full bg-opacity-50 alertModal bg-CD9D9D9"
-      // className="flex items-center justify-center w-full h-full bg-opacity-50 alertModal bg-CD9D9D9"
-    >
+    <div className="fixed top-0 z-10 flex items-center justify-center w-full h-full bg-opacity-50 alertModal bg-CD9D9D9">
       <div className="flex flex-col w-1/2 px-12 py-16 bg-white rounded-lg">
         <span className="mb-5 text-xl font-semibold">
           Update Immunization Record
@@ -104,51 +116,15 @@ export default function UpdateImmunizationModal({ onClose, childId }) {
             onChange={handleVaccineSelect}
             value={selectedVaccine}
           >
-            <option value="BCG Vaccine" key="BCG Vaccine" data-info="1">
-              BCG Vaccine
-            </option>
-            <option
-              value="Hepatitis B Vaccine"
-              key="Hepatitis B Vaccine"
-              data-info="2"
-            >
-              Hepatitis B Vaccine
-            </option>
-            <option
-              value="Pentavalent Vaccine (DPT-Hep B-HIB)"
-              key="Pentavalent Vaccine"
-              data-info="3"
-            >
-              Pentavalent Vaccine (DPT-Hep B-HIB)
-            </option>
-            <option
-              value="Oral Polio Vaccine (OPV)"
-              key="Oral Polio Vaccine"
-              data-info="4"
-            >
-              Oral Polio Vaccine (OPV)
-            </option>
-            <option
-              value="Inactivated Polio Vaccine (PIV)"
-              key="Inactivated Polio Vaccine"
-              data-info="5"
-            >
-              Inactivated Polio Vaccine (PIV)
-            </option>
-            <option
-              value="Pneumococcal Conjugate Vaccine (PCV)"
-              key="Pneumococcal Conjugate Vaccine"
-              data-info="6"
-            >
-              Pneumococcal Conjugate Vaccine (PCV)
-            </option>
-            <option
-              value="Measles, Mumps, Rubella Vaccine (MMR)"
-              key="Measles, Mumps, Rubella Vaccine"
-              data-info="7"
-            >
-              Measles, Mumps, Rubella Vaccine (MMR)
-            </option>
+            {vaccines.map((vaccine) => (
+              <option
+                key={vaccine.vaccine_id}
+                value={vaccine.name}
+                data-info={vaccine.vaccine_id}
+              >
+                {vaccine.name}
+              </option>
+            ))}
           </select>
         </div>
 
@@ -165,35 +141,16 @@ export default function UpdateImmunizationModal({ onClose, childId }) {
           </div>
           <div className="flex flex-col items-center flex-1">
             <label>Dose Taken: </label>
-            {/* <select
-              className="w-full px-2 py-3 text-center border-2 rounded-lg"
-              value={doses}
-              onChange={(e) => setDoses(e.target.value)}
-            > */}
             {doseLeft !== 0 ? (
               <span className="mt-2 text-center">{doseTaken}</span>
             ) : (
-              // <input type="text" value=/>
-              // <option value={doseTaken}> {doseTaken}</option>
-              // <option value="maximumReached">
               <span className="mt-2 text-center">
                 Required Doses Have Been Reached
               </span>
-              // </option>
             )}
-            {/* </select> */}
           </div>
         </div>
 
-        {/* <div>
-          <label>Remarks: </label>
-          <input
-            type="text"
-            className="w-full px-2 py-3 border-2 rounded-lg"
-            value={remarks}
-            onChange={(e) => setRemarks(e.target.value)}
-          />
-        </div> */}
         <div className="flex items-center justify-end gap-3 mt-3">
           <button
             onClick={onClose}
