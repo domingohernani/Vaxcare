@@ -1437,7 +1437,7 @@ app.delete("/deleteChild/:childId", (req, res) => {
 
 // vaccines
 app.get("/getAllVaccines", (req, res) => {
-  const query = `SELECT * FROM vaccine`;
+  const query = `SELECT * FROM vaccine WHERE is_deleted = 0`;
 
   db.query(query, (error, data) => {
     if (error) {
@@ -1446,7 +1446,6 @@ app.get("/getAllVaccines", (req, res) => {
     return res.json(data);
   });
 });
-
 app.post("/addVaccine", (req, res) => {
   const { name, doses_required, recommended_schedule } = req.body;
 
@@ -1459,7 +1458,7 @@ app.post("/addVaccine", (req, res) => {
 
     const newVaccineId = result[0].max_id ? result[0].max_id + 1 : 1;
 
-    const insertQuery = `INSERT INTO vaccine (vaccine_id, name, doses_required, recommended_schedule) VALUES (?, ?, ?, ?)`;
+    const insertQuery = `INSERT INTO vaccine (vaccine_id, name, doses_required, recommended_schedule, is_deleted) VALUES (?, ?, ?, ?, 0)`;
 
     db.query(
       insertQuery,
@@ -1476,14 +1475,17 @@ app.post("/addVaccine", (req, res) => {
 
 app.delete("/deleteVaccine/:id", (req, res) => {
   const { id } = req.params;
-  const query = `DELETE FROM vaccine WHERE vaccine_id = ?`;
+  const query = `UPDATE vaccine SET is_deleted = 1 WHERE vaccine_id = ?`;
 
   db.query(query, [id], (error, result) => {
     if (error) {
       return res.status(500).json({ error: "Internal Server Error" });
     }
 
-    return res.json({ success: true, message: "Vaccine deleted successfully" });
+    return res.json({
+      success: true,
+      message: "Vaccine soft deleted successfully",
+    });
   });
 });
 
