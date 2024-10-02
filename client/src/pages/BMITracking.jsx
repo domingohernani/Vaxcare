@@ -217,7 +217,7 @@ export default function BMITracking() {
             .map((child, index) => {
               return (
                 <tr key={index}>
-                  <td>CAB-UR-{child.child_id}</td>
+                  <td>VXCR-UR-{child.child_id}</td>
                   <td>{child.name}</td>
                   <td>{child.age_in_months} month/s</td>
 

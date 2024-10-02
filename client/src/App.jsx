@@ -22,6 +22,7 @@ import PublicViewImmu from "./pages/PublicViewImmu";
 import AddAdmin from "./components/AddAdmin";
 import ViewMessage from "./components/ViewMessage";
 import AddMessage from "./components/modals/AddMessage";
+import Vaccines from "./pages/Vaccines";
 
 const isAdmin = () => {
   return localStorage.getItem("role") === "president";
@@ -88,6 +89,7 @@ function App() {
                       path="/addimmunization"
                       element={<AddImmunization />}
                     />
+                    <Route path="/vaccines" element={<Vaccines />} />
                     <Route path="/reminders" element={<Reminders />} />
                     <Route path="/addMessage" element={<AddMessage />} />
                     <Route path="/remindersView" element={<RemindersView />} />

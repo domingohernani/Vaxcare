@@ -272,7 +272,7 @@ export default function ViewBMITracking() {
       <section className="flex gap-3 mt-2 ">
         <div className="grid flex-1 grid-cols-4 gap-4 px-5 py-3 bg-white rounded-lg">
           <span className="col-start-1 col-end-4 font-light">
-            ID: CAB-UR-{childDetails.child_id}
+            ID: VXCR-UR-{childDetails.child_id}
           </span>
           <span className="flex items-center justify-end col-start-4 col-end-4 gap-2 font-light ">
             {updateButtonClicked ? (

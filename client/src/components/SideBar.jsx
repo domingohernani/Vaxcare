@@ -6,6 +6,7 @@ import immunization from "../assets/primaryIcon/syringe.svg";
 import listofchildren from "../assets/primaryIcon/child-head.svg";
 import reminders from "../assets/primaryIcon/bell.svg";
 import manageaccount from "../assets/primaryIcon/user.svg";
+import medicine from "../assets/sidebarassets/medicine.svg";
 
 const isAdmin = () => {
   return localStorage.getItem("role") === "president" ? true : false;
@@ -96,6 +97,12 @@ export default function SideBar() {
         <div className="flex items-center gap-2 px-6 py-3 rounded-lg">
           <img src={immunization} alt="" className="w-6 h-6" />
           <span className="font-medium text-black">Immunization</span>
+        </div>
+      </NavLink>
+      <NavLink to={"/vaccines"} className={sideBarLinkColor}>
+        <div className="flex items-center gap-2 px-6 py-3 rounded-lg">
+          <img src={medicine} alt="" className="w-6 h-6" />
+          <span className="font-medium text-black">Vaccines</span>
         </div>
       </NavLink>
       <NavLink to={"/reminders"} className={changeColor}>

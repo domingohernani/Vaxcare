@@ -172,7 +172,7 @@ export default function ListOfChildren() {
             .map((child, index) => {
               return (
                 <tr key={index}>
-                  <td>VAXCARE{child.child_id}</td>
+                  <td>VXCR-{child.child_id}</td>
                   <td>{child.name}</td>
                   <td>{calculateAge(child.date_of_birth)} month/s</td>
                   <td>{child.sex}</td>

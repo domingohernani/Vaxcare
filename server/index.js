@@ -281,7 +281,7 @@ WHERE
   `;
 
   db.query(query, [status], (err, data) => {
-    if (err) { 
+    if (err) {
       console.error("Error executing the query:", err);
       return res.status(500).json({ error: "Internal Server Error" });
     }
@@ -1432,6 +1432,17 @@ app.delete("/deleteChild/:childId", (req, res) => {
       return res.status(404).json({ error: "Child not found" });
     }
     return res.json({ message: "Child deleted successfully", refresh: true });
+  });
+});
+
+app.get("/getAllVaccines", (req, res) => {
+  const query = `SELECT * FROM vaccine`;
+
+  db.query(query, (error, data) => {
+    if (error) {
+      return res.status(500).json({ error: "Internal Server Error" });
+    }
+    return res.json(data);
   });
 });
 

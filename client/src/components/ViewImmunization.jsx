@@ -294,7 +294,7 @@ export default function ViewImmunization() {
 
       <div className="grid grid-cols-4 gap-4 px-5 py-3 mb-3 bg-white rounded-lg">
         <span className="col-start-1 col-end-4 font-light">
-          ID: CAB-UR-{childDetails.child_id}
+          ID: VXCR-UR-{childDetails.child_id}
         </span>
         <span className="flex items-center justify-end col-start-4 col-end-4 gap-2 font-light ">
           {updateButtonClicked ? (
@@ -390,7 +390,7 @@ export default function ViewImmunization() {
             <span className="font-bold">{childDetails.place_of_birth}</span>
           )}
         </div>
-        <div className="flex flex-col col-start-3 col-span-2">
+        <div className="flex flex-col col-span-2 col-start-3">
           <span>Address</span>
           {updateButtonClicked ? (
             <input
