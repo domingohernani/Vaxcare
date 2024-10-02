@@ -12,7 +12,6 @@ const app = express();
 // const bodyParser = require("body-parser");
 // const MessagingResponse = require("twilio").twiml.MessagingResponse;
 
-
 const db = mysql.createConnection({
   host: "localhost",
   user: "root",
@@ -282,7 +281,7 @@ WHERE
   `;
 
   db.query(query, [status], (err, data) => {
-    if (err) {
+    if (err) { 
       console.error("Error executing the query:", err);
       return res.status(500).json({ error: "Internal Server Error" });
     }
@@ -292,19 +291,32 @@ WHERE
 app.get("/inactiveBMI", (req, res) => {
   const status = "Inactive";
   const query = `
-    SELECT 
-      child.child_id, 
-      child.name, 
-      child.address, 
-      CAST(SUBSTRING_INDEX(SUBSTRING_INDEX(child.address, ' ', 2), ' ', -1) AS UNSIGNED) AS zone_number, 
-      TIMESTAMPDIFF(MONTH, child.date_of_birth, CURDATE()) AS age_in_months, 
-      child.sex, 
-      child.status 
-    FROM 
-      child 
-    WHERE 
-      child.status = "Inactive";
-`;
+  SELECT 
+  child.child_id, 
+  child.name, 
+  child.address, 
+  CAST(SUBSTRING_INDEX(SUBSTRING_INDEX(child.address, ' ', 2), ' ', -1) AS UNSIGNED) AS zone_number, 
+  TIMESTAMPDIFF(MONTH, child.date_of_birth, CURDATE()) AS age_in_months, 
+  child.sex, 
+  child.status, 
+  ht.height, 
+  ht.weight 
+FROM 
+  child 
+LEFT JOIN (
+  SELECT 
+      child_id,
+      MAX(ht_date) AS latest_date
+  FROM 
+      historical_bmi_tracking
+  GROUP BY 
+      child_id
+) AS latest_ht ON child.child_id = latest_ht.child_id
+LEFT JOIN 
+  historical_bmi_tracking AS ht ON child.child_id = ht.child_id AND latest_ht.latest_date = ht.ht_date
+WHERE 
+  child.status = ?;
+  `;
   db.query(query, [status], (err, data) => {
     if (err) {
       console.error("Error executing the query:", err);
