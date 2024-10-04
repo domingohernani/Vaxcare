@@ -19,7 +19,7 @@ export default function Login() {
       Swal.fire({
         icon: "warning",
         title: "Empty Fields",
-        text: "Please enter both username and password before attempting to log in.",
+        text: "Please enter both username and password before attempting to log in",
         confirmButtonColor: "#3085d6",
         confirmButtonText: "OK",
       });
