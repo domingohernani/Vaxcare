@@ -764,87 +764,42 @@ app.get("/completedImmu", (req, res) => {
 app.get("/getChildImmunization/:childId", async (req, res) => {
   const childID = req.params.childId;
 
-  const BCGVaccineQ = `
-  SELECT  vaccinations.date_administered
-  FROM vaccine 
-  INNER JOIN vaccinations ON vaccine.vaccine_id = vaccinations.vaccine_id 
-  INNER JOIN child on vaccinations.child_id = child.child_id 
-  WHERE child.child_id = ? AND vaccine.name = "BCG Vaccine";
-  `;
-
-  const HepatitisBVaccine = `
-  SELECT  vaccinations.date_administered
-  FROM vaccine 
-  INNER JOIN vaccinations ON vaccine.vaccine_id = vaccinations.vaccine_id 
-  INNER JOIN child on vaccinations.child_id = child.child_id 
-  WHERE child.child_id = ? AND vaccine.name = "Hepatitis B Vaccine";
-  `;
-
-  const PentavalentVaccineQ = `
-  SELECT  vaccinations.date_administered
-  FROM vaccine 
-  INNER JOIN vaccinations ON vaccine.vaccine_id = vaccinations.vaccine_id 
-  INNER JOIN child on vaccinations.child_id = child.child_id 
-  WHERE child.child_id = ? AND vaccine.name = "Pentavalent Vaccine (DPT-Hep B-HIB)";
-  `;
-
-  const OralPolioVaccineQ = `
-  SELECT  vaccinations.date_administered
-  FROM vaccine 
-  INNER JOIN vaccinations ON vaccine.vaccine_id = vaccinations.vaccine_id 
-  INNER JOIN child on vaccinations.child_id = child.child_id 
-  WHERE child.child_id = ? AND vaccine.name = "Oral Polio Vaccine (OPV)";
-  `;
-
-  const InactivatedPolioQ = `
-  SELECT  vaccinations.date_administered
-  FROM vaccine 
-  INNER JOIN vaccinations ON vaccine.vaccine_id = vaccinations.vaccine_id 
-  INNER JOIN child on vaccinations.child_id = child.child_id 
-  WHERE child.child_id = ? AND vaccine.name = "Inactivated Polio Vaccine (PIV)";
-  `;
-
-  const PneumococcalConjugateQ = `
-  SELECT  vaccinations.date_administered
-  FROM vaccine 
-  INNER JOIN vaccinations ON vaccine.vaccine_id = vaccinations.vaccine_id 
-  INNER JOIN child on vaccinations.child_id = child.child_id 
-  WHERE child.child_id = ? AND vaccine.name = "Pneumococcal Conjugate Vaccine (PCV)";
-  `;
-
-  const MeaslesMumpsRubellaQ = `
-  SELECT  vaccinations.date_administered
-  FROM vaccine 
-  INNER JOIN vaccinations ON vaccine.vaccine_id = vaccinations.vaccine_id 
-  INNER JOIN child on vaccinations.child_id = child.child_id 
-  WHERE child.child_id = ? AND vaccine.name = "Measles, Mumps, Rubella Vaccine (MMR)";
-  `;
-
-  const result = {
-    BCGVaccine: "",
-    HepatitisBVaccine: "",
-    PentavalentVaccine: "",
-    OralPolioVaccine: "",
-    InactivatedPolio: "",
-    PneumococcalConjugate: "",
-    MeaslesMumpsRubella: "",
-  };
+  const query = `
+  SELECT 
+    vaccine.name AS vaccine_name, 
+    vaccinations.date_administered,
+    vaccine.doses_required,
+    vaccine.is_deleted
+  FROM vaccine
+  LEFT JOIN vaccinations ON vaccine.vaccine_id = vaccinations.vaccine_id 
+    AND vaccinations.child_id = ?
+  WHERE vaccine.is_deleted = 0
+  ORDER BY vaccine.vaccine_id ASC;
+`;
 
   try {
-    result.BCGVaccine = await queryAsync(BCGVaccineQ, [childID]);
-    result.HepatitisBVaccine = await queryAsync(HepatitisBVaccine, [childID]);
-    result.PentavalentVaccine = await queryAsync(PentavalentVaccineQ, [
-      childID,
-    ]);
-    result.OralPolioVaccine = await queryAsync(OralPolioVaccineQ, [childID]);
-    result.InactivatedPolio = await queryAsync(InactivatedPolioQ, [childID]);
-    result.PneumococcalConjugate = await queryAsync(PneumococcalConjugateQ, [
-      childID,
-    ]);
-    result.MeaslesMumpsRubella = await queryAsync(MeaslesMumpsRubellaQ, [
-      childID,
-    ]);
+    // Execute the query
+    const vaccineData = await queryAsync(query, [childID]);
 
+    // Organize the data by vaccine name
+    const result = {};
+    vaccineData.forEach((vaccine) => {
+      if (!result[vaccine.vaccine_name]) {
+        result[vaccine.vaccine_name] = {
+          dosesRequired: vaccine.doses_required,
+          administeredDates: [],
+          dosesTaken: 0, // Initialize dosesTaken
+        };
+      }
+      if (vaccine.date_administered) {
+        result[vaccine.vaccine_name].administeredDates.push(
+          vaccine.date_administered
+        );
+        result[vaccine.vaccine_name].dosesTaken += 1; // Increment doses taken
+      }
+    });
+
+    // Send the result
     res.json(result);
   } catch (error) {
     console.error("Error executing the queries:", error);
