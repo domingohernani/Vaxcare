@@ -35,7 +35,7 @@ export default function Login() {
       if (response.data.success) {
         localStorage.setItem("isLoggedIn", "true");
         localStorage.setItem("role", response.data.role.role);
-        navigate("/");
+        navigate("/dashboard");
       } else {
         console.error("Authentication failed");
       }

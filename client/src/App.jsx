@@ -23,6 +23,7 @@ import AddAdmin from "./components/AddAdmin";
 import ViewMessage from "./components/ViewMessage";
 import AddMessage from "./components/modals/AddMessage";
 import Vaccines from "./pages/Vaccines";
+import LoginParent from "./pages/LoginParent";
 
 function App() {
   const [isAdminState, setIsAdminState] = useState(false);
@@ -49,6 +50,7 @@ function App() {
         <Route path="/publicViewing" element={<PublicViewing />} />
         <Route path="/enterId" element={<EnterId />} />
         <Route path="/publicviewImmu/:childId" element={<PublicViewImmu />} />
+        <Route path="/" element={<LoginParent />} />
 
         {/* Main structure with NavBar, SideBar, and main content */}
         <Route
@@ -69,7 +71,7 @@ function App() {
                   <Routes>
                     {/* Rest of your routes */}
                     <Route path="/login" element={<LogIn />} />
-                    <Route path="/" element={<DashBoard />} />
+                    <Route path="/dashboard" element={<DashBoard />} />
                     <Route
                       path="/listofchildren"
                       element={<ListOfChildren />}
