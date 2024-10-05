@@ -4,6 +4,7 @@ import axios from "axios";
 import addIcon from "../assets/bmitrackingassets/plus.svg";
 import DeleteAdmin from "../components/modals/DeleteAdmin";
 import UpdateAdminModal from "../components/modals/UpdateAdminModal";
+import UserAccountTable from "../components/UserAccountTable";
 
 export default function ManageAccounts() {
   const navigate = useNavigate();
@@ -246,6 +247,9 @@ export default function ManageAccounts() {
               )}
           </tbody>
         </table>
+      </section>
+      <section className="pt-4">
+        <UserAccountTable />
       </section>
     </div>
   );

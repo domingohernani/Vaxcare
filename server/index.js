@@ -1517,6 +1517,56 @@ app.delete("/deleteVaccine/:id", (req, res) => {
     });
   });
 });
+app.get("/allAccounts", (req, res) => {
+  const query = `SELECT p.parent_id ,p.name AS parent_name, 
+             p.relationship, 
+             p.phoneNo, 
+             p.child_id, 
+             p.username, 
+             p.password, 
+             c.name AS child_name
+      FROM parent AS p
+      JOIN child AS c ON p.child_id = c.child_id`;
+
+  db.query(query, (error, data) => {
+    if (error) {
+      console.error("Error fetching data:", error);
+      return res.status(500).json({ error: "Internal Server Error" });
+    }
+    return res.json(data); // Send the data as JSON
+  });
+});
+
+app.put("/updateCredentials/:parentId", (req, res) => {
+  const { parentId } = req.params;
+  const { username, password } = req.body;
+
+  // Check if the username already exists (excluding the current parent being updated)
+  const checkUsernameQuery = `SELECT * FROM parent WHERE username = ? AND parent_id != ?`;
+
+  db.query(checkUsernameQuery, [username, parentId], (err, results) => {
+    if (err) {
+      console.error("Error checking username: ", err);
+      return res.status(500).json({ error: "Database error" });
+    }
+
+    if (results.length > 0) {
+      // Username already exists, return an error
+      return res.status(400).json({ error: "Username already exists" });
+    }
+
+    // If username doesn't exist, proceed with the update
+    const updateQuery = `UPDATE parent SET username = ?, password = ? WHERE parent_id = ?`;
+
+    db.query(updateQuery, [username, password, parentId], (err, result) => {
+      if (err) {
+        console.error("Error updating credentials: ", err);
+        return res.status(500).json({ error: "Database error" });
+      }
+      res.status(200).json({ message: "Credentials updated successfully" });
+    });
+  });
+});
 
 app.listen(8800, () => {
   console.log("Connected to backend");
