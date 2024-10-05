@@ -24,15 +24,23 @@ import ViewMessage from "./components/ViewMessage";
 import AddMessage from "./components/modals/AddMessage";
 import Vaccines from "./pages/Vaccines";
 
-const isAdmin = () => {
-  return localStorage.getItem("role") === "president";
-};
-
 function App() {
   const [isAdminState, setIsAdminState] = useState(false);
+  const [loading, setLoading] = useState(true);
+
   useEffect(() => {
-    setIsAdminState(isAdmin());
+    const checkAdminStatus = () => {
+      const role = localStorage.getItem("role");
+      setIsAdminState(role === "president");
+    };
+
+    checkAdminStatus();
+    setLoading(false);
   }, []);
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <BrowserRouter>
@@ -99,7 +107,7 @@ function App() {
                     />
 
                     {/* Manage Accounts */}
-                    {isAdminState ? (
+                    {isAdminState && (
                       <>
                         <Route
                           path="/manageaccounts"
@@ -107,7 +115,7 @@ function App() {
                         />
                         <Route path="/addadmin" element={<AddAdmin />} />
                       </>
-                    ) : null}
+                    )}
                   </Routes>
                 </section>
               </main>
@@ -118,5 +126,4 @@ function App() {
     </BrowserRouter>
   );
 }
-
 export default App;

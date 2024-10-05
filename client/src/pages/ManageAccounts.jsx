@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, NavLink } from "react-router-dom";
-
 import axios from "axios";
 import addIcon from "../assets/bmitrackingassets/plus.svg";
 import DeleteAdmin from "../components/modals/DeleteAdmin";
@@ -8,30 +7,41 @@ import UpdateAdminModal from "../components/modals/UpdateAdminModal";
 
 export default function ManageAccounts() {
   const navigate = useNavigate();
-
   const [admins, setAdmins] = useState([]);
   const [search, setSearch] = useState("");
-
   const [deleteModal, setDeleteModal] = useState(false);
   const [adminIdToBePassed, setAdminIdToBePassed] = useState("");
   const [nameToBePassed, setNameToBePassed] = useState("");
   const [passwordToBePassed, setPasswordToBePassed] = useState("");
-
   const [hideNewPassword, setHideNewPassword] = useState(true);
-
   const [updateAdminModal, setUpdateAdminModal] = useState(false);
+  const [isFirstLoad, setIsFirstLoad] = useState(true); // New state for checking first load
 
   useEffect(() => {
-    const fetchAdmins = async () => {
-      try {
-        const result = await axios.get("http://localhost:8800/allAdmin");
-        setAdmins(result.data);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    fetchAdmins();
+    const hasReloaded = sessionStorage.getItem("hasReloaded");
+    if (!hasReloaded) {
+      // If not reloaded before, set the flag and reload
+      sessionStorage.setItem("hasReloaded", "true");
+      window.location.reload(); // Reload only once
+    } else {
+      // If already reloaded, fetch the admin data
+      const fetchAdmins = async () => {
+        try {
+          const result = await axios.get("http://localhost:8800/allAdmin");
+          setAdmins(result.data);
+        } catch (error) {
+          console.log(error);
+        }
+      };
+      fetchAdmins();
+      setIsFirstLoad(false); // Now that it's loaded, it's no longer the first load
+    }
   }, []);
+
+  // If it's still loading after the first load, show loading or empty content
+  if (isFirstLoad) {
+    return <div>Loading...</div>; // Show loading or some placeholder
+  }
 
   const showModal = () => {
     setDeleteModal(!deleteModal);
