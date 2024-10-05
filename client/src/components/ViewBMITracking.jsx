@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { NavLink, useNavigate, useParams } from "react-router-dom";
-import AddBMI from "./AddBMI";
 import axios from "axios";
 import editIcon from "../assets/bmitrackingassets/editIcon.svg";
 import cancelIcon from "../assets/bmitrackingassets/cancelIcon.svg";
@@ -15,21 +14,9 @@ export default function ViewBMITracking() {
   const navigate = useNavigate();
   const { childId } = useParams();
 
-  const [name, setName] = useState("");
-  const [gender, setGender] = useState("");
-  let [birthdate, setBirthdate] = useState("");
-  const [placeofbirth, setPlaceofbirth] = useState("");
-  const [number, setNumber] = useState("");
-  const [mothersname, setMothersname] = useState("");
-  const [fathersname, setFathersname] = useState("");
-  const [mothersNo, setMothersNo] = useState("");
-  const [fathersNo, setFathersNo] = useState("");
-  const [address, setAddress] = useState("");
-  const [medicineTaken, setMedicineTaken] = useState([]);
-  let [medicinePrescription, setMedicinePrescription] = useState([]);
+  const [medicinePrescription, setMedicinePrescription] = useState([]);
 
   const calculateBMI = (weightInKg, heightInCm, dateOfBirth, sex) => {
-    // Calculate age based on the current date and date of birth
     const currentDate = new Date();
     const birthDate = new Date(dateOfBirth);
     const ageInMonths =
@@ -38,7 +25,6 @@ export default function ViewBMITracking() {
       birthDate.getMonth();
 
     const heightInMeters = heightInCm / 100;
-
     const bmi = (weightInKg / Math.pow(heightInMeters, 2)).toFixed(2);
 
     const bmiCategories = {
@@ -99,6 +85,14 @@ export default function ViewBMITracking() {
     return <span className={config.className}>{config.label}</span>;
   };
 
+  const capitalizeAfterSpace = (inputString) => {
+    const words = inputString.split(" ");
+    const capitalizedWords = words.map(
+      (word) => word.charAt(0).toUpperCase() + word.slice(1)
+    );
+    return capitalizedWords.join(" ");
+  };
+
   const updateRecord = () => {
     setUpdateButtonClicked(!updateButtonClicked);
   };
@@ -106,60 +100,29 @@ export default function ViewBMITracking() {
   const formatDateForInput = (serverDate) => {
     const date = new Date(serverDate);
     const year = date.getFullYear();
-    let month = (date.getMonth() + 1).toString().padStart(2, "0"); // Months are zero-based
+    let month = (date.getMonth() + 1).toString().padStart(2, "0");
     let day = date.getDate().toString().padStart(2, "0");
-
     return `${year}-${month}-${day}`;
   };
 
   const applyChanges = async (childID) => {
-    birthdate = formatDateForInput(birthdate);
     try {
       const response = await axios.put(
         "http://localhost:8800/updateChildDetailsFromImmu",
         {
-          name,
-          birthdate,
-          placeofbirth,
-          gender,
-          mothersname,
-          fathersname,
-          address,
+          ...childDetails,
+          birthdate: formatDateForInput(childDetails.date_of_birth),
           childID,
         }
       );
       console.log(response);
+
       if (response.data.reloadPage) {
         window.location.reload();
       }
     } catch (error) {
-      console.log(error);
+      console.log("Error updating child and parent details:", error);
     }
-    try {
-      const response = await axios.put("http://localhost:8800/updateParents", {
-        childID,
-        fathersname,
-        fathersNo,
-        mothersname,
-        mothersNo,
-      });
-      console.log(response);
-      if (response.data.reloadPage) {
-        window.location.reload();
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const capitalizeAfterSpace = (inputString) => {
-    const words = inputString.split(" ");
-    const capitalizedWords = words.map(
-      (word) => word.charAt(0).toUpperCase() + word.slice(1)
-    );
-    const resultString = capitalizedWords.join(" ");
-
-    return resultString;
   };
 
   const prescribeUsingMedicines = () => {
@@ -178,25 +141,25 @@ export default function ViewBMITracking() {
         case "Inactivated Polio Vaccine (PIV)":
           return occurrenceCount >= 2
             ? "Mataas ang immune response ng bata laban sa polio"
-            : "Delekado ang situation ng bata. Maari siyang mahawala ng polio, isang nakakahawang sakit na maaaring magdulot ng paralysis";
+            : "Delekado ang situation ng bata. Maari siyang mahawaan ng polio, isang nakakahawang sakit na maaaring magdulot ng paralysis";
         case "Measles, Mumps, Rubella Vaccine (MMR)":
           return occurrenceCount > 0
             ? "Mataas proteksyon laban sa tigdas, bulutong, at rubella, na nagpapababa ng panganib na magkaruon ng mga malubhang sakit at komplikasyon"
             : "Mataas ang tsansang mahawa ang bata sa tigdas, bulutong, at rubella";
         case "Pentavalent Vaccine (DPT-Hep B-HIB)":
           return occurrenceCount > 0
-            ? "Protektado laban sa diphtheria, pertussis, tetanus, Hepatitis B, at Haemophilus influenzae type b (HIB). Pangmatagalan at komprehensibong proteksyon laban sa mga nabanggit na sakit."
+            ? "Protektado laban sa diphtheria, pertussis, tetanus, Hepatitis B, at Haemophilus influenzae type b (HIB)."
             : "Ang bata ay maaaring mas madaling matamaan ng diphtheria, pertussis, tetanus, Hepatitis B, at Haemophilus influenzae type b (HIB)";
         case "Pneumococcal Conjugate Vaccine (PCV)":
           return occurrenceCount > 0
             ? "Protektado laban sa ilang uri ng bacteria na sanhi ng pneumonia, meningitis, at iba pang respiratory infections"
-            : "Mataas ang panganib na mahawaan ng mga sakit na dulot ng pneumococcus, na maaaring magresulta sa pneumonia, meningitis, o iba pang respiratory infections na maaaring magdulot ng komplikasyon at kritikal na kondisyon";
+            : "Mataas ang panganib na mahawaan ng mga sakit na dulot ng pneumococcus";
         default:
           return "";
       }
     };
 
-    medicineTaken.forEach((vaccine) => {
+    childDetails.medicineTaken?.forEach((vaccine) => {
       const text = getPrescriptionText(vaccine.name, vaccine.occurrence_count);
       prescription.push(text);
     });
@@ -214,21 +177,11 @@ export default function ViewBMITracking() {
 
         const { data } = childDetailsResponse;
         setChildDetails(data.childDetails[0]);
-        setName(data.childDetails[0].name);
-        setGender(data.childDetails[0].sex);
-        setBirthdate(data.childDetails[0].date_of_birth);
-        setPlaceofbirth(data.childDetails[0].place_of_birth);
-        setNumber(data.childDetails[0].family_number);
-        setMothersname(data.childDetails[0].mother);
-        setFathersname(data.childDetails[0].father);
-        setAddress(data.childDetails[0].address);
-        setFathersNo(data.childDetails[0].father_phoneNo);
-        setMothersNo(data.childDetails[0].mother_phoneNo);
 
         setBmiHistory(data.bmiHistory);
         setHistoryRecords(data.historyRecords);
 
-        setMedicineTaken(medicineResponse.data);
+        setMedicinePrescription(medicineResponse.data);
         prescribeUsingMedicines();
       } catch (error) {
         console.log(error);
@@ -236,7 +189,7 @@ export default function ViewBMITracking() {
     };
 
     fetchData();
-  }, [childId, medicinePrescription]);
+  }, [childId]);
 
   return (
     <section>
@@ -257,30 +210,31 @@ export default function ViewBMITracking() {
           Body Mass Index Tracking Information
         </h3>
         <div className="flex items-center gap-4">
-          <NavLink to={"/viewbmitracking/addbmi/" + childId}>
+          <NavLink to={`/viewbmitracking/addbmi/${childId}`}>
             <button className="py-3 font-normal text-white bg-C1886C3">
               Add Body Mass Index
             </button>
           </NavLink>
-          <NavLink to={"/viewbmitracking/addmedicalhistory/" + childId}>
-            <button className="py-3 font-normal text-white bg-C1886C3 ">
+          <NavLink to={`/viewbmitracking/addmedicalhistory/${childId}`}>
+            <button className="py-3 font-normal text-white bg-C1886C3">
               Add Medical History
             </button>
           </NavLink>
         </div>
       </div>
-      <section className="flex gap-3 mt-2 ">
+
+      <section className="flex gap-3 mt-2">
         <div className="grid flex-1 grid-cols-4 gap-4 px-5 py-3 bg-white rounded-lg">
           <span className="col-start-1 col-end-4 font-light">
             ID: VXCR-UR-{childDetails.child_id}
           </span>
-          <span className="flex items-center justify-end col-start-4 col-end-4 gap-2 font-light ">
+          <span className="flex items-center justify-end col-start-4 col-end-4 gap-2 font-light">
             {updateButtonClicked ? (
               <>
                 <img
                   src={applyIcon}
                   alt="icon"
-                  width={"20px"}
+                  width="20px"
                   className="cursor-pointer"
                   title="Apply changes"
                   onClick={() => applyChanges(childDetails.child_id)}
@@ -288,7 +242,7 @@ export default function ViewBMITracking() {
                 <img
                   src={cancelIcon}
                   alt="icon"
-                  width={"20px"}
+                  width="20px"
                   className="cursor-pointer"
                   title="Cancel changes"
                   onClick={() => setUpdateButtonClicked(false)}
@@ -298,170 +252,214 @@ export default function ViewBMITracking() {
             <img
               src={editIcon}
               alt="icon"
-              width={"18px"}
+              width="18px"
               className="cursor-pointer"
               onClick={updateRecord}
             />
           </span>
-          <div className="flex flex-col ">
+
+          {/* Name Input */}
+          <div className="flex flex-col">
             <span>Name</span>
             {updateButtonClicked ? (
               <input
                 type="text"
-                placeholder={childDetails.name}
-                className="font-bold"
-                value={name}
-                onChange={(e) => setName(capitalizeAfterSpace(e.target.value))}
+                value={childDetails.name}
+                className="p-1 font-bold border border-black"
+                onChange={(e) =>
+                  setChildDetails({
+                    ...childDetails,
+                    name: capitalizeAfterSpace(e.target.value),
+                  })
+                }
               />
             ) : (
               <span className="font-bold">{childDetails.name}</span>
             )}
           </div>
+
+          {/* Age */}
           <div className="flex flex-col">
             <span>Age</span>
             <span className="font-bold">{childDetails.age}</span>
           </div>
+
+          {/* Gender Input */}
           <div className="flex flex-col">
             <span>Gender</span>
             {updateButtonClicked ? (
-              <input
-                type="text"
-                placeholder={childDetails.sex}
-                className="font-bold"
-                value={gender}
+              <select
+                className="p-1 font-bold border border-black"
+                value={childDetails.sex}
                 onChange={(e) =>
-                  setGender(capitalizeAfterSpace(e.target.value))
+                  setChildDetails({
+                    ...childDetails,
+                    sex: e.target.value,
+                  })
                 }
-              />
+              >
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+              </select>
             ) : (
               <span className="font-bold">{childDetails.sex}</span>
             )}
           </div>
+
+          {/* Birthdate */}
           <div className="flex flex-col">
             <span>Birthdate</span>
             {updateButtonClicked ? (
-              // <input
-              //   type="date"
-              //   value={birthdate}
-              //   onChange={(e) => setBirthdate(e.target.value)}
-              // />
-              <span className="font-bold">{childDetails.date_of_birth}</span>
+              <input
+                type="date"
+                className="p-1 font-bold border border-black"
+                value={formatDateForInput(childDetails.date_of_birth)}
+                onChange={(e) => {
+                  setChildDetails({
+                    ...childDetails,
+                    date_of_birth: e.target.value,
+                  });
+                }}
+              />
             ) : (
               <span className="font-bold">{childDetails.date_of_birth}</span>
             )}
           </div>
+
+          {/* Place of Birth Input */}
           <div className="flex flex-col col-span-2">
             <span>Place of birth</span>
             {updateButtonClicked ? (
               <input
                 type="text"
-                placeholder={childDetails.place_of_birth}
-                className="font-bold"
-                value={placeofbirth}
+                value={childDetails.place_of_birth}
+                className="p-1 font-bold border border-black"
                 onChange={(e) =>
-                  setPlaceofbirth(capitalizeAfterSpace(e.target.value))
+                  setChildDetails({
+                    ...childDetails,
+                    place_of_birth: capitalizeAfterSpace(e.target.value),
+                  })
                 }
               />
             ) : (
               <span className="font-bold">{childDetails.place_of_birth}</span>
             )}
           </div>
-          <div className="flex flex-col col-span-2 col-start-3 ">
+
+          {/* Address Input */}
+          <div className="flex flex-col col-span-2 col-start-3">
             <span>Address</span>
             {updateButtonClicked ? (
               <input
                 type="text"
-                className="font-bold"
-                placeholder={childDetails.address}
-                value={address}
+                value={childDetails.address}
+                className="p-1 font-bold border border-black"
                 onChange={(e) =>
-                  setAddress(capitalizeAfterSpace(e.target.value))
+                  setChildDetails({
+                    ...childDetails,
+                    address: capitalizeAfterSpace(e.target.value),
+                  })
                 }
               />
             ) : (
               <span className="font-bold">{childDetails.address}</span>
             )}
           </div>
+
+          {/* Mother's Name Input */}
           <div className="flex flex-col">
             <span>Mother's Name</span>
             {updateButtonClicked ? (
               <input
                 type="text"
-                className="font-bold"
-                placeholder={childDetails.mother}
-                value={mothersname}
+                value={childDetails.mother}
+                className="p-1 font-bold border border-black"
                 onChange={(e) =>
-                  setMothersname(capitalizeAfterSpace(e.target.value))
+                  setChildDetails({
+                    ...childDetails,
+                    mother: capitalizeAfterSpace(e.target.value),
+                  })
                 }
               />
             ) : (
               <span className="font-bold">{childDetails.mother}</span>
             )}
           </div>
+
+          {/* Mother's No Input */}
           <div className="flex flex-col">
             <span>Mother's No.</span>
             {updateButtonClicked ? (
               <input
                 type="text"
-                className="font-bold"
-                placeholder={childDetails.mother_phoneNo}
-                value={mothersNo}
+                value={childDetails.mother_phoneNo}
                 maxLength="11"
-                pattern="[0-9]*"
-                onChange={(e) => {
-                  e.target.value = e.target.value
-                    .replace(/[^0-9]/g, "")
-                    .slice(0, 11);
-                  setMothersNo(e.target.value);
-                }}
+                className="p-1 font-bold border border-black"
+                onChange={(e) =>
+                  setChildDetails({
+                    ...childDetails,
+                    mother_phoneNo: e.target.value
+                      .replace(/[^0-9]/g, "")
+                      .slice(0, 11),
+                  })
+                }
               />
             ) : (
               <span className="font-bold">{childDetails.mother_phoneNo}</span>
             )}
           </div>
+
+          {/* Father's Name Input */}
           <div className="flex flex-col">
             <span>Father's Name</span>
             {updateButtonClicked ? (
               <input
                 type="text"
-                className="font-bold"
-                placeholder={childDetails.father}
-                value={fathersname}
+                value={childDetails.father}
+                className="p-1 font-bold border border-black"
                 onChange={(e) =>
-                  setFathersname(capitalizeAfterSpace(e.target.value))
+                  setChildDetails({
+                    ...childDetails,
+                    father: capitalizeAfterSpace(e.target.value),
+                  })
                 }
               />
             ) : (
               <span className="font-bold">{childDetails.father}</span>
             )}
           </div>
+
+          {/* Father's No Input */}
           <div className="flex flex-col">
             <span>Father's No.</span>
             {updateButtonClicked ? (
               <input
                 type="text"
-                className="font-bold"
-                placeholder={childDetails.father_phoneNo}
-                value={fathersNo}
+                value={childDetails.father_phoneNo}
                 maxLength="11"
-                pattern="[0-9]*"
-                onChange={(e) => {
-                  // Ensure only numeric input and limit to 11 characters
-                  e.target.value = e.target.value
-                    .replace(/[^0-9]/g, "")
-                    .slice(0, 11);
-                  setFathersNo(e.target.value); // Corrected from setMothersNo to setFathersNo
-                }}
+                className="p-1 font-bold border border-black"
+                onChange={(e) =>
+                  setChildDetails({
+                    ...childDetails,
+                    father_phoneNo: e.target.value
+                      .replace(/[^0-9]/g, "")
+                      .slice(0, 11),
+                  })
+                }
               />
             ) : (
-              <span className="font-bold">{childDetails.father_phoneNo} </span>
+              <span className="font-bold">{childDetails.father_phoneNo}</span>
             )}
           </div>
-          <div className="">
+
+          {/* Status */}
+          <div>
             <span>Status: </span>
             {showStatusTag(childDetails.status)}
           </div>
         </div>
+
+        {/* Medical History Section */}
         <div className="pb-3 text-center rounded-lg max-h-80">
           <h4 className="px-4 py-4 text-base font-semibold text-center text-black bg-white rounded-md">
             Medical History
@@ -470,94 +468,96 @@ export default function ViewBMITracking() {
             {historyRecords.length === 0 ? (
               <span className="text-gray-500">No records</span>
             ) : (
-              historyRecords.map((record, index) => {
-                return (
-                  <li key={index}>
-                    <span className="block">
-                      <span className="font-semibold">Date: </span>
-                      {new Date(record.history_date).toLocaleDateString(
-                        "en-CA"
-                      )}
-                    </span>
-
-                    <span className="block">
-                      <span className="font-semibold">Allergies:</span>{" "}
-                      {record.allergies}
-                    </span>
-                    <span className="block">
-                      <span className="font-semibold">Temperature: </span>
-                      {record.temperature}
-                    </span>
-                    <span className="block">
-                      <span className="font-semibold">Coughs: </span>{" "}
-                      {record.cough}
-                    </span>
-                    <span className="block">
-                      <span className="font-semibold">Colds: </span>
-                      {record.cold}
-                    </span>
-                  </li>
-                );
-              })
+              historyRecords.map((record, index) => (
+                <li key={index}>
+                  <span className="block">
+                    <span className="font-semibold">Date: </span>
+                    {new Date(record.history_date).toLocaleDateString("en-CA")}
+                  </span>
+                  <span className="block">
+                    <span className="font-semibold">Allergies: </span>{" "}
+                    {record.allergies}
+                  </span>
+                  <span className="block">
+                    <span className="font-semibold">Temperature: </span>{" "}
+                    {record.temperature}
+                  </span>
+                  <span className="block">
+                    <span className="font-semibold">Coughs: </span>{" "}
+                    {record.cough}
+                  </span>
+                  <span className="block">
+                    <span className="font-semibold">Colds: </span> {record.cold}
+                  </span>
+                </li>
+              ))
             )}
           </ul>
         </div>
       </section>
+
+      {/* Prescription Section */}
       <section className="flex gap-2 mt-3">
         <div className="flex-1 gap-3 rounded-lg">
           <div className="px-4 py-3 text-gray-500 bg-white rounded-lg">
             <span className="font-semibold text-black">Prescription</span>
-            <hr className="my-4 bg-gray-100 " />
+            <hr className="my-4 bg-gray-100" />
             <ul className="text-left text-black list-disc px-9">
-              {bmiHistory.length > 0 ? (
-                <>
-                  <Prescription
-                    height={bmiHistory[0].height}
-                    weight={bmiHistory[0].weight}
-                  />
-                </>
-              ) : (
-                ""
+              {bmiHistory.length > 0 && (
+                <Prescription
+                  height={bmiHistory[0].height}
+                  weight={bmiHistory[0].weight}
+                />
               )}
-              {medicinePrescription.map((item) =>
-                item ? <li className="my-2">{item}</li> : ""
+              {medicinePrescription.map((item, index) =>
+                item ? (
+                  <li className="my-2" key={index}>
+                    {item}
+                  </li>
+                ) : (
+                  ""
+                )
               )}
             </ul>
           </div>
-          <div className="px-4 py-3 my-3 bg-white rounded-lg ">
-            <span className="block py-2 font-semibold text-black bg-white rounded-lg mr-7">
+
+          {/* BMI History */}
+          <div className="px-4 py-3 my-3 bg-white rounded-lg">
+            <span className="block py-2 font-semibold text-black bg-white rounded-lg">
               BMI History
             </span>
             <hr />
-            <ul className="w-full py-2 mt-3 text-black rounded-lg bmiHistory ">
+            <ul className="w-full py-2 mt-3 text-black rounded-lg bmiHistory">
               {bmiHistory.length === 0 ? (
                 <span className="text-gray-500 pl-9">No records</span>
               ) : (
-                bmiHistory.map((bmi, element) => {
-                  return (
-                    <div className="flex p-3 mb-5 rounded-md hover:bg-slate-100">
-                      <h3 className="mr-2">{element + 1}).</h3> <br />
-                      <div className="flex-1">
-                        {calculateBMI(bmi.weight, bmi.height)}
-                      </div>
-                      <div className="flex flex-col flex-1">
-                        <span>
-                          <span className="font-semibold">Weight: </span>
-                          {bmi.weight}
-                        </span>
-                        <span>
-                          <span className="font-semibold">Height: </span>
-                          {bmi.height}
-                        </span>
-                      </div>
-                      <div>
-                        <span>
-                          <span> Date:</span> {bmi.ht_date}
-                        </span>
-                      </div>
+                bmiHistory.map((bmi, element) => (
+                  <div
+                    className="flex p-3 mb-5 rounded-md hover:bg-slate-100"
+                    key={element}
+                  >
+                    <h3 className="mr-2">{element + 1}).</h3>
+                    <div className="flex-1">
+                      {calculateBMI(bmi.weight, bmi.height)}
                     </div>
-                  );
-                })
+                    <div className="flex flex-col flex-1">
+                      <span>
+                        <span className="font-semibold">Weight: </span>
+                        {bmi.weight}
+                      </span>
+                      <span>
+                        <span className="font-semibold">Height: </span>
+                        {bmi.height}
+                      </span>
+                    </div>
+                    <div>
+                      <span>
+                        <span> Date: </span>{" "}
+                        {new Date(bmi.ht_date).toDateString()}
+                      </span>
+                    </div>
+                  </div>
+                ))
               )}
             </ul>
           </div>

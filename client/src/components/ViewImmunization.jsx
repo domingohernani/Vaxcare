@@ -13,7 +13,7 @@ export default function ViewImmunization() {
   const [updateImmuModal, setUpdateImmuModal] = useState(false);
   const [editImmuModal, setEditImmuModal] = useState(false);
   const [childDetails, setChildDetails] = useState({});
-  const [vaccines, setVaccines] = useState({}); // Initialize as an empty object
+  const [vaccines, setVaccines] = useState({});
   const [updateVaccines, setUpdateVaccines] = useState({});
 
   const triggerUpdate = () => setUpdateImmuModal(!updateImmuModal);
@@ -74,6 +74,7 @@ export default function ViewImmunization() {
     let day = date.getDate().toString().padStart(2, "0");
     return `${year}-${month}-${day}`;
   };
+
   const updateRecord = () => {
     setUpdateButtonClicked(!updateButtonClicked);
   };
@@ -141,9 +142,14 @@ export default function ViewImmunization() {
             <input
               type="text"
               placeholder={childDetails.name}
-              className="font-bold"
-              value={name}
-              onChange={(e) => setName(capitalizeAfterSpace(e.target.value))}
+              className="p-1 font-bold border border-black"
+              value={childDetails.name}
+              onChange={(e) =>
+                setChildDetails({
+                  ...childDetails,
+                  name: e.target.value,
+                })
+              }
             />
           ) : (
             <span className="font-bold">{childDetails.name}</span>
@@ -156,13 +162,19 @@ export default function ViewImmunization() {
         <div className="flex flex-col">
           <span>Gender</span>
           {updateButtonClicked ? (
-            <input
-              type="text"
-              // placeholder={childDetails.sex}
-              className="font-bold"
-              // value={gender}
-              // onChange={(e) => setGender(capitalizeAfterSpace(e.target.value))}
-            />
+            <select
+              className="p-1 font-bold border border-black"
+              value={childDetails.sex}
+              onChange={(e) =>
+                setChildDetails({
+                  ...childDetails,
+                  sex: e.target.value,
+                })
+              }
+            >
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+            </select>
           ) : (
             <span className="font-bold">{childDetails.sex}</span>
           )}
@@ -170,16 +182,17 @@ export default function ViewImmunization() {
         <div className="flex flex-col">
           <span>Birthdate</span>
           {updateButtonClicked ? (
-            // <input
-            //   type="date"
-            //   // value={birthdate}
-            //   value={birthdate}
-            //   onChange={(e) => {
-            //     formatDateForInput(e.target.value);
-            //     setBirthdate(e.target.value);
-            //   }}
-            // />
-            <span className="font-bold">{childDetails.date_of_birth}</span>
+            <input
+              type="date"
+              className="p-1 font-bold border border-black"
+              value={formatDateForInput(childDetails.date_of_birth)}
+              onChange={(e) => {
+                setChildDetails({
+                  ...childDetails,
+                  date_of_birth: e.target.value,
+                });
+              }}
+            />
           ) : (
             <span className="font-bold">{childDetails.date_of_birth}</span>
           )}
@@ -189,12 +202,15 @@ export default function ViewImmunization() {
           {updateButtonClicked ? (
             <input
               type="text"
-              // placeholder={childDetails.place_of_birth}
-              className="font-bold"
-              // value={placeofbirth}
-              // onChange={(e) =>
-              //   setPlaceofbirth(capitalizeAfterSpace(e.target.value))
-              // }
+              placeholder={childDetails.place_of_birth}
+              className="p-1 font-bold border border-black"
+              value={childDetails.place_of_birth}
+              onChange={(e) =>
+                setChildDetails({
+                  ...childDetails,
+                  place_of_birth: e.target.value,
+                })
+              }
             />
           ) : (
             <span className="font-bold">{childDetails.place_of_birth}</span>
@@ -205,14 +221,18 @@ export default function ViewImmunization() {
           {updateButtonClicked ? (
             <input
               type="text"
-              className="font-bold"
-              // placeholder={childDetails.address}
-              // value={address}
-              // onChange={(e) => setAddress(capitalizeAfterSpace(e.target.value))}
+              placeholder={childDetails.address}
+              className="p-1 font-bold border border-black"
+              value={childDetails.address}
+              onChange={(e) =>
+                setChildDetails({
+                  ...childDetails,
+                  address: e.target.value,
+                })
+              }
             />
           ) : (
-            // <span className="font-bold">{childDetails.address}</span>
-            <span className="font-bold">Address</span>
+            <span className="font-bold">{childDetails.address}</span>
           )}
         </div>
         <div className="flex flex-col">
@@ -220,12 +240,15 @@ export default function ViewImmunization() {
           {updateButtonClicked ? (
             <input
               type="text"
-              className="font-bold"
-              // placeholder={childDetails.mother}
-              // value={mothersname}
-              // onChange={(e) =>
-              //   setMothersname(capitalizeAfterSpace(e.target.value))
-              // }
+              placeholder={childDetails.mother}
+              value={childDetails.mother}
+              className="p-1 font-bold border border-black"
+              onChange={(e) =>
+                setChildDetails({
+                  ...childDetails,
+                  mother: e.target.value,
+                })
+              }
             />
           ) : (
             <span className="font-bold">{childDetails.mother}</span>
@@ -236,16 +259,19 @@ export default function ViewImmunization() {
           {updateButtonClicked ? (
             <input
               type="text"
-              className="font-bold"
+              className="p-1 font-bold border border-black"
               placeholder={childDetails.mother_phoneNo}
-              // value={mothersNo}
+              value={childDetails.mother_phoneNo}
               maxLength="11"
               pattern="[0-9]*"
               onChange={(e) => {
                 e.target.value = e.target.value
                   .replace(/[^0-9]/g, "")
                   .slice(0, 11);
-                setMothersNo(e.target.value);
+                setChildDetails({
+                  ...childDetails,
+                  mother_phoneNo: e.target.value,
+                });
               }}
             />
           ) : (
@@ -257,11 +283,14 @@ export default function ViewImmunization() {
           {updateButtonClicked ? (
             <input
               type="text"
-              className="font-bold"
+              className="p-1 font-bold border border-black"
               placeholder={childDetails.father}
-              // value={fathersname}
+              value={childDetails.father}
               onChange={(e) =>
-                setFathersname(capitalizeAfterSpace(e.target.value))
+                setChildDetails({
+                  ...childDetails,
+                  father: e.target.value,
+                })
               }
             />
           ) : (
@@ -273,28 +302,25 @@ export default function ViewImmunization() {
           {updateButtonClicked ? (
             <input
               type="text"
-              className="font-bold"
               placeholder={childDetails.father_phoneNo}
-              // value={fathersNo}
+              value={childDetails.father_phoneNo}
+              className="p-1 font-bold border border-black"
               maxLength="11"
               pattern="[0-9]*"
               onChange={(e) => {
                 e.target.value = e.target.value
                   .replace(/[^0-9]/g, "")
                   .slice(0, 11);
-                setFathersNo(e.target.value); // Corrected from setMothersNo to setFathersNo
+                setChildDetails({
+                  ...childDetails,
+                  father_phoneNo: e.target.value,
+                });
               }}
             />
           ) : (
             <span className="font-bold">{childDetails.father_phoneNo}</span>
           )}
         </div>
-
-        {/* <div className="">
-          <span>Status: </span>
-          {showStatusTag(childDetails.status)}
-          <span>{childDetails.status}</span>
-        </div> */}
       </div>
 
       {/* Vaccine Table */}
@@ -313,29 +339,31 @@ export default function ViewImmunization() {
             <React.Fragment key={vaccineName}>
               <div className="p-3 bg-gray-100 rounded-md">{vaccineName}</div>
               <div className="p-3 bg-gray-100 rounded-md">
-                {vaccines[vaccineName].dosesTaken} of{" "}
-                {vaccines[vaccineName].dosesRequired}
+                {vaccines[vaccineName]?.dosesTaken} of{" "}
+                {vaccines[vaccineName]?.dosesRequired}
               </div>
               <div className="p-3 bg-gray-100 rounded-md">
-                {vaccines[vaccineName].administeredDates.map((date, index) => (
-                  <input
-                    key={index}
-                    type="date"
-                    value={new Date(date).toISOString().split("T")[0]}
-                    onChange={(e) =>
-                      handleVaccineDateChange(
-                        vaccineName,
-                        index,
-                        e.target.value
-                      )
-                    }
-                    className="w-full text-center rounded-md"
-                  />
-                ))}
+                {vaccines[vaccineName]?.administeredDates?.map(
+                  (date, index) => (
+                    <input
+                      key={index}
+                      type="date"
+                      value={new Date(date).toISOString().split("T")[0]}
+                      onChange={(e) =>
+                        handleVaccineDateChange(
+                          vaccineName,
+                          index,
+                          e.target.value
+                        )
+                      }
+                      className="w-full text-center rounded-md"
+                    />
+                  )
+                )}
               </div>
               <div className="p-3 bg-gray-100 rounded-md">
-                {vaccines[vaccineName].dosesTaken ===
-                vaccines[vaccineName].dosesRequired
+                {vaccines[vaccineName]?.dosesTaken ===
+                vaccines[vaccineName]?.dosesRequired
                   ? "Vaccinated"
                   : "On process"}
               </div>

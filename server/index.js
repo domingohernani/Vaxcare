@@ -468,51 +468,125 @@ app.put("/updateChildDetails", (req, res) => {
 });
 
 app.put("/updateChildDetailsFromImmu", (req, res) => {
-  const { name, birthdate, placeofbirth, gender, address, childID } = req.body;
+  const {
+    name,
+    birthdate,
+    place_of_birth,
+    sex, // Use sex here as it directly corresponds to the database field
+    address,
+    childID,
+    mother: motherName,
+    mother_phoneNo: motherPhoneNo,
+    father: fatherName,
+    father_phoneNo: fatherPhoneNo,
+  } = req.body;
 
-  console.log("Name:", name);
-  console.log("Birthdate:", birthdate);
-  console.log("Place of Birth:", placeofbirth);
-  console.log("Gender:", gender);
-  console.log("Address:", address);
-  console.log("Child ID:", childID);
+  console.log("Received Data:", req.body);
 
-  let query = "UPDATE child SET ";
-  const setClauses = [];
+  // Build the query for updating child details
+  let childQuery = "UPDATE child SET ";
+  const childSetClauses = [];
 
-  if (name.length !== 0) setClauses.push(`name = '${name.trim()}'`);
-  if (birthdate.length !== 0)
-    setClauses.push(`date_of_birth = '${birthdate.trim()}'`);
-  if (placeofbirth.length !== 0)
-    setClauses.push(`place_of_birth = '${placeofbirth.trim()}'`);
-  if (gender.length !== 0) setClauses.push(`sex = '${gender.trim()}'`);
-  if (address.length !== 0) setClauses.push(`address = '${address.trim()}'`);
+  if (name) childSetClauses.push(`name = '${name.trim()}'`);
+  if (birthdate) childSetClauses.push(`date_of_birth = '${birthdate.trim()}'`);
+  if (place_of_birth)
+    childSetClauses.push(`place_of_birth = '${place_of_birth.trim()}'`);
 
-  const birthdateObj = new Date(birthdate);
-  const currentDate = new Date();
-  const ageInYears = currentDate.getFullYear() - birthdateObj.getFullYear();
-
-  if (ageInYears > 1) {
-    console.log("The child is at least 1 year old.");
-    setClauses.push(`status = 'Active'`);
+  // Add the sex field (gender) to the query
+  if (sex) {
+    childSetClauses.push(`sex = '${sex.trim()}'`);
   }
 
-  query += setClauses.join(", ");
-  query += ` WHERE child_id = '${childID}'`;
+  if (address) childSetClauses.push(`address = '${address.trim()}'`);
 
-  const values = [name, birthdate, placeofbirth, gender, address, childID];
+  // Join the clauses and append to query
+  childQuery += childSetClauses.join(", ");
+  childQuery += ` WHERE child_id = '${childID}'`;
 
-  db.query(query, values, (error, results) => {
-    if (error) {
-      console.error("Error updating child details:", error);
-      res.status(500).json({ error: "Internal Server Error" });
-    } else {
-      res.status(200).json({
-        message: "Child details updated successfully",
-        rowsAffected: results.affectedRows,
-        reloadPage: true,
-      });
+  console.log("Constructed Child Query:", childQuery);
+
+  // Build the query for updating parent's details
+  let parentQueries = [];
+
+  if (motherName || motherPhoneNo) {
+    let motherQuery = "UPDATE parent SET ";
+    const motherSetClauses = [];
+    if (motherName) motherSetClauses.push(`name = '${motherName.trim()}'`);
+    if (motherPhoneNo)
+      motherSetClauses.push(`phoneNo = '${motherPhoneNo.trim()}'`);
+    motherQuery += motherSetClauses.join(", ");
+    motherQuery += ` WHERE child_id = '${childID}' AND relationship = 'Mother'`;
+    parentQueries.push(motherQuery);
+  }
+
+  if (fatherName || fatherPhoneNo) {
+    let fatherQuery = "UPDATE parent SET ";
+    const fatherSetClauses = [];
+    if (fatherName) fatherSetClauses.push(`name = '${fatherName.trim()}'`);
+    if (fatherPhoneNo)
+      fatherSetClauses.push(`phoneNo = '${fatherPhoneNo.trim()}'`);
+    fatherQuery += fatherSetClauses.join(", ");
+    fatherQuery += ` WHERE child_id = '${childID}' AND relationship = 'Father'`;
+    parentQueries.push(fatherQuery);
+  }
+
+  console.log("Parent Queries:", parentQueries);
+
+  // Start database transaction
+  db.beginTransaction((transactionError) => {
+    if (transactionError) {
+      console.error("Transaction Error:", transactionError);
+      return res.status(500).json({ error: "Transaction Error" });
     }
+
+    // Execute the child update query
+    db.query(childQuery, (childError, childResults) => {
+      if (childError) {
+        return db.rollback(() => {
+          console.error("Error updating child details:", childError);
+          res.status(500).json({ error: "Failed to update child details" });
+        });
+      }
+
+      // Execute parent update queries in sequence
+      Promise.all(
+        parentQueries.map(
+          (parentQuery) =>
+            new Promise((resolve, reject) => {
+              db.query(parentQuery, (parentError, parentResults) => {
+                if (parentError) {
+                  reject(parentError);
+                } else {
+                  resolve(parentResults);
+                }
+              });
+            })
+        )
+      )
+        .then(() => {
+          // Commit the transaction if all queries succeed
+          db.commit((commitError) => {
+            if (commitError) {
+              return db.rollback(() => {
+                console.error("Commit Error:", commitError);
+                res.status(500).json({ error: "Failed to commit transaction" });
+              });
+            }
+
+            res.status(200).json({
+              message: "Child and parent details updated successfully",
+              reloadPage: true,
+            });
+          });
+        })
+        .catch((parentError) => {
+          // Rollback transaction if any parent update fails
+          db.rollback(() => {
+            console.error("Error updating parent details:", parentError);
+            res.status(500).json({ error: "Failed to update parent details" });
+          });
+        });
+    });
   });
 });
 
