@@ -1568,6 +1568,37 @@ app.put("/updateCredentials/:parentId", (req, res) => {
   });
 });
 
+app.get("/getAllChildOfParent", (req, res) => {
+  const { username, password } = req.query;
+
+  if (!username || !password) {
+    return res.status(400).send("Username and password are required");
+  }
+
+  const query = `
+    SELECT * FROM Child
+    WHERE mother_id = (SELECT parent_id FROM Parent WHERE username = ? AND password = ?)
+    OR father_id = (SELECT parent_id FROM Parent WHERE username = ? AND password = ?)
+  `;
+
+  db.query(
+    query,
+    [username, password, username, password],
+    (error, children) => {
+      if (error) {
+        console.error("Error fetching children:", error);
+        return res.status(500).json({ error: "Internal Server Error" });
+      }
+
+      if (children.length === 0) {
+        return res.status(404).send("No children found for the given parent");
+      }
+
+      return res.json(children); // Send the data as JSON
+    }
+  );
+});
+
 app.listen(8800, () => {
   console.log("Connected to backend");
 });
