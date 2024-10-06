@@ -123,15 +123,6 @@ export default function AddBMI() {
               readOnly
             />
           </div>
-          <div className="flex flex-col">
-            <label className="font-semibold">Contact No.</label>
-            <input
-              type="number"
-              className="px-1 py-2 pl-3 bg-white border rounded-lg border-blue-950"
-              value={childDetails.family_number}
-              readOnly
-            />
-          </div>
         </div>
         <div className="flex flex-col px-5">
           <label className="font-semibold">Address</label>

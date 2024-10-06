@@ -151,15 +151,6 @@ export default function AddMedicalHistory() {
               value={childDetails.place_of_birth}
             />
           </div>
-          <div className="flex flex-col">
-            <label className="font-semibold text-black">Contact No.</label>
-            <input
-              type="number"
-              className="px-1 py-2 pl-3 text-center bg-white border border-none rounded-lg"
-              readOnly
-              value={childDetails.family_number}
-            />
-          </div>
         </div>
         <div className="flex ">
           <div className="flex flex-col flex-1 px-5">
