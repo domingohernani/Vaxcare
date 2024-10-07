@@ -38,8 +38,8 @@ const LoginParent = () => {
       if (err.response && err.response.status === 404) {
         Swal.fire({
           icon: "error",
-          title: "No children found",
-          text: "It seems you don't have any children registered in the system.",
+          title: "No parent found",
+          text: "Please check your credentials and try again.",
         });
       } else {
         Swal.fire({
@@ -54,7 +54,7 @@ const LoginParent = () => {
   return (
     <div>
       <div className="px-10 pt-4">
-        <ParentNavigation />
+        <img src={logo} className="w-20 h-auto" />
       </div>
       <div className="flex items-center justify-center px-4 py-20">
         <div className="grid items-center w-full max-w-6xl gap-4 md:grid-cols-2">

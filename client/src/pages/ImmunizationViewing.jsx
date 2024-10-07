@@ -31,7 +31,7 @@ function ImmunizationViewing() {
   return (
     <div>
       <div className="px-10 pt-4 mb-10">
-        <ParentNavigation />
+        {children && <ParentNavigation parentId={children[0].parent_id} />}
       </div>
       <div className="px-4 mb-6">
         <h1 className="text-base font-bold">Immunization Record</h1>
@@ -47,6 +47,7 @@ function ImmunizationViewing() {
                 {/* Render ImmunizationTable and pass the childId as a prop */}
                 <ImmunizationTable childId={child.child_id} />
                 <hr className="my-8" />
+                <p>Parent {child.parent_id}</p>
               </div>
             ))}
           </div>
