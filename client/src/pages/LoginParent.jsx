@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom"; // Import useNavigate
+import logo from "../assets/vaxcare_logo.png";
+import ParentNavigation from "../components/ParentNavigation";
 
 const LoginParent = () => {
   const [username, setUsername] = useState("");
@@ -28,7 +30,9 @@ const LoginParent = () => {
 
         // Redirect to the page where the parent can see their children's details
         // navigate("/children-details", { state: { children: response.data } });
-        navigate("/publicViewing");
+        navigate("/immunization-viewing", {
+          state: { children: response.data },
+        });
       }
     } catch (err) {
       if (err.response && err.response.status === 404) {
@@ -49,7 +53,10 @@ const LoginParent = () => {
 
   return (
     <div>
-      <div className="flex items-center justify-center min-h-screen px-4 py-6">
+      <div className="px-10 pt-4">
+        <ParentNavigation />
+      </div>
+      <div className="flex items-center justify-center px-4 py-20">
         <div className="grid items-center w-full max-w-6xl gap-4 md:grid-cols-2">
           <div className="border border-gray-300 rounded-lg p-6 max-w-md shadow-[0_2px_22px_-4px_rgba(93,96,127,0.2)] max-md:mx-auto">
             <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>

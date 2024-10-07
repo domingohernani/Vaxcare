@@ -55,7 +55,7 @@ export default function Login() {
     <div className="absolute top-0 left-0 z-10 flex flex-col w-screen h-screen mx-auto bg-white">
       <div className="w-10/12 max-w-4xl mt-8 ml-9">
         <h6 className="font-bold logo">
-          <img src={logo} className="w-20 h-20" />
+          <img src={logo} className="w-20 h-auto" />
         </h6>
         <p className="welcomeText">
           Barangay Child Health Center Immunization System

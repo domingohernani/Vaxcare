@@ -26,14 +26,14 @@ export default function RemindersView() {
     fetchAllReminder();
   }, []);
 
-  useEffect(() => {
-    const filteredList = reminders.filter(
-      (reminder) =>
-        reminder.parent.toLowerCase().includes(search.toLowerCase()) ||
-        reminder.child.toLowerCase().includes(search.toLowerCase())
-    );
-    setFilteredReminders(filteredList);
-  }, [search, reminders]);
+  // useEffect(() => {
+  //   const filteredList = reminders.filter(
+  //     (reminder) =>
+  //       reminder.parent.toLowerCase().includes(search.toLowerCase()) ||
+  //       reminder.child.toLowerCase().includes(search.toLowerCase())
+  //   );
+  //   setFilteredReminders(filteredList);
+  // }, [search, reminders]);
 
   return (
     <div className="">
@@ -55,7 +55,7 @@ export default function RemindersView() {
         {filteredReminders.map((reminder, index) => (
           <div
             key={index}
-            className="relative p-4 my-3  hover:bg-slate-100 rounded-md cursor-pointer"
+            className="relative p-4 my-3 rounded-md cursor-pointer hover:bg-slate-100"
             onClick={() =>
               navigate(`/viewMessages/${reminder.parentID}/${reminder.childID}`)
             }

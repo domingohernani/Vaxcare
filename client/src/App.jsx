@@ -24,6 +24,7 @@ import ViewMessage from "./components/ViewMessage";
 import AddMessage from "./components/modals/AddMessage";
 import Vaccines from "./pages/Vaccines";
 import LoginParent from "./pages/LoginParent";
+import ImmunizationViewing from "./pages/ImmunizationViewing";
 
 function App() {
   const [isAdminState, setIsAdminState] = useState(false);
@@ -51,6 +52,7 @@ function App() {
         <Route path="/enterId" element={<EnterId />} />
         <Route path="/publicviewImmu/:childId" element={<PublicViewImmu />} />
         <Route path="/" element={<LoginParent />} />
+        <Route path="/immunization-viewing" element={<ImmunizationViewing />} />
 
         {/* Main structure with NavBar, SideBar, and main content */}
         <Route
