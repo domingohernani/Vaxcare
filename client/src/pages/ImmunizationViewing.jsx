@@ -47,7 +47,6 @@ function ImmunizationViewing() {
                 {/* Render ImmunizationTable and pass the childId as a prop */}
                 <ImmunizationTable childId={child.child_id} />
                 <hr className="my-8" />
-                <p>Parent {child.parent_id}</p>
               </div>
             ))}
           </div>
