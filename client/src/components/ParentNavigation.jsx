@@ -48,7 +48,7 @@ const ParentNavigation = ({ parentId }) => {
 
   const handleAccountUpdate = (parentId) => {
     Swal.fire({
-      title: `Update Account Credentials ${parentId}`,
+      title: `Update Account Credentials`,
       html: `
       <input type="text" id="username" class="swal2-input" placeholder="New Username" />
       <input type="password" id="password" class="swal2-input" placeholder="New Password" />
