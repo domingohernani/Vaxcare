@@ -4,6 +4,7 @@ import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom"; // Import useNavigate
 import logo from "../assets/vaxcare_logo.png";
 import ParentNavigation from "../components/ParentNavigation";
+import loginImage from "../assets/loginassets/login-image.webp";
 
 const LoginParent = () => {
   const [username, setUsername] = useState("");
@@ -118,7 +119,7 @@ const LoginParent = () => {
 
           <div className="lg:h-[400px] md:h-[300px] max-md:mt-8">
             <img
-              src="https://readymadeui.com/login-image.webp"
+              src={loginImage}
               className="block object-cover w-full h-full mx-auto max-md:w-4/5"
               alt="Child Health Monitoring"
             />
