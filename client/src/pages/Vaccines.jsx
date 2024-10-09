@@ -111,7 +111,7 @@ const Vaccines = () => {
     <div>
       <div className="flex items-center justify-between">
         <h3 className="px-6 py-2 font-semibold bg-white rounded-lg">
-          Child Immunization Records
+          Vacciness
         </h3>
         <button
           className="flex items-center justify-center gap-2 px-4 py-4 text-white rounded-none"
