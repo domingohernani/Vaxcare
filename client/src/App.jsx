@@ -27,23 +27,6 @@ import LoginParent from "./pages/LoginParent";
 import ImmunizationViewing from "./pages/ImmunizationViewing";
 
 function App() {
-  const [isAdminState, setIsAdminState] = useState(false);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const checkAdminStatus = () => {
-      const role = localStorage.getItem("role");
-      setIsAdminState(role === "president");
-    };
-
-    checkAdminStatus();
-    setLoading(false);
-  }, []);
-
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-
   return (
     <BrowserRouter>
       <Routes>
@@ -111,15 +94,11 @@ function App() {
                     />
 
                     {/* Manage Accounts */}
-                    {isAdminState && (
-                      <>
-                        <Route
-                          path="/manageaccounts"
-                          element={<ManageAccounts />}
-                        />
-                        <Route path="/addadmin" element={<AddAdmin />} />
-                      </>
-                    )}
+                    <Route
+                      path="/manageaccounts"
+                      element={<ManageAccounts />}
+                    />
+                    <Route path="/addadmin" element={<AddAdmin />} />
                   </Routes>
                 </section>
               </main>
