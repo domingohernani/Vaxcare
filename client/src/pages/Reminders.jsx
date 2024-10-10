@@ -39,7 +39,7 @@ export default function RemindersView() {
     <div className="">
       <div className="flex items-center justify-center ">
         <h3 className="px-6 py-2 font-semibold bg-white rounded-lg">
-          Reminder Messages
+          Messages
         </h3>
         <div className="flex items-center flex-1 gap-2 h-fit">
           <input

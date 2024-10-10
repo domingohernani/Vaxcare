@@ -4,7 +4,7 @@ import dashboard from "../assets/primaryIcon/chart-pie-alt.svg";
 import bmi from "../assets/primaryIcon/scale.svg";
 import immunization from "../assets/primaryIcon/syringe.svg";
 import listofchildren from "../assets/primaryIcon/child-head.svg";
-import reminders from "../assets/primaryIcon/bell.svg";
+import reminders from "../assets/sidebarassets/comment-dots.svg";
 import manageaccount from "../assets/primaryIcon/user.svg";
 import medicine from "../assets/sidebarassets/medicine.svg";
 
@@ -108,7 +108,7 @@ export default function SideBar() {
       <NavLink to={"/reminders"} className={changeColor}>
         <div className="flex items-center gap-2 px-6 py-3 rounded-lg">
           <img src={reminders} alt="" className="w-6 h-6" />
-          <span className="font-medium text-black">Reminders</span>
+          <span className="font-medium text-black">Messages</span>
         </div>
       </NavLink>
       {isAdmin() ? (
