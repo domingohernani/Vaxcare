@@ -113,18 +113,6 @@ app.put("/addchildinfo", (req, res) => {
   const age = calculateAge(birthdate);
   const status = age >= 1 ? "Active" : "Underimmunization";
 
-  console.log("Name:", name);
-  console.log("Birthdate:", birthdate);
-  console.log("Age:", age);
-  console.log("Sex:", sex);
-  console.log("Place of Birth:", placeOfBirth);
-  console.log("Address:", address);
-  console.log("Status:", status);
-  console.log("Mother:", mother);
-  console.log("Father:", father);
-  console.log("Father:", mothersNo);
-  console.log("Father:", fathersNo);
-
   // Start a transaction
   db.beginTransaction((err) => {
     if (err) {
@@ -216,9 +204,64 @@ app.put("/addchildinfo", (req, res) => {
   });
 });
 
-// app.put("/addchildinfoParent", (req, res)=> {
+app.put("/addchildinfoexistingparent", (req, res) => {
+  const { name, birthdate, sex, placeOfBirth, address, mother_id, father_id } =
+    req.body;
 
-// });
+  if (
+    !name ||
+    !birthdate ||
+    !sex ||
+    !placeOfBirth ||
+    !address ||
+    !mother_id ||
+    !father_id
+  ) {
+    return res.status(400).json({ error: "Please fill in all the fields" });
+  }
+
+  // Function to calculate age
+  const calculateAge = (birthdate) => {
+    const today = new Date();
+    const birthDate = new Date(birthdate);
+    let age = today.getFullYear() - birthDate.getFullYear();
+    const monthDiff = today.getMonth() - birthDate.getMonth();
+
+    if (
+      monthDiff < 0 ||
+      (monthDiff === 0 && today.getDate() < birthDate.getDate())
+    ) {
+      age--;
+    }
+
+    return age;
+  };
+
+  const age = calculateAge(birthdate);
+  const status = age >= 1 ? "Active" : "Underimmunization";
+  const query = `
+    INSERT INTO child (name, date_of_birth, sex, place_of_birth, address, mother_id, father_id, status)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+  `;
+
+  db.query(
+    query,
+    [name, birthdate, sex, placeOfBirth, address, mother_id, father_id, status],
+    (err, result) => {
+      if (err) {
+        console.error("Error inserting child info:", err);
+        return res.status(500).json({ error: "Internal Server Error" });
+      }
+
+      // Send a success response with the result and a reload flag
+      res.status(201).json({
+        message: "Child info added successfully",
+        result,
+        reloadPage: true,
+      });
+    }
+  );
+});
 
 // For list of children
 app.get("/listofchildren", (req, res) => {
@@ -344,41 +387,32 @@ app.get("/viewbmitracking/:childId", async (req, res) => {
 
   const childDetailsQ = `
   SELECT 
-  child.child_id, 
-  child.name, 
-  child.address, 
-  DATE_FORMAT(child.date_of_birth, '%M %d, %Y') AS date_of_birth, 
-  CONCAT(
-      IF(TIMESTAMPDIFF(DAY, child.date_of_birth, CURDATE()) <= 365, 
-         TIMESTAMPDIFF(MONTH, child.date_of_birth, CURDATE()), 
-         TIMESTAMPDIFF(YEAR, child.date_of_birth, CURDATE())
-      ), 
-      IF(TIMESTAMPDIFF(DAY, child.date_of_birth, CURDATE()) <= 365, ' month/s', ' year/s')
-  ) AS age, 
-  child.sex, 
-  child.status, 
-  child.family_number, 
-  child.place_of_birth, 
-  child.status, 
-  MAX(CASE WHEN parent.relationship = 'Father' THEN parent.name END) AS father, 
-  MAX(CASE WHEN parent.relationship = 'Mother' THEN parent.name END) AS mother, 
-  MAX(CASE WHEN parent.relationship = 'Father' THEN parent.phoneNo END) AS father_phoneNo, 
-  MAX(CASE WHEN parent.relationship = 'Mother' THEN parent.phoneNo END) AS mother_phoneNo
-FROM 
-  child 
-LEFT JOIN 
-  parent ON child.child_id = parent.child_id 
-WHERE 
-  child.child_id = ? 
-GROUP BY 
-  child.name, 
-  child.address, 
-  child.date_of_birth, 
-  child.sex, 
-  child.status, 
-  child.family_number, 
-  child.place_of_birth, 
-  child.status;
+    child.child_id, 
+    child.name, 
+    child.address, 
+    DATE_FORMAT(child.date_of_birth, '%M %d, %Y') AS date_of_birth, 
+    CONCAT(
+        IF(TIMESTAMPDIFF(DAY, child.date_of_birth, CURDATE()) <= 365, 
+          TIMESTAMPDIFF(MONTH, child.date_of_birth, CURDATE()), 
+          TIMESTAMPDIFF(YEAR, child.date_of_birth, CURDATE())
+        ), 
+        IF(TIMESTAMPDIFF(DAY, child.date_of_birth, CURDATE()) <= 365, ' month/s', ' year/s')
+    ) AS age, 
+    child.sex, 
+    child.status, 
+    child.family_number, 
+    child.place_of_birth, 
+    child.status, 
+    father.name AS father, 
+    mother.name AS mother, 
+    father.phoneNo AS father_phoneNo, 
+    mother.phoneNo AS mother_phoneNo
+  FROM 
+    child
+  LEFT JOIN parent AS father ON child.father_id = father.parent_id 
+  LEFT JOIN parent AS mother ON child.mother_id = mother.parent_id
+  WHERE 
+    child.child_id = ?
   `;
 
   const bmiHistoryQ = `SELECT hr.ht_date, hr.height, hr.weight FROM historical_bmi_tracking as hr WHERE hr.child_id = ? ORDER BY hr.ht_date DESC`;

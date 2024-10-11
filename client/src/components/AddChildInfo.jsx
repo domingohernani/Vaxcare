@@ -51,40 +51,78 @@ export default function AddChildInfo() {
     setName(fullName);
     setAddress(fullAddress);
 
-    if (
-      !fullName ||
-      !mothersNo ||
-      !fathersNo ||
-      !birthdate ||
-      !sex ||
-      !placeOfBirth ||
-      !fullAddress ||
-      !mother ||
-      !father
-    ) {
-      Swal.fire({
-        icon: "warning",
-        title: "Incomplete Form",
-        text: "Please fill in all the required fields before submitting the form.",
-        confirmButtonColor: "#3085d6",
-        confirmButtonText: "OK",
-      });
-      return;
+    if (!isExistingParent) {
+      // Validation for new parents
+      if (
+        !fullName ||
+        !mothersNo ||
+        !fathersNo ||
+        !birthdate ||
+        !sex ||
+        !placeOfBirth ||
+        !fullAddress ||
+        !mother ||
+        !father
+      ) {
+        Swal.fire({
+          icon: "warning",
+          title: "Incomplete Form",
+          text: "Please fill in all the required fields before submitting the form.",
+          confirmButtonColor: "#3085d6",
+          confirmButtonText: "OK",
+        });
+        return;
+      }
+    } else {
+      // Validation for existing parents
+      if (
+        !fullName ||
+        !birthdate ||
+        !sex ||
+        !placeOfBirth ||
+        !fullAddress ||
+        !motherId ||
+        !fatherId
+      ) {
+        Swal.fire({
+          icon: "warning",
+          title: "Incomplete Form",
+          text: "Please fill in all the required fields before submitting the form.",
+          confirmButtonColor: "#3085d6",
+          confirmButtonText: "OK",
+        });
+        return;
+      }
     }
 
     try {
-      const response = await axios.put(`http://localhost:8800/addchildinfo`, {
-        name: fullName,
-        birthdate,
-        sex,
-        placeOfBirth,
-        address: fullAddress,
-        mother,
-        father,
-        mothersNo,
-        fathersNo,
-      });
-      console.log(response);
+      let response = "";
+      if (!isExistingParent) {
+        response = await axios.put(`http://localhost:8800/addchildinfo`, {
+          name: fullName,
+          birthdate,
+          sex,
+          placeOfBirth,
+          address: fullAddress,
+          mother,
+          father,
+          mothersNo,
+          fathersNo,
+        });
+      } else {
+        response = await axios.put(
+          `http://localhost:8800/addchildinfoexistingparent`,
+          {
+            name: fullName,
+            birthdate,
+            sex,
+            placeOfBirth,
+            address: fullAddress,
+            mother_id: motherId,
+            father_id: fatherId,
+          }
+        );
+      }
       if (response.data.reloadPage) {
         navigate("/listofchildren");
       }
@@ -103,12 +141,10 @@ export default function AddChildInfo() {
 
   const handleMotherSelect = (id) => {
     setMotherId(id);
-    console.log("Selected Mother ID:", id);
   };
 
   const handleFatherSelect = (id) => {
     setFatherId(id);
-    console.log("Selected Father ID:", id);
   };
 
   return (
