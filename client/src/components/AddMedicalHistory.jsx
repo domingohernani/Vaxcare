@@ -74,7 +74,7 @@ export default function AddMedicalHistory() {
   };
 
   return (
-    <section className="w-9/12 mx-auto">
+    <section className="w-9/12 mx-auto bg-red-300">
       <section className="p-3 text-center bg-white border rounded-lg border-C0076BE text-blue-950">
         <p className="text-3xl">Medical History Child Information Form</p>
         <p>
