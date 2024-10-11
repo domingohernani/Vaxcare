@@ -7,13 +7,13 @@ export default function EnterId() {
   const navigate = useNavigate();
 
   const handleSearch = async () => {
-    const regex = /^VXCR-UR-\d+$/;
+    const regex = /^VXCR-\d+$/;
 
     if (!regex.test(id)) {
       Swal.fire({
         icon: "error",
         title: "Invalid ID Format",
-        text: "Please enter a valid ID in the format VXCR-UR-{digit}",
+        text: "Please enter a valid ID in the format VXCR{digit}",
       });
       return;
     }
@@ -50,7 +50,7 @@ export default function EnterId() {
           type="text"
           className="px-2 py-2 border-2 rounded-lg"
           onChange={(e) => setId(e.target.value)}
-          placeholder="ex: VXCR-UR-#"
+          placeholder="ex: VXCR#"
         />
         <button className="px-16 my-5 text-white" onClick={handleSearch}>
           Search

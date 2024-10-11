@@ -152,7 +152,7 @@ export default function Immunization() {
           {filteredChildren.map((child, index) => {
             return (
               <tr key={index}>
-                <td>VXCR-UR-{child.child_id}</td>
+                <td>VXCR{child.child_id}</td>
                 <td>{child.name}</td>
                 <td>{child.age_in_months} month/s</td>
                 <td>{child.sex}</td>

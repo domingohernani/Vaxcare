@@ -73,7 +73,7 @@ export default function ImmunizationTable({ childId }) {
 
       <div className="grid grid-cols-4 gap-4 px-5 py-3 mb-3 text-xs bg-white rounded-lg sm:text-sm">
         <span className="col-start-1 col-end-4 font-light">
-          ID: VXCR-UR-{childDetails.child_id}
+          ID: VXCR{childDetails.child_id}
         </span>
         <span className="flex items-center justify-end col-start-4 col-end-4 gap-2 font-light opacity-0 ">
           {updateButtonClicked ? (
