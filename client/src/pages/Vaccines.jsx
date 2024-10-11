@@ -111,13 +111,33 @@ const Vaccines = () => {
 
   // Define AG Grid columns
   const columnDefs = [
-    { headerName: "Vaccine ID", field: "vaccine_id", flex: 1 },
-    { headerName: "Name", field: "name", flex: 1 },
-    { headerName: "Doses Required", field: "doses_required", flex: 1 },
+    {
+      headerName: "Vaccine ID",
+      field: "vaccine_id",
+      flex: 1,
+      sortable: true,
+      filter: true,
+    },
+    {
+      headerName: "Name",
+      field: "name",
+      flex: 1,
+      sortable: true,
+      filter: true,
+    },
+    {
+      headerName: "Doses Required",
+      field: "doses_required",
+      flex: 1,
+      sortable: true,
+      filter: true,
+    },
     {
       headerName: "Recommended Schedule",
       field: "recommended_schedule",
       flex: 1,
+      sortable: true,
+      filter: true,
     },
     {
       headerName: "Action",
@@ -164,6 +184,7 @@ const Vaccines = () => {
           rowData={vaccines}
           pagination={true}
           paginationPageSize={10}
+          paginationPageSizeSelector={[10, 25, 50]}
         />
       </div>
     </div>
