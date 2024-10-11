@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { NavLink, useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
+import { AgGridReact } from "ag-grid-react";
+import "ag-grid-community/styles/ag-grid.css";
+import "ag-grid-community/styles/ag-theme-quartz.css";
 import editIcon from "../assets/bmitrackingassets/editIcon.svg";
 import cancelIcon from "../assets/bmitrackingassets/cancelIcon.svg";
 import applyIcon from "../assets/bmitrackingassets/applyIcon.svg";
-import Prescription from "./Prescription";
 
 export default function ViewBMITracking() {
   const [childDetails, setChildDetails] = useState({});
@@ -14,88 +16,85 @@ export default function ViewBMITracking() {
   const navigate = useNavigate();
   const { childId } = useParams();
 
-  const [medicinePrescription, setMedicinePrescription] = useState([]);
+  const [bmiHistoryColumns] = useState([
+    { headerName: "BMI", field: "bmi", sortable: true, filter: true, flex: 1 },
+    {
+      headerName: "Weight",
+      field: "weight",
+      sortable: true,
+      filter: true,
+      flex: 1,
+    },
+    {
+      headerName: "Height",
+      field: "height",
+      sortable: true,
+      filter: true,
+      flex: 1,
+    },
+    {
+      headerName: "Date",
+      field: "ht_date",
+      sortable: true,
+      filter: true,
+      flex: 1,
+      valueFormatter: (params) => new Date(params.value).toLocaleDateString(),
+    },
+  ]);
 
-  const calculateBMI = (weightInKg, heightInCm, dateOfBirth, sex) => {
-    const currentDate = new Date();
-    const birthDate = new Date(dateOfBirth);
-    const ageInMonths =
-      (currentDate.getFullYear() - birthDate.getFullYear()) * 12 +
-      currentDate.getMonth() -
-      birthDate.getMonth();
+  const bmiRowData = bmiHistory.map((bmi) => ({
+    bmi: (bmi.weight / Math.pow(bmi.height / 100, 2)).toFixed(2),
+    weight: bmi.weight,
+    height: bmi.height,
+    ht_date: bmi.ht_date,
+  }));
 
-    const heightInMeters = heightInCm / 100;
-    const bmi = (weightInKg / Math.pow(heightInMeters, 2)).toFixed(2);
+  const [medicalHistoryColumns] = useState([
+    {
+      headerName: "Date",
+      field: "history_date",
+      sortable: true,
+      filter: true,
+      flex: 1,
+      valueFormatter: (params) => new Date(params.value).toLocaleDateString(),
+    },
+    {
+      headerName: "Allergies",
+      field: "allergies",
+      sortable: true,
+      filter: true,
+      flex: 1,
+    },
+    {
+      headerName: "Temperature",
+      field: "temperature",
+      sortable: true,
+      filter: true,
+      flex: 1,
+    },
+    {
+      headerName: "Cough",
+      field: "cough",
+      sortable: true,
+      filter: true,
+      flex: 1,
+    },
+    {
+      headerName: "Colds",
+      field: "cold",
+      sortable: true,
+      filter: true,
+      flex: 1,
+    },
+  ]);
 
-    const bmiCategories = {
-      underweight: { upperLimit: 18.4, category: "Underweight" },
-      normal: { upperLimit: 24.9, category: "Normal" },
-      overweight: { upperLimit: 29.9, category: "Overweight" },
-      obese: { upperLimit: Number.POSITIVE_INFINITY, category: "Obese" },
-    };
-
-    if (sex === "Male" && ageInMonths >= 24) {
-      bmiCategories.underweight.upperLimit = 17.9;
-      bmiCategories.normal.upperLimit = 23.9;
-    } else if (sex === "Female" && ageInMonths >= 24) {
-      bmiCategories.underweight.upperLimit = 17.9;
-      bmiCategories.normal.upperLimit = 23.9;
-    }
-
-    let bmiCategory = Object.keys(bmiCategories).find(
-      (category) => bmi <= bmiCategories[category].upperLimit
-    );
-    bmiCategory = bmiCategories[bmiCategory].category;
-
-    return (
-      <>
-        <li>
-          <span className="font-semibold">BMI:</span> {bmi}
-        </li>
-        <li>
-          <span className="font-semibold">Interpretation:</span>{" "}
-          <span className="text-C40BE04">{bmiCategory}</span>
-        </li>
-      </>
-    );
-  };
-
-  const showStatusTag = (status) => {
-    const statusConfig = {
-      Active: {
-        className: "text-C40BE04",
-        label: "Active",
-      },
-      Inactive: {
-        className: "text-C1886C3",
-        label: "Inactive",
-      },
-      Completed: {
-        className: "text-C869EAC",
-        label: "Completed",
-      },
-      Underimmunization: {
-        className: "text-gray",
-        label: "Underimmunization",
-      },
-    };
-
-    const config = statusConfig[status] || statusConfig.Completed;
-
-    return <span className={config.className}>{config.label}</span>;
-  };
-
-  const capitalizeAfterSpace = (inputString) => {
-    const words = inputString.split(" ");
-    const capitalizedWords = words.map(
-      (word) => word.charAt(0).toUpperCase() + word.slice(1)
-    );
-    return capitalizedWords.join(" ");
-  };
-
-  const updateRecord = () => {
-    setUpdateButtonClicked(!updateButtonClicked);
-  };
+  const medicalRowData = historyRecords.map((record) => ({
+    history_date: record.history_date,
+    allergies: record.allergies,
+    temperature: record.temperature,
+    cough: record.cough,
+    cold: record.cold,
+  }));
 
   const formatDateForInput = (serverDate) => {
     const date = new Date(serverDate);
@@ -105,84 +104,22 @@ export default function ViewBMITracking() {
     return `${year}-${month}-${day}`;
   };
 
-  const applyChanges = async (childID) => {
-    try {
-      const response = await axios.put(
-        "http://localhost:8800/updateChildDetailsFromImmu",
-        {
-          ...childDetails,
-          birthdate: formatDateForInput(childDetails.date_of_birth),
-          childID,
-        }
-      );
-      console.log(response);
-
-      if (response.data.reloadPage) {
-        window.location.reload();
-      }
-    } catch (error) {
-      console.log("Error updating child and parent details:", error);
-    }
-  };
-
-  const prescribeUsingMedicines = () => {
-    let prescription = [];
-
-    const getPrescriptionText = (vaccineName, occurrenceCount) => {
-      switch (vaccineName) {
-        case "BCG Vaccine":
-          return occurrenceCount > 0
-            ? "Siya ay may mababang tsansa na mahawaan ng ilang uri ng tuberculosis (TB)"
-            : "Mataas ang panganib na mahawaan siya ng ilang uri ng tuberculosis (TB)";
-        case "Hepatitis B Vaccine":
-          return occurrenceCount > 0
-            ? "Protektado ang bata sa Hepatitis B, na maaaring magdulot ng seryosong problema sa atay"
-            : "May panganib na mahawa siya ng Hepatitis B virus kung sakaling magkaruon siya ng contact sa isang taong may sakit";
-        case "Inactivated Polio Vaccine (PIV)":
-          return occurrenceCount >= 2
-            ? "Mataas ang immune response ng bata laban sa polio"
-            : "Delekado ang situation ng bata. Maari siyang mahawaan ng polio, isang nakakahawang sakit na maaaring magdulot ng paralysis";
-        case "Measles, Mumps, Rubella Vaccine (MMR)":
-          return occurrenceCount > 0
-            ? "Mataas proteksyon laban sa tigdas, bulutong, at rubella, na nagpapababa ng panganib na magkaruon ng mga malubhang sakit at komplikasyon"
-            : "Mataas ang tsansang mahawa ang bata sa tigdas, bulutong, at rubella";
-        case "Pentavalent Vaccine (DPT-Hep B-HIB)":
-          return occurrenceCount > 0
-            ? "Protektado laban sa diphtheria, pertussis, tetanus, Hepatitis B, at Haemophilus influenzae type b (HIB)."
-            : "Ang bata ay maaaring mas madaling matamaan ng diphtheria, pertussis, tetanus, Hepatitis B, at Haemophilus influenzae type b (HIB)";
-        case "Pneumococcal Conjugate Vaccine (PCV)":
-          return occurrenceCount > 0
-            ? "Protektado laban sa ilang uri ng bacteria na sanhi ng pneumonia, meningitis, at iba pang respiratory infections"
-            : "Mataas ang panganib na mahawaan ng mga sakit na dulot ng pneumococcus";
-        default:
-          return "";
-      }
-    };
-
-    childDetails.medicineTaken?.forEach((vaccine) => {
-      const text = getPrescriptionText(vaccine.name, vaccine.occurrence_count);
-      prescription.push(text);
-    });
-
-    setMedicinePrescription(prescription);
+  const updateRecord = () => {
+    setUpdateButtonClicked(!updateButtonClicked);
   };
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [childDetailsResponse, medicineResponse] = await Promise.all([
+        const [childDetailsResponse, medicalResponse] = await Promise.all([
           axios.get(`http://localhost:8800/viewbmitracking/${childId}`),
           axios.get(`http://localhost:8800/prescribeMedicines/${childId}`),
         ]);
 
         const { data } = childDetailsResponse;
         setChildDetails(data.childDetails[0]);
-
         setBmiHistory(data.bmiHistory);
         setHistoryRecords(data.historyRecords);
-
-        setMedicinePrescription(medicineResponse.data);
-        prescribeUsingMedicines();
       } catch (error) {
         console.log(error);
       }
@@ -224,7 +161,7 @@ export default function ViewBMITracking() {
       </div>
 
       <section className="flex gap-3 mt-2">
-        <div className="grid flex-1 grid-cols-4 gap-4 px-5 py-3 bg-white rounded-lg">
+        <div className="grid flex-1 grid-cols-4 gap-4 px-5 py-3 border rounded-lg">
           <span className="col-start-1 col-end-4 font-light">
             ID: VXCR-UR-{childDetails.child_id}
           </span>
@@ -455,12 +392,12 @@ export default function ViewBMITracking() {
           {/* Status */}
           <div>
             <span>Status: </span>
-            {showStatusTag(childDetails.status)}
+            {/* {showStatusTag(childDetails.status)} */}
           </div>
         </div>
 
         {/* Medical History Section */}
-        <div className="pb-3 text-center rounded-lg max-h-80">
+        {/* <div className="pb-3 text-center rounded-lg max-h-80">
           <h4 className="px-4 py-4 text-base font-semibold text-center text-black bg-white rounded-md">
             Medical History
           </h4>
@@ -493,36 +430,14 @@ export default function ViewBMITracking() {
               ))
             )}
           </ul>
-        </div>
+        </div> */}
       </section>
 
       {/* Prescription Section */}
-      <section className="flex gap-2 mt-3">
+      <section className="flex gap-2 mt-3 bg-green-200">
         <div className="flex-1 gap-3 rounded-lg">
-          <div className="px-4 py-3 text-gray-500 bg-white rounded-lg">
-            <span className="font-semibold text-black">Prescription</span>
-            <hr className="my-4 bg-gray-100" />
-            <ul className="text-left text-black list-disc px-9">
-              {bmiHistory.length > 0 && (
-                <Prescription
-                  height={bmiHistory[0].height}
-                  weight={bmiHistory[0].weight}
-                />
-              )}
-              {medicinePrescription.map((item, index) =>
-                item ? (
-                  <li className="my-2" key={index}>
-                    {item}
-                  </li>
-                ) : (
-                  ""
-                )
-              )}
-            </ul>
-          </div>
-
           {/* BMI History */}
-          <div className="px-4 py-3 my-3 bg-white rounded-lg">
+          {/* <div className="px-4 py-3 my-3 bg-white rounded-lg">
             <span className="block py-2 font-semibold text-black bg-white rounded-lg">
               BMI History
             </span>
@@ -560,9 +475,33 @@ export default function ViewBMITracking() {
                 ))
               )}
             </ul>
-          </div>
+          </div> */}
         </div>
         <div className="w-64 mx-1"></div>
+      </section>
+
+      <section className="flex items-center gap-4">
+        {/* BMI History Table */}
+        <div className="ag-theme-quartz" style={{ height: 400, width: "100%" }}>
+          <h3>BMI History</h3>
+          <AgGridReact
+            columnDefs={bmiHistoryColumns}
+            rowData={bmiRowData}
+            pagination={true}
+            paginationPageSize={5}
+          />
+        </div>
+
+        {/* Medical History Table */}
+        <div className="ag-theme-quartz" style={{ height: 400, width: "100%" }}>
+          <h3>Medical History</h3>
+          <AgGridReact
+            columnDefs={medicalHistoryColumns}
+            rowData={medicalRowData}
+            pagination={true}
+            paginationPageSize={5}
+          />
+        </div>
       </section>
     </section>
   );
