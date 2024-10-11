@@ -192,6 +192,7 @@ export default function ListOfChildren() {
           rowData={filteredChildren}
           pagination={true}
           paginationPageSize={10}
+          paginationPageSizeSelector={[10, 25, 50]}
         />
       </div>
     </section>

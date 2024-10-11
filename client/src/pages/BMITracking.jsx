@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from "react";
 import info from "../assets/bmitrackingassets/info.svg";
-import filter from "../assets/generalIcons/sort.svg";
-import { NavLink, useSearchParams } from "react-router-dom";
-import Deactivation from "../components/modals/Deactivation";
+import { NavLink } from "react-router-dom";
 import axios from "axios";
+import Deactivation from "../components/modals/Deactivation";
+import { AgGridReact } from "ag-grid-react";
+import "ag-grid-community/styles/ag-grid.css";
+import "ag-grid-community/styles/ag-theme-quartz.css";
 
 export default function BMITracking() {
   console.log("BMI Tracking is rendered");
@@ -13,40 +15,14 @@ export default function BMITracking() {
   const [status, setStatus] = useState();
   const [children, setChildren] = useState([]);
   const [search, setSearch] = useState("");
-  const [sortBy, setSortBy] = useState(null);
-  const [sortOrder, setSortOrder] = useState("asc");
+  const [filteredChildren, setFilteredChildren] = useState([]);
 
-  const handleFilterChange = async (event) => {
-    if (event.target.value === "active") {
-      try {
-        const response = await axios.get("http://localhost:8800/activeBMI");
-        setChildren(response.data);
-      } catch (error) {
-        console.log(error);
-      }
-    } else if (event.target.value === "inactive") {
-      try {
-        const response = await axios.get("http://localhost:8800/inactiveBMI");
-        setChildren(response.data);
-      } catch (error) {
-        console.log(error);
-      }
-    } else {
-      try {
-        const response = await axios.get("http://localhost:8800/completedBMI");
-        setChildren(response.data);
-      } catch (error) {
-        console.log(error);
-      }
-    }
-  };
-
-  // Kinukuha yung mga children from the database
   useEffect(() => {
     const fetchAllChild = async () => {
       try {
         const response = await axios.get("http://localhost:8800/activeBMI");
         setChildren(response.data);
+        setFilteredChildren(response.data); // Setting the initial filtered children
       } catch (error) {
         console.log(error);
       }
@@ -54,8 +30,26 @@ export default function BMITracking() {
     fetchAllChild();
   }, []);
 
+  // Handle status modal
   const toggleDeactivationModal = () => {
     setStatusModal(!statusModal);
+  };
+
+  // Filter based on status
+  const handleFilterChange = async (event) => {
+    try {
+      let response;
+      if (event.target.value === "active") {
+        response = await axios.get("http://localhost:8800/activeBMI");
+      } else if (event.target.value === "inactive") {
+        response = await axios.get("http://localhost:8800/inactiveBMI");
+      } else {
+        response = await axios.get("http://localhost:8800/completedBMI");
+      }
+      setFilteredChildren(response.data);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const showStatusButton = (status) => {
@@ -77,12 +71,12 @@ export default function BMITracking() {
     const config = statusConfig[status] || statusConfig.Completed;
 
     return (
-      <button
-        className={`px-5 py-1 font-normal text-white rounded-3xl ${config.className}`}
+      <span
+        className={`px-5 py-2 font-normal text-white cursor-pointer rounded-3xl ${config.className}`}
         onClick={toggleDeactivationModal}
       >
         {config.label}
-      </button>
+      </span>
     );
   };
 
@@ -114,31 +108,79 @@ export default function BMITracking() {
     return bmiCategory;
   };
 
-  const handleSort = (property) => {
-    if (sortBy === property) {
-      setSortOrder(sortOrder === "asc" ? "desc" : "asc");
-    } else {
-      setSortBy(property);
-      setSortOrder("asc");
-    }
-  };
+  // Set up the column definitions for AG Grid
+  const columnDefs = [
+    {
+      headerName: "Child ID",
+      field: "child_id",
+      flex: 1,
+      sortable: true,
+      filter: true,
+      cellRenderer: (params) => {
+        return `VXCR${params.value}`;
+      },
+    },
+    {
+      headerName: "Name",
+      field: "name",
+      flex: 1,
+      sortable: true,
+      filter: true,
+    },
+    {
+      headerName: "Age",
+      field: "age_in_months",
+      flex: 1,
+      sortable: true,
+      filter: true,
+      valueGetter: (params) => `${params.data.age_in_months} month/s`,
+    },
+    { headerName: "Sex", field: "sex", flex: 1, sortable: true, filter: true },
+    {
+      headerName: "BMI Status",
+      field: "bmi_status",
+      flex: 1,
+      valueGetter: (params) =>
+        calculateBMI(params.data.weight, params.data.height),
+    },
+    {
+      headerName: "Status",
+      field: "status",
+      flex: 1,
+      cellRenderer: (params) => (
+        <div
+          onClick={() => {
+            setChildId(params.data.child_id);
+            setStatus(params.data.status);
+            toggleDeactivationModal();
+          }}
+        >
+          {showStatusButton(params.data.status)}
+        </div>
+      ),
+    },
+    {
+      headerName: "Actions",
+      flex: 1,
+      cellRenderer: (params) => (
+        <div className="flex items-center justify-center gap-2">
+          <img src={info} alt="info" width={"20px"} />
+          <NavLink to={`/viewbmitracking/${params.data.child_id}`}>
+            View info
+          </NavLink>
+        </div>
+      ),
+    },
+  ];
 
-  const sortedChildren = [...children].sort((a, b) => {
-    if (sortBy === "name") {
-      return sortOrder === "asc"
-        ? a.name.localeCompare(b.name)
-        : b.name.localeCompare(a.name);
-    } else if (sortBy === "age") {
-      const ageA = a.age_in_months;
-      const ageB = b.age_in_months;
-      return sortOrder === "asc" ? ageA - ageB : ageB - ageA;
-    } else if (sortBy === "sex") {
-      return sortOrder === "asc"
-        ? a.sex.localeCompare(b.sex)
-        : b.sex.localeCompare(a.sex);
-    }
-    return 0;
-  });
+  // Filtered data based on search input
+  useEffect(() => {
+    setFilteredChildren(
+      children.filter((child) =>
+        child.name.toLowerCase().includes(search.toLowerCase())
+      )
+    );
+  }, [search, children]);
 
   return (
     <section className="">
@@ -162,104 +204,30 @@ export default function BMITracking() {
             value={search}
           />
           <select
-            className="h-full px-2 py-4 pr-2 text-sm text-gray-400 border focus:outline-none"
+            className="h-full px-2 py-4 pr-2 text-sm border focus:outline-none"
             onChange={(e) => {
-              handleSort(e.target.value);
+              handleFilterChange(e);
             }}
           >
-            <option value={"child_id"}>Child ID</option>
-            <option value={"name"}>Name</option>
-            <option value={"age"}>Age</option>
-            <option value={"sex"}>Sex</option>
+            <option value="active">Active</option>
+            <option value="inactive">Inactive</option>
           </select>
         </div>
       </div>
-      <table className="w-full mt-3 bg-white border border-collapse rounded-lg table-auto">
-        <thead>
-          <tr className="my-5 text-center border-b">
-            <th>Child ID</th>
-            <th>Name</th>
-            <th>Age</th>
-            <th>Sex</th>
-            <th>BMI Status</th>
-            <th>Status</th>
-            <th className="text-right">
-              <label className="font-medium">Filter By: </label>
-              <select
-                className="font-medium text-center border-2 border-white outline-none "
-                onChange={handleFilterChange}
-              >
-                <option
-                  value="active"
-                  key="active"
-                  className="border-none outline-none"
-                >
-                  Active
-                </option>
-                <option
-                  value="inactive"
-                  key="inactive"
-                  className="border-none outline-none"
-                >
-                  Inactive
-                </option>
-              </select>
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          {sortedChildren
-            .filter((child) => {
-              return search.toLowerCase() === ""
-                ? child
-                : child.name.toLowerCase().includes(search.toLowerCase());
-            })
-            .map((child, index) => {
-              return (
-                <tr key={index}>
-                  <td>VXCR{child.child_id}</td>
-                  <td>{child.name}</td>
-                  <td>{child.age_in_months} month/s</td>
 
-                  <td>{child.sex}</td>
-                  <td> {calculateBMI(child.weight, child.height)}</td>
-                  <td
-                    onClick={() => {
-                      setChildId(child.child_id);
-                      setStatus(child.status);
-                    }}
-                  >
-                    {showStatusButton(child.status)}
-                  </td>
-                  <td className="text-blue-600 underline cursor-pointer ">
-                    <div className="flex items-center justify-center gap-2">
-                      <img src={info} alt="" width={"20px"} />
-                      <NavLink to={`/viewbmitracking/${child.child_id}`}>
-                        View info
-                      </NavLink>
-                    </div>
-                  </td>
-                </tr>
-              );
-            })}
-
-          {/* 
-          <td>
-            <button
-              className="px-5 py-1 font-normal text-white bg-C40BE04 rounded-3xl"
-              onClick={toggleDeactivationModal}
-            >
-              Active
-            </button>
-          </td>
-          <td className="text-blue-600 underline cursor-pointer ">
-            <div className="flex items-center justify-center gap-2">
-              <img src={info} alt="" width={"20px"} />
-              <NavLink to={"/viewbmitracking/" + childId}>View info</NavLink>
-            </div>
-          </td> */}
-        </tbody>
-      </table>
+      {/* AG Grid Table */}
+      <div
+        className="ag-theme-quartz"
+        style={{ height: 600, width: "100%", paddingTop: "0.7rem" }}
+      >
+        <AgGridReact
+          columnDefs={columnDefs}
+          rowData={filteredChildren}
+          pagination={true}
+          paginationPageSize={10}
+          paginationPageSizeSelector={[10, 25, 50]}
+        />
+      </div>
     </section>
   );
 }
