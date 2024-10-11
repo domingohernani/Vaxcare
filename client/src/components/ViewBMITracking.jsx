@@ -96,6 +96,31 @@ export default function ViewBMITracking() {
     cold: record.cold,
   }));
 
+  const showStatusTag = (status) => {
+    const statusConfig = {
+      Active: {
+        className: "text-C40BE04",
+        label: "Active",
+      },
+      Inactive: {
+        className: "text-C1886C3",
+        label: "Inactive",
+      },
+      Completed: {
+        className: "text-C869EAC",
+        label: "Completed",
+      },
+      Underimmunization: {
+        className: "text-gray",
+        label: "Underimmunization",
+      },
+    };
+
+    const config = statusConfig[status] || statusConfig.Completed;
+
+    return <span className={config.className}>{config.label}</span>;
+  };
+
   const formatDateForInput = (serverDate) => {
     const date = new Date(serverDate);
     const year = date.getFullYear();
@@ -106,6 +131,24 @@ export default function ViewBMITracking() {
 
   const updateRecord = () => {
     setUpdateButtonClicked(!updateButtonClicked);
+  };
+
+  const applyChanges = async (childID) => {
+    try {
+      const response = await axios.put(
+        "http://localhost:8800/updateChildDetailsFromImmu",
+        {
+          ...childDetails,
+          birthdate: formatDateForInput(childDetails.date_of_birth),
+          childID,
+        }
+      );
+      if (response.data.reloadPage) {
+        window.location.reload();
+      }
+    } catch (error) {
+      console.log("Error updating child and parent details:", error);
+    }
   };
 
   useEffect(() => {
@@ -206,7 +249,7 @@ export default function ViewBMITracking() {
                 onChange={(e) =>
                   setChildDetails({
                     ...childDetails,
-                    name: capitalizeAfterSpace(e.target.value),
+                    name: e.target.value,
                   })
                 }
               />
@@ -274,7 +317,7 @@ export default function ViewBMITracking() {
                 onChange={(e) =>
                   setChildDetails({
                     ...childDetails,
-                    place_of_birth: capitalizeAfterSpace(e.target.value),
+                    place_of_birth: e.target.value,
                   })
                 }
               />
@@ -294,7 +337,7 @@ export default function ViewBMITracking() {
                 onChange={(e) =>
                   setChildDetails({
                     ...childDetails,
-                    address: capitalizeAfterSpace(e.target.value),
+                    address: e.target.value,
                   })
                 }
               />
@@ -314,7 +357,7 @@ export default function ViewBMITracking() {
                 onChange={(e) =>
                   setChildDetails({
                     ...childDetails,
-                    mother: capitalizeAfterSpace(e.target.value),
+                    mother: e.target.value,
                   })
                 }
               />
@@ -357,7 +400,7 @@ export default function ViewBMITracking() {
                 onChange={(e) =>
                   setChildDetails({
                     ...childDetails,
-                    father: capitalizeAfterSpace(e.target.value),
+                    father: e.target.value,
                   })
                 }
               />
@@ -392,7 +435,7 @@ export default function ViewBMITracking() {
           {/* Status */}
           <div>
             <span>Status: </span>
-            {/* {showStatusTag(childDetails.status)} */}
+            {showStatusTag(childDetails.status)}
           </div>
         </div>
 
