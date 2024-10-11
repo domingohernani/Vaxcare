@@ -1553,14 +1553,12 @@ app.delete("/deleteVaccine/:id", (req, res) => {
 });
 app.get("/allAccounts", (req, res) => {
   const query = `SELECT p.parent_id ,p.name AS parent_name, 
-             p.relationship, 
-             p.phoneNo, 
-             p.child_id, 
-             p.username, 
-             p.password, 
-             c.name AS child_name
-      FROM parent AS p
-      JOIN child AS c ON p.child_id = c.child_id`;
+                p.relationship, 
+                p.phoneNo, 
+                p.child_id, 
+                p.username, 
+                p.password
+             FROM parent AS p`;
 
   db.query(query, (error, data) => {
     if (error) {

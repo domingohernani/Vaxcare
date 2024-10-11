@@ -11,6 +11,13 @@ const UserAccountTable = () => {
   const [rowData, setRowData] = useState([]);
   const [columnDefs] = useState([
     {
+      headerName: "ID",
+      field: "parent_id",
+      sortable: true,
+      filter: true,
+      flex: 1,
+    },
+    {
       headerName: "Name",
       field: "parent_name",
       sortable: true,
@@ -34,13 +41,6 @@ const UserAccountTable = () => {
     {
       headerName: "Password",
       field: "password",
-      sortable: true,
-      filter: true,
-      flex: 1,
-    },
-    {
-      headerName: "Child Name",
-      field: "child_name",
       sortable: true,
       filter: true,
       flex: 1,
