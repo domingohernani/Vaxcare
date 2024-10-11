@@ -25,6 +25,7 @@ import AddMessage from "./components/modals/AddMessage";
 import Vaccines from "./pages/Vaccines";
 import LoginParent from "./pages/LoginParent";
 import ImmunizationViewing from "./pages/ImmunizationViewing";
+import { Report } from "./pages/Report";
 
 function App() {
   return (
@@ -93,6 +94,10 @@ function App() {
                       element={<ViewMessage />}
                     />
 
+                    <Route
+                      path="/report"
+                      element={<Report />}
+                    />
                     {/* Manage Accounts */}
                     <Route
                       path="/manageaccounts"

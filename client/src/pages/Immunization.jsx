@@ -45,6 +45,9 @@ export default function Immunization() {
       sortable: true,
       filter: true,
       flex: 1,
+      cellRenderer: (params) => {
+        return `VXCR${params.value}`;
+      },
     },
     {
       headerName: "Name",
