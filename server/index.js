@@ -386,33 +386,35 @@ app.get("/viewbmitracking/:childId", async (req, res) => {
   const childId = req.params.childId;
 
   const childDetailsQ = `
-  SELECT 
+    SELECT 
     child.child_id, 
     child.name, 
     child.address, 
     DATE_FORMAT(child.date_of_birth, '%M %d, %Y') AS date_of_birth, 
     CONCAT(
-        IF(TIMESTAMPDIFF(DAY, child.date_of_birth, CURDATE()) <= 365, 
-          TIMESTAMPDIFF(MONTH, child.date_of_birth, CURDATE()), 
-          TIMESTAMPDIFF(YEAR, child.date_of_birth, CURDATE())
-        ), 
-        IF(TIMESTAMPDIFF(DAY, child.date_of_birth, CURDATE()) <= 365, ' month/s', ' year/s')
+      IF(TIMESTAMPDIFF(DAY, child.date_of_birth, CURDATE()) <= 365, 
+        TIMESTAMPDIFF(MONTH, child.date_of_birth, CURDATE()), 
+        TIMESTAMPDIFF(YEAR, child.date_of_birth, CURDATE())
+      ), 
+      IF(TIMESTAMPDIFF(DAY, child.date_of_birth, CURDATE()) <= 365, ' month/s', ' year/s')
     ) AS age, 
     child.sex, 
     child.status, 
     child.family_number, 
     child.place_of_birth, 
     child.status, 
+    father.parent_id AS father_id,  -- Added father parent_id
     father.name AS father, 
-    mother.name AS mother, 
     father.phoneNo AS father_phoneNo, 
+    mother.parent_id AS mother_id,  -- Added mother parent_id
+    mother.name AS mother, 
     mother.phoneNo AS mother_phoneNo
   FROM 
     child
   LEFT JOIN parent AS father ON child.father_id = father.parent_id 
   LEFT JOIN parent AS mother ON child.mother_id = mother.parent_id
   WHERE 
-    child.child_id = ?
+    child.child_id = ?;
   `;
 
   const bmiHistoryQ = `SELECT hr.ht_date, hr.height, hr.weight FROM historical_bmi_tracking as hr WHERE hr.child_id = ? ORDER BY hr.ht_date DESC`;
@@ -506,13 +508,15 @@ app.put("/updateChildDetailsFromImmu", (req, res) => {
     name,
     birthdate,
     place_of_birth,
-    sex, // Use sex here as it directly corresponds to the database field
+    sex,
     address,
     childID,
     mother: motherName,
     mother_phoneNo: motherPhoneNo,
     father: fatherName,
     father_phoneNo: fatherPhoneNo,
+    mother_id,
+    father_id,
   } = req.body;
 
   console.log("Received Data:", req.body);
@@ -539,28 +543,28 @@ app.put("/updateChildDetailsFromImmu", (req, res) => {
 
   console.log("Constructed Child Query:", childQuery);
 
-  // Build the query for updating parent's details
+  // Build the query for updating parent's details using their IDs
   let parentQueries = [];
 
-  if (motherName || motherPhoneNo) {
+  if (mother_id && (motherName || motherPhoneNo)) {
     let motherQuery = "UPDATE parent SET ";
     const motherSetClauses = [];
     if (motherName) motherSetClauses.push(`name = '${motherName.trim()}'`);
     if (motherPhoneNo)
       motherSetClauses.push(`phoneNo = '${motherPhoneNo.trim()}'`);
     motherQuery += motherSetClauses.join(", ");
-    motherQuery += ` WHERE child_id = '${childID}' AND relationship = 'Mother'`;
+    motherQuery += ` WHERE parent_id = '${mother_id}'`; // Use mother_id in the WHERE clause
     parentQueries.push(motherQuery);
   }
 
-  if (fatherName || fatherPhoneNo) {
+  if (father_id && (fatherName || fatherPhoneNo)) {
     let fatherQuery = "UPDATE parent SET ";
     const fatherSetClauses = [];
     if (fatherName) fatherSetClauses.push(`name = '${fatherName.trim()}'`);
     if (fatherPhoneNo)
       fatherSetClauses.push(`phoneNo = '${fatherPhoneNo.trim()}'`);
     fatherQuery += fatherSetClauses.join(", ");
-    fatherQuery += ` WHERE child_id = '${childID}' AND relationship = 'Father'`;
+    fatherQuery += ` WHERE parent_id = '${father_id}'`; // Use father_id in the WHERE clause
     parentQueries.push(fatherQuery);
   }
 

@@ -57,6 +57,8 @@ export default function ViewImmunization() {
           ...childDetails,
           birthdate: formatDateForInput(childDetails.date_of_birth),
           childID,
+          mother_id: childDetails.mother_id,
+          father_id: childDetails.father_id,
         }
       );
       if (response.data.reloadPage) {

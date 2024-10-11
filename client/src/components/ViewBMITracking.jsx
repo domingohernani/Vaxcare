@@ -141,6 +141,8 @@ export default function ViewBMITracking() {
           ...childDetails,
           birthdate: formatDateForInput(childDetails.date_of_birth),
           childID,
+          mother_id: childDetails.mother_id,
+          father_id: childDetails.father_id,
         }
       );
       if (response.data.reloadPage) {
@@ -438,95 +440,12 @@ export default function ViewBMITracking() {
             {showStatusTag(childDetails.status)}
           </div>
         </div>
-
-        {/* Medical History Section */}
-        {/* <div className="pb-3 text-center rounded-lg max-h-80">
-          <h4 className="px-4 py-4 text-base font-semibold text-center text-black bg-white rounded-md">
-            Medical History
-          </h4>
-          <ul className="py-2 my-auto mt-4 ml-1 text-left text-black bg-white border px-9 medicalhistoryrecords">
-            {historyRecords.length === 0 ? (
-              <span className="text-gray-500">No records</span>
-            ) : (
-              historyRecords.map((record, index) => (
-                <li key={index}>
-                  <span className="block">
-                    <span className="font-semibold">Date: </span>
-                    {new Date(record.history_date).toLocaleDateString("en-CA")}
-                  </span>
-                  <span className="block">
-                    <span className="font-semibold">Allergies: </span>{" "}
-                    {record.allergies}
-                  </span>
-                  <span className="block">
-                    <span className="font-semibold">Temperature: </span>{" "}
-                    {record.temperature}
-                  </span>
-                  <span className="block">
-                    <span className="font-semibold">Coughs: </span>{" "}
-                    {record.cough}
-                  </span>
-                  <span className="block">
-                    <span className="font-semibold">Colds: </span> {record.cold}
-                  </span>
-                </li>
-              ))
-            )}
-          </ul>
-        </div> */}
-      </section>
-
-      {/* Prescription Section */}
-      <section className="flex gap-2 mt-3 bg-green-200">
-        <div className="flex-1 gap-3 rounded-lg">
-          {/* BMI History */}
-          {/* <div className="px-4 py-3 my-3 bg-white rounded-lg">
-            <span className="block py-2 font-semibold text-black bg-white rounded-lg">
-              BMI History
-            </span>
-            <hr />
-            <ul className="w-full py-2 mt-3 text-black rounded-lg bmiHistory">
-              {bmiHistory.length === 0 ? (
-                <span className="text-gray-500 pl-9">No records</span>
-              ) : (
-                bmiHistory.map((bmi, element) => (
-                  <div
-                    className="flex p-3 mb-5 rounded-md hover:bg-slate-100"
-                    key={element}
-                  >
-                    <h3 className="mr-2">{element + 1}).</h3>
-                    <div className="flex-1">
-                      {calculateBMI(bmi.weight, bmi.height)}
-                    </div>
-                    <div className="flex flex-col flex-1">
-                      <span>
-                        <span className="font-semibold">Weight: </span>
-                        {bmi.weight}
-                      </span>
-                      <span>
-                        <span className="font-semibold">Height: </span>
-                        {bmi.height}
-                      </span>
-                    </div>
-                    <div>
-                      <span>
-                        <span> Date: </span>{" "}
-                        {new Date(bmi.ht_date).toDateString()}
-                      </span>
-                    </div>
-                  </div>
-                ))
-              )}
-            </ul>
-          </div> */}
-        </div>
-        <div className="w-64 mx-1"></div>
       </section>
 
       <section className="flex items-center gap-4">
         {/* BMI History Table */}
         <div className="ag-theme-quartz" style={{ height: 400, width: "100%" }}>
-          <h3>BMI History</h3>
+          <h3 className="my-2 font-semibold">BMI History</h3>
           <AgGridReact
             columnDefs={bmiHistoryColumns}
             rowData={bmiRowData}
@@ -537,7 +456,7 @@ export default function ViewBMITracking() {
 
         {/* Medical History Table */}
         <div className="ag-theme-quartz" style={{ height: 400, width: "100%" }}>
-          <h3>Medical History</h3>
+          <h3 className="my-2 font-semibold">Medical History</h3>
           <AgGridReact
             columnDefs={medicalHistoryColumns}
             rowData={medicalRowData}
