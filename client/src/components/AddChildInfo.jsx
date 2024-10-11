@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import axios from "axios";
+import ParentDatalist from "./ParentDatalist";
 
 export default function AddChildInfo() {
   const navigate = useNavigate();
@@ -27,8 +28,9 @@ export default function AddChildInfo() {
 
   const [mothersNo, setMothersNo] = useState("");
   const [fathersNo, setFathersNo] = useState("");
-
-  console.log("AddBMITracking was rendered");
+  const [isExistingParent, setExistingParent] = useState(false);
+  const [motherId, setMotherId] = useState(null);
+  const [fatherId, setFatherId] = useState(null);
 
   const getCurrentDate = () => {
     const today = new Date();
@@ -89,15 +91,6 @@ export default function AddChildInfo() {
     } catch (error) {
       console.log(error);
     }
-
-    console.log("Name:", fullName);
-    console.log("Birthdate:", birthdate);
-    console.log("Sex:", sex);
-    console.log("Place of Birth:", placeOfBirth);
-    console.log("Number:", number);
-    console.log("Address:", fullAddress);
-    console.log("Mother:", mother);
-    console.log("Father:", father);
   };
 
   const getMaxDate = () => {
@@ -106,6 +99,16 @@ export default function AddChildInfo() {
     // Format the date to be compatible with the "date" input type
     const formattedMaxDate = currentDate.toISOString().split("T")[0];
     return formattedMaxDate;
+  };
+
+  const handleMotherSelect = (id) => {
+    setMotherId(id);
+    console.log("Selected Mother ID:", id);
+  };
+
+  const handleFatherSelect = (id) => {
+    setFatherId(id);
+    console.log("Selected Father ID:", id);
   };
 
   return (
@@ -234,57 +237,81 @@ export default function AddChildInfo() {
             />
           </div>
         </div>
-        <div className="flex gap-5 px-5">
-          <div className="flex flex-col flex-1">
-            <label className="font-semibold">Mother's Name</label>
-            <input
-              type="text"
-              className="px-1 py-2 pl-3 bg-white border border-blue-950"
-              onChange={(e) => setMother(e.target.value)}
-            />
-          </div>
-          <div className="flex flex-col flex-1">
-            <label className="font-semibold">Father's Name</label>
-            <input
-              type="text"
-              className="px-1 py-2 pl-3 bg-white border border-blue-950"
-              onChange={(e) => setFather(e.target.value)}
-            />
-          </div>
+        <div className="px-5 ml-auto w-fit">
+          <input
+            className="mr-2 mt-[0.3rem] h-3.5 w-8 appearance-none rounded-[0.4375rem] bg-neutral-300 before:pointer-events-none before:absolute before:h-3.5 before:w-3.5 before:rounded-full before:bg-transparent before:content-[''] after:absolute after:z-[2] after:-mt-[0.1875rem] after:h-5 after:w-5 after:rounded-full after:border-none after:bg-neutral-100 after:shadow-[0_0px_3px_0_rgb(0_0_0_/_7%),_0_2px_2px_0_rgb(0_0_0_/_4%)] after:transition-[background-color_0.2s,transform_0.2s] after:content-[''] checked:bg-primary checked:after:absolute checked:after:z-[2] checked:after:-mt-[3px] checked:after:ml-[1.0625rem] checked:after:h-5 checked:after:w-5 checked:after:rounded-full checked:after:border-none checked:after:bg-primary checked:after:shadow-[0_3px_1px_-2px_rgba(0,0,0,0.2),_0_2px_2px_0_rgba(0,0,0,0.14),_0_1px_5px_0_rgba(0,0,0,0.12)] checked:after:transition-[background-color_0.2s,transform_0.2s] checked:after:content-[''] hover:cursor-pointer focus:outline-none focus:ring-0 focus:before:scale-100 focus:before:opacity-[0.12] focus:before:shadow-[3px_-1px_0px_13px_rgba(0,0,0,0.6)] focus:before:transition-[box-shadow_0.2s,transform_0.2s] focus:after:absolute focus:after:z-[1] focus:after:block focus:after:h-5 focus:after:w-5 focus:after:rounded-full focus:after:content-[''] checked:focus:border-primary checked:focus:bg-primary checked:focus:before:ml-[1.0625rem] checked:focus:before:scale-100 checked:focus:before:shadow-[3px_-1px_0px_13px_#3b71ca] checked:focus:before:transition-[box-shadow_0.2s,transform_0.2s] dark:bg-neutral-600 dark:after:bg-neutral-400 dark:checked:bg-primary dark:checked:after:bg-primary dark:focus:before:shadow-[3px_-1px_0px_13px_rgba(255,255,255,0.4)] dark:checked:focus:before:shadow-[3px_-1px_0px_13px_#3b71ca]"
+            type="checkbox"
+            role="switch"
+            id="flexSwitchCheckDefault"
+            onClick={() => setExistingParent(!isExistingParent)}
+          />
+          <label
+            className="inline-block pl-[0.15rem] hover:cursor-pointer"
+            htmlFor="flexSwitchCheckDefault"
+          >
+            Existing Parent
+          </label>
         </div>
-        <div className="flex gap-5 px-5">
-          <div className="flex flex-col flex-1">
-            <label className="font-semibold">Mother's No.</label>
-            <input
-              type="number"
-              placeholder="eg: 09123456789"
-              className="px-1 py-2 pl-3 bg-white border border-blue-950"
-              onInput={(e) => {
-                e.target.value = e.target.value
-                  .replace(/[^0-9]/g, "")
-                  .slice(0, 11);
-              }}
-              value={mothersNo}
-              onChange={(e) => setMothersNo(e.target.value)}
-            />
-          </div>
-          <div className="flex flex-col flex-1">
-            <label className="font-semibold">Father's No.</label>
-            <input
-              type="number"
-              placeholder="eg: 09123456789"
-              className="px-1 py-2 pl-3 bg-white border border-blue-950"
-              maxLength="11"
-              onInput={(e) => {
-                e.target.value = e.target.value
-                  .replace(/[^0-9]/g, "")
-                  .slice(0, 11);
-              }}
-              value={fathersNo}
-              onChange={(e) => setFathersNo(e.target.value)}
-            />
-          </div>
-        </div>
+        {!isExistingParent ? (
+          <>
+            <div className="flex gap-5 px-5">
+              <div className="flex flex-col flex-1">
+                <label className="font-semibold">Mother's Name</label>
+                <input
+                  type="text"
+                  className="px-1 py-2 pl-3 bg-white border border-blue-950"
+                  onChange={(e) => setMother(e.target.value)}
+                />
+              </div>
+              <div className="flex flex-col flex-1">
+                <label className="font-semibold">Father's Name</label>
+                <input
+                  type="text"
+                  className="px-1 py-2 pl-3 bg-white border border-blue-950"
+                  onChange={(e) => setFather(e.target.value)}
+                />
+              </div>
+            </div>
+            <div className="flex gap-5 px-5">
+              <div className="flex flex-col flex-1">
+                <label className="font-semibold">Mother's No.</label>
+                <input
+                  type="number"
+                  placeholder="eg: 09123456789"
+                  className="px-1 py-2 pl-3 bg-white border border-blue-950"
+                  onInput={(e) => {
+                    e.target.value = e.target.value
+                      .replace(/[^0-9]/g, "")
+                      .slice(0, 11);
+                  }}
+                  value={mothersNo}
+                  onChange={(e) => setMothersNo(e.target.value)}
+                />
+              </div>
+              <div className="flex flex-col flex-1">
+                <label className="font-semibold">Father's No.</label>
+                <input
+                  type="number"
+                  placeholder="eg: 09123456789"
+                  className="px-1 py-2 pl-3 bg-white border border-blue-950"
+                  maxLength="11"
+                  onInput={(e) => {
+                    e.target.value = e.target.value
+                      .replace(/[^0-9]/g, "")
+                      .slice(0, 11);
+                  }}
+                  value={fathersNo}
+                  onChange={(e) => setFathersNo(e.target.value)}
+                />
+              </div>
+            </div>
+          </>
+        ) : (
+          <ParentDatalist
+            onMotherSelect={handleMotherSelect}
+            onFatherSelect={handleFatherSelect}
+          />
+        )}
 
         <div className="flex w-3/6 mx-auto mt-5 mb-8 gap-9">
           <button

@@ -1545,7 +1545,7 @@ app.put("/updateCredentials/:parentId", (req, res) => {
   const checkUsernameQuery = `SELECT * FROM parent WHERE username = ? AND parent_id != ?`;
 
   console.log(checkUsernameQuery);
-  
+
   db.query(checkUsernameQuery, [username, parentId], (err, results) => {
     if (err) {
       console.error("Error checking username: ", err);
@@ -1560,7 +1560,6 @@ app.put("/updateCredentials/:parentId", (req, res) => {
     // If username doesn't exist, proceed with the update
     const updateQuery = `UPDATE parent SET username = ?, password = ? WHERE parent_id = ?`;
     console.log(updateQuery);
-    
 
     db.query(updateQuery, [username, password, parentId], (err, result) => {
       if (err) {
@@ -1609,6 +1608,18 @@ app.get("/getAllChildOfParent", (req, res) => {
       return res.json(children); // Send the data as JSON
     }
   );
+});
+
+app.get("/getAllParents", (req, res) => {
+  const query = `SELECT * FROM parent;`;
+
+  db.query(query, (err, data) => {
+    if (err) {
+      console.error("Error executing the query:", err);
+      return res.status(500).json({ error: "Internal Server Error" });
+    }
+    return res.json(data);
+  });
 });
 
 app.listen(8800, () => {

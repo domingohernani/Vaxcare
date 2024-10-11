@@ -36,7 +36,10 @@ export default function Deactivation({
     >
       {status === "Active" ? (
         <div className="relative flex flex-col w-5/12 gap-2 px-8 py-12 text-black bg-white shadow">
-          <div className="absolute w-8 h-8 top-4 right-4">
+          <div
+            className="absolute w-8 h-8 cursor-pointer top-4 right-4"
+            onClick={toggleDeactivationModal}
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               id="Outline"
