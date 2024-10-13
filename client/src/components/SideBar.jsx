@@ -106,18 +106,18 @@ export default function SideBar() {
           <span className="font-medium text-black">Vaccines</span>
         </div>
       </NavLink>
-      <NavLink to={"/reminders"} className={changeColor}>
+      <NavLink to={"/messages"} className={changeColor}>
         <div className="flex items-center gap-2 px-6 py-3 rounded-lg">
           <img src={reminders} alt="" className="w-6 h-6" />
           <span className="font-medium text-black">Messages</span>
         </div>
       </NavLink>
-      <NavLink to={"/report"} className={sideBarLinkColor}>
+      {/* <NavLink to={"/report"} className={sideBarLinkColor}>
         <div className="flex items-center gap-2 px-6 py-3 rounded-lg">
           <img src={report} alt="" className="w-6 h-6" />
           <span className="font-medium text-black">Report</span>
         </div>
-      </NavLink>
+      </NavLink> */}
       {isAdmin() ? (
         <NavLink to={"/manageaccounts"} className={changeBgByUrlAdmin}>
           <div className="flex items-center gap-2 px-6 py-3 rounded-lg">

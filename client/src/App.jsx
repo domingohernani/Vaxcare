@@ -86,7 +86,7 @@ function App() {
                       element={<AddImmunization />}
                     />
                     <Route path="/vaccines" element={<Vaccines />} />
-                    <Route path="/reminders" element={<Reminders />} />
+                    <Route path="/messages" element={<Reminders />} />
                     <Route path="/addMessage" element={<AddMessage />} />
                     <Route path="/remindersView" element={<RemindersView />} />
                     <Route

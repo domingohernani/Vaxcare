@@ -33,7 +33,7 @@ export default function Immunization() {
     const currentDate = new Date();
     const ageInMilliseconds = currentDate - birthDate;
     const ageInMonths = Math.floor(
-      ageInMilliseconds / (30.44 * 24 * 60 * 60 * 1000)
+      ageInMilliseconds / (1000 * 60 * 60 * 24 * 30.44)
     );
     return ageInMonths;
   };
@@ -62,16 +62,17 @@ export default function Immunization() {
       flex: 1,
       sortable: true,
       filter: true,
-      valueGetter: (params) =>
-        `${calculateAge(params.data.date_of_birth)} month/s`,
+      cellRenderer: (params) => {
+        return <p>{params.data.age_in_months} month/s</p>;
+      },
     },
     { headerName: "Sex", field: "sex", sortable: true, filter: true, flex: 1 },
-    {
-      headerName: "Zone",
-      field: "zone_number",
-      flex: 1,
-      valueGetter: (params) => `Zone ${params.data.zone_number}`,
-    },
+    // {
+    //   headerName: "Zone",
+    //   field: "zone_number",
+    //   flex: 1,
+    //   valueGetter: (params) => `Zone ${params.data.zone_number}`,
+    // },
     {
       headerName: "Status",
       field: "status",
