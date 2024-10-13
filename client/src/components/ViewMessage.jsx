@@ -1,33 +1,47 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
-import back from "../assets/bmitrackingassets/back.svg";
-import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
+import empty from "../assets/empty.png";
+import { useNavigate } from "react-router-dom";
 
 const ViewMessage = () => {
   const { parentID } = useParams();
   const [reminder, setReminder] = useState([]);
   const [message, setMessage] = useState("");
-
+  const [parentName, setParentName] = useState("");
   const navigate = useNavigate();
 
+  // Fetch the parent's name separately
   useEffect(() => {
-    const fetchAllMessage = async () => {
+    const fetchParentName = async () => {
       try {
         const response = await axios.get(
-          // `http://localhost:8800/getAllMessages/${parentID}`
-          `http://localhost:8800/getAllMessages/${parentID}`
+          `http://localhost:8800/getParentName/${parentID}`
         );
-        console.log(response);
-        const data = response.data;
-        setReminder(data);
+        setParentName(response.data[0].name);
       } catch (error) {
-        console.error(error);
+        console.error("Error fetching parent name:", error);
       }
     };
 
-    fetchAllMessage();
+    fetchParentName();
+  }, [parentID]);
+
+  // Fetch all reminders
+  useEffect(() => {
+    const fetchAllMessages = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:8800/getAllMessages/${parentID}`
+        );
+        setReminder(response.data);
+      } catch (error) {
+        console.error("Error fetching messages:", error);
+      }
+    };
+
+    fetchAllMessages();
   }, [parentID]);
 
   const sendMessage = async () => {
@@ -59,7 +73,7 @@ const ViewMessage = () => {
       console.log(response);
       showSuccessAlert();
     } catch (error) {
-      showErrorAlert();
+      console.error("Error sending message:", error);
     }
 
     const success = async () => {
@@ -81,12 +95,11 @@ const ViewMessage = () => {
             message,
             currentDate,
             parentID,
-            // childID,
           }
         );
         willReload = response.data.reloadPage;
       } catch (error) {
-        console.log(error);
+        console.error("Error inserting reminder:", error);
       }
 
       if (willReload) {
@@ -119,14 +132,19 @@ const ViewMessage = () => {
           </svg>
         </div>
         <h3 className="flex-1 px-6 py-4 text-base font-normal text-left text-black rounded-lg k w-fit ">
-          {reminder.length > 0 ? `${reminder[0].name}` : ""}
+          {parentName}
         </h3>
       </div>
       <hr />
       <div className="flex flex-col flex-1 py-14">
-        {reminder.map((remind, index) => {
-          return (
-            <>
+        {reminder.length === 0 ? (
+          <div className="flex flex-col items-center justify-center">
+            <img src={empty} className="h-auto w-80" alt="No reminders" />
+            <p>No messages right now</p>
+          </div>
+        ) : (
+          reminder.map((remind, index) => (
+            <React.Fragment key={index}>
               <span className="pt-4 mx-auto">
                 {remind.dateSend
                   ? new Date(remind.dateSend).toLocaleString("en-US", {
@@ -143,12 +161,10 @@ const ViewMessage = () => {
                 <div className="flex flex-col items-end w-1/2 px-10 py-5 my-3 ml-auto mr-6 bg-white border border-black rounded-lg">
                   <span>{remind.message}</span>
                 </div>
-              ) : (
-                ""
-              )}
-            </>
-          );
-        })}
+              ) : null}
+            </React.Fragment>
+          ))
+        )}
       </div>
       <div className="flex items-center justify-center w-full gap-3 bg-white bottom-3 textInputMessage">
         <input

@@ -1419,15 +1419,34 @@ app.put("/updateAdmin/:admin_id", (req, res) => {
 
 // Get all messages
 app.get("/getAllMessages/:parentId", (req, res) => {
-  const query = `
-  SELECT *
-  FROM parent
-  WHERE parent.parent_id = ?
-  `;
+  const query = `SELECT 
+    r.reminderId, 
+    r.message, 
+    r.dateSend, 
+    p.name
+FROM 
+    reminder r
+JOIN 
+    parent p
+ON 
+    r.parent_id = p.parent_id
+WHERE r.parent_id = ?`;
 
   const parentId = req.params.parentId;
 
   db.query(query, parentId, (error, data) => {
+    if (error) {
+      return res.status(500).json({ error: "Internal Server Error" });
+    }
+    return res.json(data);
+  });
+});
+
+app.get("/getParentName/:parentID", async (req, res) => {
+  const parentID = req.params.parentID;
+
+  const query = `SELECT name FROM parent WHERE parent_id = ?`;
+  db.query(query, parentID, (error, data) => {
     if (error) {
       return res.status(500).json({ error: "Internal Server Error" });
     }
