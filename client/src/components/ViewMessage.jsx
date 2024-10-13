@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 
 const ViewMessage = () => {
-  const { parentID, childID } = useParams();
+  const { parentID } = useParams();
   const [reminder, setReminder] = useState([]);
   const [message, setMessage] = useState("");
 
@@ -16,6 +16,7 @@ const ViewMessage = () => {
     const fetchAllMessage = async () => {
       try {
         const response = await axios.get(
+          // `http://localhost:8800/getAllMessages/${parentID}`
           `http://localhost:8800/getAllMessages/${parentID}`
         );
         console.log(response);
@@ -80,7 +81,7 @@ const ViewMessage = () => {
             message,
             currentDate,
             parentID,
-            childID,
+            // childID,
           }
         );
         willReload = response.data.reloadPage;
@@ -100,15 +101,24 @@ const ViewMessage = () => {
   };
 
   return (
-    <section className="relative z-40 flex flex-col px-3 overflow-y-auto bg-white rounded-md reminderScreen">
-      <div className="fixed flex items-center gap-3 bg-white border-b textInputMessage">
+    <section
+      className="relative z-40 flex flex-col px-3 overflow-y-auto rounded-md reminderScreen"
+      style={{ height: "600px" }}
+    >
+      <div className="flex items-center w-full gap-3 ">
         <div
-          className="p-1 rounded-full cursor-pointer w-fit"
-          onClick={() => navigate("/reminders")}
+          className="w-10 h-10 p-1 cursor-pointer"
+          onClick={() => navigate("/messages")}
         >
-          <img src={back} alt="" width={"40px"} />
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            id="Outline"
+            viewBox="0 0 24 24"
+          >
+            <path d="M10.6,12.71a1,1,0,0,1,0-1.42l4.59-4.58a1,1,0,0,0,0-1.42,1,1,0,0,0-1.41,0L9.19,9.88a3,3,0,0,0,0,4.24l4.59,4.59a1,1,0,0,0,.7.29,1,1,0,0,0,.71-.29,1,1,0,0,0,0-1.42Z" />
+          </svg>
         </div>
-        <h3 className="flex-1 px-6 py-4 text-lg font-normal text-left text-blue-600 bg-white rounded-lg w-fit ">
+        <h3 className="flex-1 px-6 py-4 text-base font-normal text-left text-black rounded-lg k w-fit ">
           {reminder.length > 0 ? `${reminder[0].name}` : ""}
         </h3>
       </div>
@@ -140,10 +150,10 @@ const ViewMessage = () => {
           );
         })}
       </div>
-      <div className="fixed flex items-center justify-center gap-3 bg-white w-96 bottom-3 textInputMessage">
+      <div className="flex items-center justify-center w-full gap-3 bg-white bottom-3 textInputMessage">
         <input
           type="text "
-          className="w-full px-3 py-3 bg-white border rounded-lg border-blue-950"
+          className="w-full px-3 py-3 bg-white border rounded-lg"
           value={message}
           onChange={(e) => setMessage(e.target.value)}
         />

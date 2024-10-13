@@ -1418,17 +1418,16 @@ app.put("/updateAdmin/:admin_id", (req, res) => {
 });
 
 // Get all messages
-app.get("/getAllMessages/:childId", (req, res) => {
+app.get("/getAllMessages/:parentId", (req, res) => {
   const query = `
   SELECT *
   FROM parent
-  LEFT JOIN reminder ON parent.parent_id = reminder.parent_id
   WHERE parent.parent_id = ?
   `;
 
-  const childId = req.params.childId;
+  const parentId = req.params.parentId;
 
-  db.query(query, childId, (error, data) => {
+  db.query(query, parentId, (error, data) => {
     if (error) {
       return res.status(500).json({ error: "Internal Server Error" });
     }
