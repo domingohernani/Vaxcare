@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import Swal from "sweetalert2";
 import loginIllustration from "../assets/loginassets/tempo.png";
@@ -117,6 +117,11 @@ export default function Login() {
           >
             Log In
           </button>
+          <div className="m-4 ml-auto w-fit">
+            <Link to={"/"} className="text-black underline">
+              Login as Parent
+            </Link>
+          </div>
         </div>
       </div>
     </div>

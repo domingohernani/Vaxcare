@@ -63,7 +63,7 @@ export default function BMITracking() {
         label: "Inactive",
       },
       Completed: {
-        className: "bg-C869EAC",
+        className: "bg-white",
         label: "Completed",
       },
     };
@@ -143,22 +143,24 @@ export default function BMITracking() {
       valueGetter: (params) =>
         calculateBMI(params.data.weight, params.data.height),
     },
-    {
-      headerName: "Status",
-      field: "status",
-      flex: 1,
-      cellRenderer: (params) => (
-        <div
-          onClick={() => {
-            setChildId(params.data.child_id);
-            setStatus(params.data.status);
-            toggleDeactivationModal();
-          }}
-        >
-          {showStatusButton(params.data.status)}
-        </div>
-      ),
-    },
+    // {
+    //   headerName: "Status",
+    //   field: "status",
+    //   flex: 1,
+    //   cellRenderer: (params) => (
+    //     <div
+    //     // onClick={() => {
+    //     //   setChildId(params.data.child_id);
+    //     //   setStatus(params.data.status);
+    //     //   toggleDeactivationModal();
+    //     // }}
+    //     className="text-black"
+    //     >
+    //       {/* {showStatusButton(params.data.status)} */}
+    //       Completed
+    //     </div>
+    // ),
+    // },
     {
       headerName: "Actions",
       flex: 1,
@@ -196,7 +198,7 @@ export default function BMITracking() {
           Body Mass Index Tracking
         </h3>
         <div className="flex items-center flex-1 gap-2 h-fit">
-          <input
+          {/* <input
             type="text"
             className="w-2/3 h-full py-4 pl-3 border focus:outline-none"
             placeholder="Search by name..."
@@ -211,7 +213,7 @@ export default function BMITracking() {
           >
             <option value="active">Active</option>
             <option value="inactive">Inactive</option>
-          </select>
+          </select> */}
         </div>
       </div>
 

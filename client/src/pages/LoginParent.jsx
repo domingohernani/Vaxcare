@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
-import { useNavigate } from "react-router-dom"; // Import useNavigate
+import { Link, useNavigate } from "react-router-dom"; // Import useNavigate
 import logo from "../assets/vaxcare_logo.png";
 import ParentNavigation from "../components/ParentNavigation";
 import loginImage from "../assets/loginassets/login-image.webp";
@@ -113,6 +113,11 @@ const LoginParent = () => {
                 >
                   Log in
                 </button>
+              </div>
+              <div className="m-4 ml-auto w-fit">
+                <Link to={"/login"} className="text-black underline">
+                  Login as Midwife
+                </Link>
               </div>
             </form>
           </div>

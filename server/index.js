@@ -320,7 +320,7 @@ LEFT JOIN (
 LEFT JOIN 
   historical_bmi_tracking AS ht ON child.child_id = ht.child_id AND latest_ht.latest_date = ht.ht_date
 WHERE 
-  child.status = ?;
+  child.status = "Completed";
   `;
 
   db.query(query, [status], (err, data) => {
@@ -1414,6 +1414,26 @@ app.put("/updateAdmin/:admin_id", (req, res) => {
       return res.status(404).json({ error: "Admin not found" });
     }
     return res.json({ message: "Admin updated successfully", refresh: true });
+  });
+});
+
+app.put("/updateStatus/:child_id", (req, res) => {
+  const childId = req.params.child_id;
+  const status = req.body.status;
+
+  const query = `
+    UPDATE child SET status = ? 
+    WHERE child_id = ?`;
+
+  db.query(query, [status, childId], (error, result) => {
+    if (error) {
+      return res.status(500).json({ error: "Internal Server Error" });
+    }
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ error: "Child not found" });
+    }
+    return res.json({ message: "Status updated successfully", refresh: true });
   });
 });
 
