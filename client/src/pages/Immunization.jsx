@@ -116,15 +116,15 @@ export default function Immunization() {
           Child Immunization Records
         </h3>
         <div className="flex items-center flex-1 gap-2 h-fit">
-          <input
+          {/* <input
             type="text"
             className="w-2/3 h-full py-4 pl-3 border focus:outline-none"
             placeholder="Search by name..."
             onChange={(e) => setSearch(e.target.value)}
             value={search}
-          />
+          /> */}
           <select
-            className="h-full px-2 py-4 pr-2 text-sm text-gray-400 border focus:outline-none"
+            className="h-full px-2 py-4 pr-2 ml-auto text-sm text-gray-400 border focus:outline-none"
             onChange={(e) => setFilterStatus(e.target.value)}
           >
             <option value="activeImmu">Active</option>

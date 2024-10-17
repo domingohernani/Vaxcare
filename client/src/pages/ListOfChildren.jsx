@@ -168,14 +168,14 @@ export default function ListOfChildren() {
           List Of Children
         </h3>
         <div className="flex items-center flex-1 gap-2 h-fit">
-          <input
+          {/* <input
             type="text"
             className="w-2/3 h-full py-4 pl-3 border focus:outline-none"
             placeholder="Search by name..."
             onChange={(e) => setSearch(e.target.value)}
             value={search}
-          />
-          <NavLink to={"/addchildinfo"}>
+          /> */}
+          <NavLink to={"/addchildinfo"} className={" ml-auto"}>
             <button className="flex items-center justify-center gap-2 px-4 py-4 text-white rounded-none">
               <img src={addIcon} alt="" width={"14px"} />
               <span>Add Child</span>
