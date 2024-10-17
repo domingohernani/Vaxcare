@@ -111,7 +111,7 @@ app.put("/addchildinfo", (req, res) => {
   };
 
   const age = calculateAge(birthdate);
-  const status = age >= 1 ? "Active" : "Underimmunization";
+  const status = age >= 1 ? "Completed" : "Underimmunization";
 
   // Start a transaction
   db.beginTransaction((err) => {
@@ -238,7 +238,7 @@ app.put("/addchildinfoexistingparent", (req, res) => {
   };
 
   const age = calculateAge(birthdate);
-  const status = age >= 1 ? "Active" : "Underimmunization";
+  const status = age >= 1 ? "Completed" : "Underimmunization";
   const query = `
     INSERT INTO child (name, date_of_birth, sex, place_of_birth, address, mother_id, father_id, status)
     VALUES (?, ?, ?, ?, ?, ?, ?, ?)
