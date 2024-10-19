@@ -1611,8 +1611,6 @@ app.put("/updateCredentials/:parentId", (req, res) => {
   // Check if the username already exists (excluding the current parent being updated)
   const checkUsernameQuery = `SELECT * FROM parent WHERE username = ? AND parent_id != ?`;
 
-  console.log(checkUsernameQuery);
-
   db.query(checkUsernameQuery, [username, parentId], (err, results) => {
     if (err) {
       console.error("Error checking username: ", err);
@@ -1626,7 +1624,6 @@ app.put("/updateCredentials/:parentId", (req, res) => {
 
     // If username doesn't exist, proceed with the update
     const updateQuery = `UPDATE parent SET username = ?, password = ? WHERE parent_id = ?`;
-    console.log(updateQuery);
 
     db.query(updateQuery, [username, password, parentId], (err, result) => {
       if (err) {
