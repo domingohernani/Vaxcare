@@ -296,31 +296,24 @@ app.get("/activeBMI", (req, res) => {
   //   "child.sex, child.status FROM child WHERE child.status = ?";
 
   const query = `
-  SELECT 
-  child.child_id, 
-  child.name, 
-  child.address, 
-  CAST(SUBSTRING_INDEX(SUBSTRING_INDEX(child.address, ' ', 2), ' ', -1) AS UNSIGNED) AS zone_number, 
-  TIMESTAMPDIFF(MONTH, child.date_of_birth, CURDATE()) AS age_in_months, 
-  child.sex, 
-  child.status, 
-  ht.height, 
-  ht.weight 
-FROM 
-  child 
+WITH LatestHeightWeight AS (
+    SELECT child_id, height, weight, ht_date,
+           ROW_NUMBER() OVER (PARTITION BY child_id ORDER BY ht_date DESC) AS rn
+    FROM historical_bmi_tracking
+)
+SELECT child.child_id, child.name, child.address, 
+       CAST(SUBSTRING_INDEX(SUBSTRING_INDEX(child.address, ' ', 2), ' ', -1) AS UNSIGNED) AS zone_number,
+       TIMESTAMPDIFF(MONTH, child.date_of_birth, CURDATE()) AS age_in_months, 
+       child.sex, child.status, latest.height, latest.weight
+FROM child
 LEFT JOIN (
-  SELECT 
-      child_id,
-      MAX(ht_date) AS latest_date
-  FROM 
-      historical_bmi_tracking
-  GROUP BY 
-      child_id
+    SELECT child_id, MAX(ht_date) AS latest_date
+    FROM historical_bmi_tracking 
+    GROUP BY child_id
 ) AS latest_ht ON child.child_id = latest_ht.child_id
-LEFT JOIN 
-  historical_bmi_tracking AS ht ON child.child_id = ht.child_id AND latest_ht.latest_date = ht.ht_date
-WHERE 
-  child.status = "Completed";
+LEFT JOIN LatestHeightWeight AS latest 
+ON child.child_id = latest.child_id AND latest.rn = 1
+WHERE child.status = 'Completed';
   `;
 
   db.query(query, [status], (err, data) => {
