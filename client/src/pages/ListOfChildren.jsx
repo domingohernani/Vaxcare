@@ -51,8 +51,15 @@ export default function ListOfChildren() {
       flex: 1,
       sortable: true,
       filter: true,
-      valueGetter: (params) =>
-        calculateAge(params.data.date_of_birth) + " month/s",
+      valueGetter: (params) => {
+        const ageInMonths = calculateAge(params.data.date_of_birth); // Assuming this returns age in months
+        if (ageInMonths >= 12) {
+          const years = Math.floor(ageInMonths / 12);
+          return `${years} year/s`;
+        } else {
+          return `${ageInMonths} month/s`;
+        }
+      },
     },
     { headerName: "Sex", field: "sex", flex: 1, sortable: true, filter: true },
     {

@@ -133,8 +133,17 @@ export default function BMITracking() {
       flex: 1,
       sortable: true,
       filter: true,
-      valueGetter: (params) => `${params.data.age_in_months} month/s`,
+      valueGetter: (params) => {
+        const months = params.data.age_in_months;
+        if (months >= 12) {
+          const years = Math.floor(months / 12);
+          return `${years} year/s`;
+        } else {
+          return `${months} month/s`;
+        }
+      },
     },
+
     { headerName: "Sex", field: "sex", flex: 1, sortable: true, filter: true },
     {
       headerName: "Status",

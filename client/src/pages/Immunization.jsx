@@ -63,9 +63,16 @@ export default function Immunization() {
       sortable: true,
       filter: true,
       cellRenderer: (params) => {
-        return <p>{params.data.age_in_months} month/s</p>;
+        const months = params.data.age_in_months;
+        if (months >= 12) {
+          const years = Math.floor(months / 12);
+          return <p>{years} year/s</p>;
+        } else {
+          return <p>{months} month/s</p>;
+        }
       },
     },
+
     { headerName: "Sex", field: "sex", sortable: true, filter: true, flex: 1 },
     // {
     //   headerName: "Zone",
