@@ -53,13 +53,10 @@ export default function Login() {
 
   return (
     <div className="absolute top-0 left-0 z-10 flex flex-col w-screen h-screen mx-auto bg-white">
-      <div className="w-10/12 max-w-4xl mt-8 ml-9">
-        <h6 className="font-bold logo">
-          <img src={logo} className="w-20 h-auto" />
-        </h6>
-        <p className="welcomeText">
+      <div className="mt-10">
+        <h3 className="mx-auto text-xl font-bold text-center">
           Barangay Child Health Center Immunization System
-        </p>
+        </h3>
       </div>
       <div className="flex w-3/4 m-auto bg-white logInContainer h-3/4 max-w-7xl">
         <div className="flex items-center justify-center w-5/6 h-full bg-opacity-30 bg-C2AA8F5">
@@ -69,6 +66,9 @@ export default function Login() {
           />
         </div>
         <div className="flex flex-col justify-center w-3/4 gap-5 px-12 py-10">
+          <h6 className="mx-auto font-bold logo w-fit">
+            <img src={logo} className="w-20 h-auto" />
+          </h6>
           <h3 className="mx-auto text-2xl text-center text-blue-800 loginHeader">
             Please log in.
           </h3>
