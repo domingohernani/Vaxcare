@@ -66,7 +66,7 @@ export default function RemindersView() {
     <div className="ag-theme-quartz" style={{ height: 600, width: "100%" }}>
       <div className="flex items-center mb-4 justify-left">
         <h3 className="px-6 py-2 font-semibold bg-white rounded-lg">
-          Messages
+          Reminder
         </h3>
       </div>
       <AgGridReact

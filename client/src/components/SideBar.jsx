@@ -109,7 +109,7 @@ export default function SideBar() {
       <NavLink to={"/messages"} className={changeColor}>
         <div className="flex items-center gap-2 px-6 py-3 rounded-lg">
           <img src={reminders} alt="" className="w-6 h-6" />
-          <span className="font-medium text-black">Messages</span>
+          <span className="font-medium text-black">Reminder</span>
         </div>
       </NavLink>
       {/* <NavLink to={"/report"} className={sideBarLinkColor}>
