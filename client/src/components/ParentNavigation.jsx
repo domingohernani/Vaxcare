@@ -89,6 +89,9 @@ const ParentNavigation = ({ parentId }) => {
               title: "Success!",
               text: "Your credentials have been updated successfully.",
               icon: "success",
+            }).then(() => {
+              sessionStorage.removeItem("childrenData");
+              navigate("/");
             });
           })
           .catch((error) => {
