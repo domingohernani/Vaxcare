@@ -36,8 +36,6 @@ const UserAccountTable = () => {
       field: "login_attempt",
       flex: 1,
       cellRenderer: (params) => {
-        console.log(params);
-
         if (params.value >= 5) {
           return (
             <span
@@ -192,7 +190,6 @@ const UserAccountTable = () => {
       // Fetch data from the /allAccounts API endpoint
       const result = await axios.get("http://localhost:8800/allAccounts");
       setRowData(result.data);
-      console.log(result.data);
     } catch (error) {
       console.error("Error fetching data:", error);
     }

@@ -312,7 +312,7 @@ export default function AddChildInfo() {
               <div className="flex flex-col flex-1">
                 <label className="font-semibold">Mother's No.</label>
                 <input
-                  type="number"
+                  type="text"
                   placeholder="eg: 09123456789"
                   className="px-1 py-2 pl-3 bg-white border border-blue-950"
                   onInput={(e) => {
@@ -327,7 +327,7 @@ export default function AddChildInfo() {
               <div className="flex flex-col flex-1">
                 <label className="font-semibold">Father's No.</label>
                 <input
-                  type="number"
+                  type="text"
                   placeholder="eg: 09123456789"
                   className="px-1 py-2 pl-3 bg-white border border-blue-950"
                   maxLength="11"
