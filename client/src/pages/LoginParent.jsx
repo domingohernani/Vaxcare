@@ -20,6 +20,8 @@ const LoginParent = () => {
         }
       );
 
+      console.log(response.data);
+
       if (response.data.length > 0) {
         Swal.fire({
           icon: "success",
@@ -30,23 +32,42 @@ const LoginParent = () => {
         });
 
         // Redirect to the page where the parent can see their children's details
-        // navigate("/children-details", { state: { children: response.data } });
         navigate("/immunization-viewing", {
           state: { children: response.data },
         });
       }
     } catch (err) {
-      if (err.response && err.response.status === 404) {
+      if (err.response && err.response.status === 403) {
+        // Account blocked due to too many login attempts
         Swal.fire({
           icon: "error",
-          title: "No parent found",
-          text: "Please check your credentials and try again.",
+          title: "Account Blocked",
+          text: "Your account has been blocked. Please reach out to your admin for further assistance.",
         });
-      } else {
+        setUsername("");
+        setPassword("");
+      } else if (err.response && err.response.status === 401) {
+        setUsername("");
+        setPassword("");
+        // Invalid username or password
         Swal.fire({
           icon: "error",
           title: "Login failed",
-          text: "Please check your credentials and try again.",
+          text: "Invalid username or password. Please check your credentials.",
+        });
+      } else if (err.response && err.response.status === 404) {
+        // No children found
+        Swal.fire({
+          icon: "error",
+          title: "No children found",
+          text: "No children are associated with your account. Please contact support if you believe this is a mistake.",
+        });
+      } else {
+        // Other errors (500 or network issues)
+        Swal.fire({
+          icon: "error",
+          title: "Login failed",
+          text: "Something went wrong. Please try again later.",
         });
       }
     }

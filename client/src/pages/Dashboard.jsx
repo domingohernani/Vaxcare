@@ -44,7 +44,7 @@ export default function Dashboard() {
       <div className="flex flex-row gap-3 mx-auto mb-3">
         <div className="flex-1 p-5 text-center bg-C0076BE rounded-xl">
           <h1>{actives}</h1>
-          <p>Total number of active children</p>
+          <p>Total children with tracked BMI</p>
         </div>
         <div className="flex-1 p-5 text-center bg-C0076BE rounded-xl">
           <h1>{under}</h1>

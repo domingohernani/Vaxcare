@@ -64,12 +64,6 @@ const BMIChart = () => {
           title: {
             text: "BMI Tracking Bar Graph",
             font: {
-              // family: "Inter, sans-serif",
-              // family: 'Syne', sans-serif;
-              // family: "Poppins", sans-serif;
-              // family: 'Montserrat, sans-serif',
-              // family: 'Be Vietnam Pro', sans-serif;
-              // family: "Poppins, sans-serif",
               family: "Be Vietnam Pro, sans-serif",
               size: "16",
               color: "black",
@@ -95,6 +89,7 @@ const BMIChart = () => {
         config={{
           responsive: true,
           displayModeBar: false,
+          staticPlot: true, // Disable zooming and all interactions
         }}
         style={{ width: "95%", maxWidth: "100%" }}
       />

@@ -136,13 +136,13 @@ export default function BMITracking() {
       valueGetter: (params) => `${params.data.age_in_months} month/s`,
     },
     { headerName: "Sex", field: "sex", flex: 1, sortable: true, filter: true },
-    // {
-    //   headerName: "BMI Status",
-    //   field: "bmi_status",
-    //   flex: 1,
-    //   valueGetter: (params) =>
-    //     calculateBMI(params.data.weight, params.data.height),
-    // },
+    {
+      headerName: "Status",
+      field: "bmi_status",
+      flex: 1,
+      valueGetter: (params) =>
+        calculateBMI(params.data.weight, params.data.height),
+    },
     // {
     //   headerName: "Status",
     //   field: "status",

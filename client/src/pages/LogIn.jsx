@@ -25,6 +25,9 @@ export default function Login() {
       });
       return;
     }
+    console.log(username);
+    console.log(password);
+    
 
     try {
       const response = await axios.post("http://localhost:8800/api/login", {
@@ -66,11 +69,11 @@ export default function Login() {
           />
         </div>
         <div className="flex flex-col justify-center w-3/4 gap-5 px-12 py-10">
-          <h6 className="mx-auto font-bold logo w-fit">
-            <img src={logo} className="w-20 h-auto" />
+          <h6 className="mx-auto mb-2 font-bold logo w-fit">
+            <img src={logo} className="h-auto w-28" />
           </h6>
-          <h3 className="mx-auto text-2xl text-center text-blue-800 loginHeader">
-            Please log in.
+          <h3 className="mx-auto text-xl text-center text-blue-800 loginHeader">
+            Please log in
           </h3>
           <input
             type="text"

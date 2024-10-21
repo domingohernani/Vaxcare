@@ -52,7 +52,7 @@ app.get("/", (req, res) => {
 app.post("/api/login", (req, res) => {
   const { username, password } = req.body;
 
-  const query = `SELECT * FROM super_admin  WHERE admin_username = ? AND admin_password = ?`;
+  const query = `SELECT * FROM super_admin  WHERE BINARY admin_username = ? AND BINARY admin_password = ?`;
 
   db.query(query, [username, password], (error, results) => {
     if (error) {
@@ -1488,7 +1488,7 @@ app.get("/prescribeMedicines/:childId", (req, res) => {
 
 app.get("/getBmi", (req, res) => {
   const query = `
-  SELECT
+SELECT
   child.*,
   ht.weight,
   ht.height,
@@ -1592,7 +1592,8 @@ app.get("/allAccounts", (req, res) => {
                 p.phoneNo, 
                 p.child_id, 
                 p.username, 
-                p.password
+                p.password,
+                p.login_attempt
              FROM parent AS p`;
 
   db.query(query, (error, data) => {
@@ -1635,6 +1636,32 @@ app.put("/updateCredentials/:parentId", (req, res) => {
   });
 });
 
+app.post("/resetLoginAttempt", (req, res) => {
+  const { parent_id } = req.body;
+
+  console.log(parent_id);
+  
+
+  if (!parent_id) {
+    return res.status(400).json({ error: "parent_id is required" });
+  }
+
+  const query = `UPDATE parent SET login_attempt = 0 WHERE parent_id = ?`;
+
+  db.query(query, [parent_id], (error, result) => {
+    if (error) {
+      console.error("Error resetting login attempt:", error);
+      return res.status(500).json({ error: "Internal Server Error" });
+    }
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ error: "Parent not found" });
+    }
+
+    return res.json({ message: "Login attempt has been reset successfully" });
+  });
+});
+
 app.get("/getAllChildOfParent", (req, res) => {
   const { username, password } = req.query;
 
@@ -1642,36 +1669,75 @@ app.get("/getAllChildOfParent", (req, res) => {
     return res.status(400).send("Username and password are required");
   }
 
-  const query = `
-    SELECT 
-    c.*, -- Select all columns from Child
-    p.parent_id -- Select parent_id from Parent
-    FROM 
-        Child c
-    JOIN 
-        Parent p
-        ON (c.mother_id = p.parent_id OR c.father_id = p.parent_id)
-    WHERE 
-        p.username = ?
-        AND p.password = ?;
-  `;
+  const parentQuery = `SELECT login_attempt FROM parent WHERE username = ?`;
 
-  db.query(
-    query,
-    [username, password, username, password],
-    (error, children) => {
+  db.query(parentQuery, [username], (error, parentResult) => {
+    if (error) {
+      console.error("Error fetching parent details:", error);
+      return res.status(500).json({ error: "Internal Server Error" });
+    }
+
+    if (parentResult.length > 0 && parentResult[0].login_attempt >= 5) {
+      return res
+        .status(403)
+        .json({ error: "Account blocked due to too many login attempts" });
+    }
+
+    const passwordQuery = `SELECT * FROM parent WHERE username = ? AND password = ?`;
+
+    db.query(passwordQuery, [username, password], (error, parentResult) => {
       if (error) {
-        console.error("Error fetching children:", error);
+        console.error("Error fetching parent details:", error);
         return res.status(500).json({ error: "Internal Server Error" });
       }
 
-      if (children.length === 0) {
-        return res.status(404).send("No children found for the given parent");
-      }
+      if (parentResult.length === 0) {
+        const incrementLoginAttemptQuery = `UPDATE parent SET login_attempt = login_attempt + 1 WHERE username = ?`;
+        db.query(incrementLoginAttemptQuery, [username], (error, result) => {
+          if (error) {
+            console.error("Error updating login_attempt:", error);
+            return res.status(500).json({ error: "Internal Server Error" });
+          }
 
-      return res.json(children); // Send the data as JSON
-    }
-  );
+          return res
+            .status(401)
+            .json({ error: "Invalid username or password" });
+        });
+      } else {
+        const resetLoginAttemptQuery = `UPDATE parent SET login_attempt = 0 WHERE username = ?`;
+
+        db.query(resetLoginAttemptQuery, [username], (error, result) => {
+          if (error) {
+            console.error("Error resetting login_attempt:", error);
+            return res.status(500).json({ error: "Internal Server Error" });
+          }
+
+          const childrenQuery = `
+            SELECT
+              c.*, -- Select all columns from Child
+              p.parent_id -- Select parent_id from Parent
+            FROM
+              Child c
+            JOIN
+              Parent p
+            ON (c.mother_id = p.parent_id OR c.father_id = p.parent_id)
+            WHERE
+              p.username = ?
+              AND p.password = ?;
+          `;
+
+          db.query(childrenQuery, [username, password], (error, children) => {
+            if (error) {
+              console.error("Error fetching children:", error);
+              return res.status(500).json({ error: "Internal Server Error" });
+            }
+
+            return res.json(children); // Send the children data as JSON
+          });
+        });
+      }
+    });
+  });
 });
 
 app.get("/getAllParents", (req, res) => {

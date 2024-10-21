@@ -206,7 +206,7 @@ export default function AddBMI() {
                     childId,
                     weight,
                     height,
-                    currentDate: new Date().toISOString().split("T")[0],
+                    currentDate: new Date().toISOString(),
                   }
                 );
 

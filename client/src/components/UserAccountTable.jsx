@@ -32,6 +32,31 @@ const UserAccountTable = () => {
       flex: 1,
     },
     {
+      headerName: "Login attempt",
+      field: "login_attempt",
+      flex: 1,
+      cellRenderer: (params) => {
+        console.log(params);
+
+        if (params.value >= 5) {
+          return (
+            <span
+              className="underline"
+              onClick={() =>
+                resetLoginAttempt(
+                  params.data.parent_name,
+                  params.data.parent_id
+                )
+              }
+            >
+              Blocked
+            </span>
+          );
+        }
+        return `${params.value} attempt(s)`;
+      },
+    },
+    {
       headerName: "Username",
       field: "username",
       sortable: true,
@@ -129,18 +154,51 @@ const UserAccountTable = () => {
     });
   };
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        // Fetch data from the /allAccounts API endpoint
-        const result = await axios.get("http://localhost:8800/allAccounts");
-        setRowData(result.data);
-        console.log(result.data);
-      } catch (error) {
-        console.error("Error fetching data:", error);
+  const resetLoginAttempt = (name, id) => {
+    Swal.fire({
+      title: `Reset login attempts for ${name}?`,
+      text: "This action will reset the user's failed login attempts.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, reset it!",
+      cancelButtonText: "Cancel",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        axios
+          .post("http://localhost:8800/resetLoginAttempt", { parent_id: id })
+          .then(() => {
+            Swal.fire({
+              icon: "success",
+              title: "Reset Successful!",
+              text: `${name}'s login attempts have been reset.`,
+            });
+            fetchData();
+          })
+          .catch((error) => {
+            Swal.fire({
+              icon: "error",
+              title: "Reset Failed",
+              text: "An error occurred while resetting login attempts. Please try again later.",
+            });
+            console.error("Error resetting login attempt:", error);
+          });
       }
-    };
+    });
+  };
+  const fetchData = async () => {
+    try {
+      // Fetch data from the /allAccounts API endpoint
+      const result = await axios.get("http://localhost:8800/allAccounts");
+      setRowData(result.data);
+      console.log(result.data);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
 
+  useEffect(() => {
     fetchData();
   }, []);
 

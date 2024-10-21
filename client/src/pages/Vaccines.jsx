@@ -33,6 +33,9 @@ const Vaccines = () => {
         `<input id="swal-input2" class="swal2-input" placeholder="Doses Required" type="number">` +
         `<input id="swal-input3" class="swal2-input" placeholder="Recommended Schedule">`,
       focusConfirm: false,
+      showCancelButton: true,
+      confirmButtonText: "Add Vaccine",
+      cancelButtonText: "Cancel",
       preConfirm: () => {
         const name = document.getElementById("swal-input1").value;
         const doses_required = document.getElementById("swal-input2").value;
