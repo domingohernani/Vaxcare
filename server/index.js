@@ -113,7 +113,6 @@ app.put("/addchildinfo", (req, res) => {
   const age = calculateAge(birthdate);
   const status = age >= 1 ? "Completed" : "Underimmunization";
 
-  // Start a transaction
   db.beginTransaction((err) => {
     if (err) {
       console.error("Error starting transaction:", err);
@@ -130,8 +129,6 @@ app.put("/addchildinfo", (req, res) => {
       [name, birthdate, placeOfBirth, address, sex, status],
       (childError, childResults) => {
         if (childError) {
-          // Rollback the transaction if there's an error
-          console.error("Error updating child details:", childError);
           return db.rollback(() => {
             res.status(500).json({
               error: "Internal Server Error",
@@ -140,19 +137,16 @@ app.put("/addchildinfo", (req, res) => {
           });
         }
 
-        // Get the last inserted child_id
         const lastChildId = childResults.insertId;
 
-        // Insert data into parent table for both mother and father
+        // Insert data into parent table for mother
         const parentQuery =
           "INSERT INTO parent (name, relationship, phoneNo, child_id) VALUES (?, ?, ?, ?)";
         db.query(
           parentQuery,
           [mother, "Mother", mothersNo, lastChildId],
-          (motherError) => {
+          (motherError, motherResults) => {
             if (motherError) {
-              // Rollback the transaction if there's an error
-              console.error("Error updating mother details:", motherError);
               return db.rollback(() => {
                 res.status(500).json({
                   error: "Internal Server Error",
@@ -161,14 +155,14 @@ app.put("/addchildinfo", (req, res) => {
               });
             }
 
-            // Insert data for the father
+            const lastMotherId = motherResults.insertId;
+
+            // Insert data into parent table for father
             db.query(
               parentQuery,
               [father, "Father", fathersNo, lastChildId],
-              (fatherError) => {
+              (fatherError, fatherResults) => {
                 if (fatherError) {
-                  // Rollback the transaction if there's an error
-                  console.error("Error updating father details:", fatherError);
                   return db.rollback(() => {
                     res.status(500).json({
                       error: "Internal Server Error",
@@ -177,24 +171,44 @@ app.put("/addchildinfo", (req, res) => {
                   });
                 }
 
-                // Commit the transaction if both child and parent updates are successful
-                db.commit((commitError) => {
-                  if (commitError) {
-                    console.error("Error committing transaction:", commitError);
-                    return res.status(500).json({
-                      error: "Internal Server Error",
-                      details: commitError.message,
+                const lastFatherId = fatherResults.insertId;
+
+                // Update child table with mother_id and father_id
+                const updateChildQuery =
+                  "UPDATE child SET mother_id = ?, father_id = ? WHERE child_id = ?";
+                db.query(
+                  updateChildQuery,
+                  [lastMotherId, lastFatherId, lastChildId],
+                  (updateError) => {
+                    if (updateError) {
+                      return db.rollback(() => {
+                        res.status(500).json({
+                          error: "Internal Server Error",
+                          details: updateError.message,
+                        });
+                      });
+                    }
+
+                    // Commit the transaction
+                    db.commit((commitError) => {
+                      if (commitError) {
+                        return res.status(500).json({
+                          error: "Internal Server Error",
+                          details: commitError.message,
+                        });
+                      }
+
+                      res.status(200).json({
+                        message:
+                          "Child and parent details updated successfully",
+                        childRowsAffected: childResults.affectedRows,
+                        motherRowsAffected: motherResults.affectedRows,
+                        fatherRowsAffected: fatherResults.affectedRows,
+                        reloadPage: true,
+                      });
                     });
                   }
-
-                  res.status(200).json({
-                    message: "Child and parent details updated successfully",
-                    childRowsAffected: childResults.affectedRows,
-                    motherRowsAffected: 1, // Assuming only one row is affected for each parent
-                    fatherRowsAffected: 1,
-                    reloadPage: true,
-                  });
-                });
+                );
               }
             );
           }
@@ -203,6 +217,7 @@ app.put("/addchildinfo", (req, res) => {
     );
   });
 });
+
 
 app.put("/addchildinfoexistingparent", (req, res) => {
   const { name, birthdate, sex, placeOfBirth, address, mother_id, father_id } =
@@ -1731,6 +1746,8 @@ app.get("/getAllChildOfParent", (req, res) => {
               console.error("Error fetching children:", error);
               return res.status(500).json({ error: "Internal Server Error" });
             }
+            console.log(children);
+            
 
             return res.json(children); // Send the children data as JSON
           });
