@@ -76,6 +76,7 @@ export default function RemindersView() {
         pagination={true}
         paginationPageSize={10}
         onRowClicked={onRowClicked}
+        paginationPageSizeSelector={[10, 25, 50]}
       />
     </div>
   );
