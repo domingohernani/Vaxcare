@@ -136,7 +136,9 @@ export default function ViewBMITracking() {
   const applyChanges = async (childID) => {
     try {
       const response = await axios.put(
-        `${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/updateChildDetailsFromImmu`,
+        `${
+          import.meta.env.VITE_REACT_APP_BACKEND_BASEURL
+        }/updateChildDetailsFromImmu`,
         {
           ...childDetails,
           birthdate: formatDateForInput(childDetails.date_of_birth),
@@ -157,8 +159,16 @@ export default function ViewBMITracking() {
     const fetchData = async () => {
       try {
         const [childDetailsResponse, medicalResponse] = await Promise.all([
-          axios.get(`${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/viewbmitracking/${childId}`),
-          axios.get(`${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/prescribeMedicines/${childId}`),
+          axios.get(
+            `${
+              import.meta.env.VITE_REACT_APP_BACKEND_BASEURL
+            }/viewbmitracking/${childId}`
+          ),
+          axios.get(
+            `${
+              import.meta.env.VITE_REACT_APP_BACKEND_BASEURL
+            }/prescribeMedicines/${childId}`
+          ),
         ]);
 
         const { data } = childDetailsResponse;
@@ -451,6 +461,7 @@ export default function ViewBMITracking() {
             rowData={bmiRowData}
             pagination={true}
             paginationPageSize={5}
+            paginationPageSizeSelector={[10, 25, 50]}
           />
         </div>
 
@@ -462,6 +473,7 @@ export default function ViewBMITracking() {
             rowData={medicalRowData}
             pagination={true}
             paginationPageSize={5}
+            paginationPageSizeSelector={[10, 25, 50]}
           />
         </div>
       </section>
