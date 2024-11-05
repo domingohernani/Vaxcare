@@ -20,7 +20,7 @@ const manifestForPlugin = {
     description:
       "Vaxcare Talogtog is a Barangay Child Health Immunization System designed to streamline vaccination efforts for children in local communities. The app supports health workers in tracking immunization schedules, sending reminders to parents, and maintaining accurate health records for each child. With a user-friendly interface and offline capabilities, Vaxcare Talogtog ensures reliable access to essential health information, promoting the well-being of children in the barangay.",
     theme_color: "#181818",
-    background_color: "#e0cc3b",
+    background_color: "#ffffff",
     display: "standalone",
     scope: "/",
     start_url: "/",
