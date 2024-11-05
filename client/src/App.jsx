@@ -33,7 +33,7 @@ function App() {
       <Routes>
         {/* publicViewing outside of the main structure */}
         
-        <Route path="/publicViewing" element={PublicViewing} />
+        <Route path="/publicViewing" element={<PublicViewing/>} />
         <Route path="/enterId" element={<EnterId />} />
         <Route path="/publicviewImmu/:childId" element={<PublicViewImmu />} />
         <Route path="/" element={<LoginParent />} />
