@@ -43,7 +43,6 @@ export default function Login() {
         console.error("Authentication failed");
       }
     } catch (error) {
-      console.log(error);
       console.error("Authentication failed");
       Swal.fire({
         icon: "error",

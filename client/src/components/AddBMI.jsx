@@ -33,7 +33,9 @@ export default function AddBMI() {
     const fetchChildDetails = async () => {
       try {
         const { data } = await axios.get(
-          `${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/viewbmitracking/addbmi/${childId}`
+          `${
+            import.meta.env.VITE_REACT_APP_BACKEND_BASEURL
+          }/viewbmitracking/addbmi/${childId}`
         );
         // setChildDetails(data[0]);
 
@@ -201,7 +203,9 @@ export default function AddBMI() {
 
               try {
                 const response = await axios.post(
-                  `${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/addBMIRecord/${childId}`,
+                  `${
+                    import.meta.env.VITE_REACT_APP_BACKEND_BASEURL
+                  }/addBMIRecord/${childId}`,
                   {
                     childId,
                     weight,
@@ -210,13 +214,11 @@ export default function AddBMI() {
                   }
                 );
 
-                console.log(response);
+                navigate(`/viewbmitracking/${childId}`);
               } catch (error) {
                 console.error("Error:", error);
                 console.error("Error:", error.message);
               }
-
-              navigate(`/viewbmitracking/${childId}`);
             }}
           >
             Add
