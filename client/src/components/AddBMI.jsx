@@ -202,9 +202,9 @@ export default function AddBMI() {
               }
 
               try {
-                console.log(height);
-                console.log(weight);
-                console.log(new Date().toISOString());
+                // console.log(height);
+                // console.log(weight);
+                // console.log(new Date().toISOString());
 
                 const response = await axios.post(
                   `${
@@ -214,7 +214,11 @@ export default function AddBMI() {
                     childId,
                     weight,
                     height,
-                    currentDate: new Date().toISOString(),
+                    currentDate: new Date()
+                      .toISOString()
+                      .slice(0, 19)
+                      .replace("T", " "),
+                    // currentDate: new Date().toISOString(),
                   }
                 );
 
