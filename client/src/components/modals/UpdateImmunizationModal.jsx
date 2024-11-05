@@ -65,11 +65,14 @@ export default function UpdateImmunizationModal({ onClose, childId }) {
   const appyUpdate = async () => {
     let doseValid = doseLeft !== 0;
 
-    console.log("Remarks:", doseValid);
+    // console.log("Remarks:", doseVdaalid);
+    console.log("date: ", date === "");
 
     if (
       selectedVaccine.length === 0 ||
       date === undefined ||
+      date === "" ||
+      !date ||
       doseValid === false
     ) {
       Swal.fire({
@@ -89,7 +92,6 @@ export default function UpdateImmunizationModal({ onClose, childId }) {
             remarks,
           }
         );
-        console.log(response);
         window.location.reload();
       } catch (error) {
         console.log(error);
