@@ -13,10 +13,10 @@ const app = express();
 // const MessagingResponse = require("twilio").twiml.MessagingResponse;
 
 const db = mysql.createConnection({
-  host: "localhost",
-  user: "root",
-  password: "",
-  database: "vaxcare",
+  host: process.env.DB_HOST,
+  user: process.env.DB_USERNAME,
+  password:process.env.DB_PASSWORD,
+  database: process.env.DB_NAME,
 });
 
 app.use(express.json());
