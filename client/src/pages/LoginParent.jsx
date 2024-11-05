@@ -118,7 +118,17 @@ const LoginParent = () => {
   return (
     <div>
       <div className="px-10 pt-4">
-        <img src={logo} className="w-20 h-auto" />
+        <section className="flex items-center justify-between">
+          <img src={logo} className="w-20 h-auto" />
+          <div className="flex justify-center mt-4">
+            <button
+              onClick={handleInstallClick}
+              className="px-6 py-2 text-sm tracking-wide text-white bg-green-600 rounded-lg shadow-xl hover:bg-green-700 focus:outline-none"
+            >
+              Install App
+            </button>
+          </div>
+        </section>
       </div>
       <div className="flex items-center justify-center px-4 py-20">
         <div className="grid items-center w-full max-w-6xl gap-4 md:grid-cols-2">
@@ -193,14 +203,6 @@ const LoginParent = () => {
             />
           </div>
         </div>
-      </div>
-      <div className="flex justify-center mt-4">
-        <button
-          onClick={handleInstallClick}
-          className="px-6 py-2 text-sm tracking-wide text-white bg-green-600 rounded-lg shadow-xl hover:bg-green-700 focus:outline-none"
-        >
-          Install App
-        </button>
       </div>
     </div>
   );
