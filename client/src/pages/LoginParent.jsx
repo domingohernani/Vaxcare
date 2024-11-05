@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
-import { Link, useNavigate } from "react-router-dom"; // Import useNavigate
+import { Link, useNavigate } from "react-router-dom";
 import logo from "../assets/vaxcare_logo.png";
 import ParentNavigation from "../components/ParentNavigation";
 import loginImage from "../assets/loginassets/login-image.webp";
@@ -9,7 +9,23 @@ import loginImage from "../assets/loginassets/login-image.webp";
 const LoginParent = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const navigate = useNavigate(); // Initialize useNavigate hook
+  const [deferredPrompt, setDeferredPrompt] = useState(null); // State to store the install prompt event
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const handleBeforeInstallPrompt = (e) => {
+      e.preventDefault();
+      setDeferredPrompt(e); // Store the event so it can be triggered later
+    };
+
+    window.addEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
+
+    return () =>
+      window.removeEventListener(
+        "beforeinstallprompt",
+        handleBeforeInstallPrompt
+      );
+  }, []);
 
   const handleLogin = async () => {
     try {
@@ -19,7 +35,6 @@ const LoginParent = () => {
           params: { username, password },
         }
       );
-
 
       if (response.data.length > 0) {
         Swal.fire({
@@ -52,7 +67,7 @@ const LoginParent = () => {
         Swal.fire({
           icon: "error",
           title: "Login failed",
-          text: "Invalid username or password. Please check your credentials.",
+          text: "Invalid username or password. Please check your credentials. ",
         });
       } else if (err.response && err.response.status === 404) {
         // No children found
@@ -69,6 +84,34 @@ const LoginParent = () => {
           text: "Something went wrong. Please try again later.",
         });
       }
+    }
+  };
+
+  const handleInstallClick = () => {
+    if (deferredPrompt) {
+      Swal.fire({
+        title: "Install Vaxcare App",
+        text: "Would you like to install the Vaxcare app for quick and easy access?",
+        icon: "question",
+        showCancelButton: true,
+        confirmButtonText: "Install",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          deferredPrompt.prompt(); // Show the install prompt
+          deferredPrompt.userChoice.then((choiceResult) => {
+            if (choiceResult.outcome === "accepted") {
+              console.log("User accepted the install prompt");
+            }
+            setDeferredPrompt(null); // Clear the prompt once it's used
+          });
+        }
+      });
+    } else {
+      Swal.fire({
+        icon: "info",
+        title: "Install Unavailable",
+        text: "The app is already installed or cannot be installed on this device.",
+      });
     }
   };
 
@@ -150,6 +193,14 @@ const LoginParent = () => {
             />
           </div>
         </div>
+      </div>
+      <div className="flex justify-center mt-4">
+        <button
+          onClick={handleInstallClick}
+          className="px-6 py-2 text-sm tracking-wide text-white bg-green-600 rounded-lg shadow-xl hover:bg-green-700 focus:outline-none"
+        >
+          Install App
+        </button>
       </div>
     </div>
   );
