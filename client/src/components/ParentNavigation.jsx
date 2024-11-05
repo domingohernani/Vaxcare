@@ -80,7 +80,7 @@ const ParentNavigation = ({ parentId }) => {
         const { username, password } = result.value;
 
         axios
-          .put(`http://localhost:8800/updateCredentials/${parentId}`, {
+          .put(`${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/updateCredentials/${parentId}`, {
             username,
             password,
           })

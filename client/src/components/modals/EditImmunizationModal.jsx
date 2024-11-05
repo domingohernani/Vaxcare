@@ -47,7 +47,7 @@ export default function EditImmunization({ onClose, childId }) {
     const fetchAllVaccine = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:8800/administeredVaccines",
+          `${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/administeredVaccines`,
           {
             params: {
               childId,
@@ -69,7 +69,7 @@ export default function EditImmunization({ onClose, childId }) {
     const fetchAllVaccineDate = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:8800/admnisteredVaccinesWithId/${childId}`
+          `${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/admnisteredVaccinesWithId/${childId}`
         );
         console.log("Dates", response.data);
 
@@ -365,7 +365,7 @@ export default function EditImmunization({ onClose, childId }) {
 
   const applyChanges = async () => {
     try {
-      await axios.put(`http://localhost:8800/updateVaccineDate/${childId}`, {
+      await axios.put(`${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/updateVaccineDate/${childId}`, {
         vaccineId: selectedVaccineId,
         // date: getDateForSelectedVaccine(), // Define the function to get the date
         oldDate: oldDate,

@@ -15,9 +15,9 @@ export default function Immunization() {
   useEffect(() => {
     const fetchFilteredChildren = async () => {
       try {
-        let url = "http://localhost:8800/activeImmu"; // Default to active
+        let url = `${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/activeImmu`; // Default to active
         if (filterStatus === "completedImmu") {
-          url = "http://localhost:8800/completedImmu";
+          url = `${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/completedImmu`;
         }
         const response = await axios.get(url);
         setChildren(response.data);

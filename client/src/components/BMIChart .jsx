@@ -13,7 +13,7 @@ const BMIChart = () => {
   useEffect(() => {
     const fetchBmi = async () => {
       try {
-        const response = await axios.get("http://localhost:8800/getBmi");
+        const response = await axios.get(`${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/getBmi`);
         const bmiData = response.data;
 
         // Reset state variables

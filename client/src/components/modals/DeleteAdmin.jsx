@@ -10,7 +10,7 @@ export default function DeleteAdmin({ showModal, admin_id }) {
   const handleDelete = async () => {
     try {
       const response = await axios.delete(
-        `http://localhost:8800/deleteAdmin/${admin_id}`
+        `${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/deleteAdmin/${admin_id}`
       );
       console.log(response);
       if (response.data.refresh) {

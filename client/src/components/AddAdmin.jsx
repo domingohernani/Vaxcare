@@ -32,7 +32,7 @@ export default function AddAdmin() {
       return;
     }
     try {
-      const response = await axios.put("http://localhost:8800/createAdmin", {
+      const response = await axios.put(`${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/createAdmin`, {
         username,
         password,
         repassword,

@@ -136,7 +136,7 @@ export default function ViewBMITracking() {
   const applyChanges = async (childID) => {
     try {
       const response = await axios.put(
-        "http://localhost:8800/updateChildDetailsFromImmu",
+        `${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/updateChildDetailsFromImmu`,
         {
           ...childDetails,
           birthdate: formatDateForInput(childDetails.date_of_birth),
@@ -157,8 +157,8 @@ export default function ViewBMITracking() {
     const fetchData = async () => {
       try {
         const [childDetailsResponse, medicalResponse] = await Promise.all([
-          axios.get(`http://localhost:8800/viewbmitracking/${childId}`),
-          axios.get(`http://localhost:8800/prescribeMedicines/${childId}`),
+          axios.get(`${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/viewbmitracking/${childId}`),
+          axios.get(`${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/prescribeMedicines/${childId}`),
         ]);
 
         const { data } = childDetailsResponse;

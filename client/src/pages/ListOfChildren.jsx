@@ -16,7 +16,7 @@ export default function ListOfChildren() {
     const fetchAllChild = async () => {
       try {
         const { data } = await axios.get(
-          "http://localhost:8800/listofchildren"
+          `${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/listofchildren`
         );
         setChildren(data);
       } catch (error) {
@@ -132,7 +132,7 @@ export default function ListOfChildren() {
   const onDelete = async (childId) => {
     try {
       const response = await axios.delete(
-        `http://localhost:8800/deleteChild/${childId}`
+        `${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/deleteChild/${childId}`
       );
       console.log(response);
       if (response.data.refresh) {

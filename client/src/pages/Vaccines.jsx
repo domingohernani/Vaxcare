@@ -12,7 +12,7 @@ const Vaccines = () => {
   // Function to fetch all vaccines
   const fetchVaccines = async () => {
     try {
-      const response = await axios.get("http://localhost:8800/getAllVaccines");
+      const response = await axios.get(`${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/getAllVaccines`);
       setVaccines(response.data);
     } catch (error) {
       console.error("Error fetching vaccines:", error);
@@ -56,7 +56,7 @@ const Vaccines = () => {
         try {
           // Send data to the backend to add a new vaccine record
           const response = await axios.post(
-            "http://localhost:8800/addVaccine",
+            `${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/addVaccine`,
             {
               name,
               doses_required,
@@ -94,7 +94,7 @@ const Vaccines = () => {
         try {
           // Send delete request to the backend
           const response = await axios.delete(
-            `http://localhost:8800/deleteVaccine/${vaccine_id}`
+            `${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/deleteVaccine/${vaccine_id}`
           );
 
           // If deletion was successful, refresh the vaccines table

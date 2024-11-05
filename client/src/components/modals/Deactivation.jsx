@@ -19,7 +19,7 @@ export default function Deactivation({
   const handleUpdateStatus = async (status) => {
     try {
       const response = await axios.put(
-        `http://localhost:8800/updateStatusInactive/${childId}/${status}`
+        `${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/updateStatusInactive/${childId}/${status}`
       );
       toggleDeactivationModal();
       console.log(response);

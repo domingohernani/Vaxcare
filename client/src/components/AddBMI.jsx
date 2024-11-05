@@ -33,7 +33,7 @@ export default function AddBMI() {
     const fetchChildDetails = async () => {
       try {
         const { data } = await axios.get(
-          `http://localhost:8800/viewbmitracking/addbmi/${childId}`
+          `${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/viewbmitracking/addbmi/${childId}`
         );
         // setChildDetails(data[0]);
 
@@ -201,7 +201,7 @@ export default function AddBMI() {
 
               try {
                 const response = await axios.post(
-                  `http://localhost:8800/addBMIRecord/${childId}`,
+                  `${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/addBMIRecord/${childId}`,
                   {
                     childId,
                     weight,

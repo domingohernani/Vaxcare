@@ -35,7 +35,7 @@ export default function UpdateAdminModal({
 
     try {
       const result = await axios.put(
-        `http://localhost:8800/updateAdmin/${admin_id}`,
+        `${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/updateAdmin/${admin_id}`,
         {
           username,
           newPassword,

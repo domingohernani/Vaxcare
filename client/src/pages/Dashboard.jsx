@@ -13,7 +13,7 @@ export default function Dashboard() {
   useEffect(() => {
     const fetchAllActive = async () => {
       try {
-        const response = await axios.get("http://localhost:8800/activeBMI");
+        const response = await axios.get(`${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/activeBMI`);
         console.log(response.data.length);
         setActives(response.data.length);
       } catch (error) {
@@ -21,7 +21,7 @@ export default function Dashboard() {
       }
       try {
         const responseUnderImmu = await axios.get(
-          "http://localhost:8800/getUnderImmunization"
+          `${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/getUnderImmunization`
         );
         setUnder(responseUnderImmu.data[0].number);
       } catch (error) {
@@ -29,7 +29,7 @@ export default function Dashboard() {
       }
       try {
         const responseCom = await axios.get(
-          "http://localhost:8800/getCompleted"
+          `${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/getCompleted`
         );
         setComplete(responseCom.data.length);
       } catch (error) {
