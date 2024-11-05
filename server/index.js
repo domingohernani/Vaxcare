@@ -218,7 +218,6 @@ app.put("/addchildinfo", (req, res) => {
   });
 });
 
-
 app.put("/addchildinfoexistingparent", (req, res) => {
   const { name, birthdate, sex, placeOfBirth, address, mother_id, father_id } =
     req.body;
@@ -1088,6 +1087,49 @@ app.get("/administeredVaccines", (req, res) => {
   });
 });
 
+app.get("/getVaccinatedCounts", (req, res) => {
+  const query = `
+   SELECT 
+  v.vaccine_id, 
+  v.name AS vaccine_name, 
+  c.sex, 
+  COUNT(vc.vaccinaction_id) AS total_vaccinated
+FROM 
+  vaccine AS v
+LEFT JOIN 
+  vaccinations AS vc ON v.vaccine_id = vc.vaccine_id
+LEFT JOIN 
+  child AS c ON vc.child_id = c.child_id
+WHERE 
+  v.is_deleted = 0
+GROUP BY 
+  v.vaccine_id, v.name, c.sex
+ORDER BY 
+  v.vaccine_id;
+  `;
+
+  db.query(query, (err, data) => {
+    if (err) {
+      console.error("Error executing the query:", err);
+      return res.status(500).json({ error: "Internal Server Error" });
+    }
+
+    const result = {};
+    data.forEach((row) => {
+      if (!result[row.vaccine_name]) {
+        result[row.vaccine_name] = { male: 0, female: 0 };
+      }
+      if (row.sex === "Male") {
+        result[row.vaccine_name].male = row.total_vaccinated;
+      } else if (row.sex === "Female") {
+        result[row.vaccine_name].female = row.total_vaccinated;
+      }
+    });
+
+    return res.json(result);
+  });
+});
+
 app.get("/admnisteredVaccinesWithId/:childId", async (req, res) => {
   const childId = req.params.childId;
 
@@ -1655,7 +1697,6 @@ app.post("/resetLoginAttempt", (req, res) => {
   const { parent_id } = req.body;
 
   console.log(parent_id);
-  
 
   if (!parent_id) {
     return res.status(400).json({ error: "parent_id is required" });
@@ -1747,7 +1788,6 @@ app.get("/getAllChildOfParent", (req, res) => {
               return res.status(500).json({ error: "Internal Server Error" });
             }
             console.log(children);
-            
 
             return res.json(children); // Send the children data as JSON
           });

@@ -10,7 +10,11 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@ag-grid-community/client-side-row-model": "^32.3.2",
+    "@ag-grid-community/csv-export": "^32.3.2",
+    "@ag-grid-community/react": "^32.3.2",
     "@fortawesome/react-fontawesome": "github:fortawesome/react-fontawesome",
+    "@heroicons/react": "^2.1.5",
     "ag-grid-community": "^32.2.1",
     "ag-grid-react": "^32.2.1",
     "axios": "^1.6.2",
