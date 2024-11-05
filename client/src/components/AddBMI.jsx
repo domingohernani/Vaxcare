@@ -212,7 +212,8 @@ export default function AddBMI() {
 
                 console.log(response);
               } catch (error) {
-                console.error("Error during login:", error.message);
+                console.error("Error:", error);
+                console.error("Error:", error.message);
               }
 
               navigate(`/viewbmitracking/${childId}`);
