@@ -67,7 +67,7 @@ const LoginParent = () => {
         Swal.fire({
           icon: "error",
           title: "Login failed",
-          text: "Invalid username or password. Please check your credentials.",
+          text: "Invalid username or password. Please check your credentials. ",
         });
       } else if (err.response && err.response.status === 404) {
         // No children found
