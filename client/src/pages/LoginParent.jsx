@@ -123,7 +123,7 @@ const LoginParent = () => {
           <div className="flex justify-center mt-4">
             <button
               onClick={handleInstallClick}
-              className="px-6 py-2 text-sm tracking-wide text-white bg-green-600 rounded-lg shadow-xl hover:bg-green-700 focus:outline-none"
+              className="px-6 py-2 text-sm tracking-wide text-white bg-blue-600 rounded-lg shadow-xl hover:bg-blue-700 focus:outline-none"
             >
               Install App
             </button>
