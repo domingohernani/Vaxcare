@@ -16,7 +16,6 @@ import LogIn from "./pages/LogIn";
 import AddMedicalHistory from "./components/AddMedicalHistory";
 import ManageAccounts from "./pages/ManageAccounts";
 import RemindersView from "./components/ReminderView";
-import PublicViewing from "./pages/publicViewing";
 import EnterId from "./pages/EnterId";
 import PublicViewImmu from "./pages/PublicViewImmu";
 import AddAdmin from "./components/AddAdmin";
@@ -26,13 +25,15 @@ import Vaccines from "./pages/Vaccines";
 import LoginParent from "./pages/LoginParent";
 import ImmunizationViewing from "./pages/ImmunizationViewing";
 import { Report } from "./pages/Report";
+import PublicViewing from "./pages/PublicViewing";
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
         {/* publicViewing outside of the main structure */}
-        <Route path="/publicViewing" element={<PublicViewing />} />
+        
+        <Route path="/publicViewing" element={PublicViewing} />
         <Route path="/enterId" element={<EnterId />} />
         <Route path="/publicviewImmu/:childId" element={<PublicViewImmu />} />
         <Route path="/" element={<LoginParent />} />
