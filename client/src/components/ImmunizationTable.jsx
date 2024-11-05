@@ -21,12 +21,12 @@ export default function ImmunizationTable({ childId }) {
     const fetchChildData = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:8800/viewbmitracking/${childId}`
+          `${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/viewbmitracking/${childId}`
         );
         setChildDetails(response.data.childDetails[0]);
 
         const vaccineResponse = await axios.get(
-          `http://localhost:8800/getChildImmunization/${childId}`
+          `${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/getChildImmunization/${childId}`
         );
         setVaccines(vaccineResponse.data || {});
       } catch (error) {

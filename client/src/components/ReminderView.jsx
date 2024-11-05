@@ -17,7 +17,7 @@ export default function RemindersView() {
     const fetchAllChild = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:8800/getAllUnderimmunizaton"
+          `${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/getAllUnderimmunizaton`
         );
         setChildren(response.data);
         console.log(response.data);

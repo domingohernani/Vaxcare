@@ -10,7 +10,7 @@ const ParentDatalist = ({ onMotherSelect, onFatherSelect }) => {
     // Fetch the list of parents from the server
     const fetchParents = async () => {
       try {
-        const response = await axios.get("http://localhost:8800/getAllParents");
+        const response = await axios.get(`${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/getAllParents`);
         setParents(response.data);
       } catch (error) {
         console.error("Error fetching parents:", error);

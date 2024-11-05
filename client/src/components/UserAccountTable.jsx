@@ -119,7 +119,7 @@ const UserAccountTable = () => {
         const { username, password } = result.value;
         axios
           .put(
-            `http://localhost:8800/updateCredentials/${parentData.parent_id}`,
+            `${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/updateCredentials/${parentData.parent_id}`,
             {
               username,
               password,
@@ -165,7 +165,7 @@ const UserAccountTable = () => {
     }).then((result) => {
       if (result.isConfirmed) {
         axios
-          .post("http://localhost:8800/resetLoginAttempt", { parent_id: id })
+          .post(`${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/resetLoginAttempt`, { parent_id: id })
           .then(() => {
             Swal.fire({
               icon: "success",
@@ -188,7 +188,7 @@ const UserAccountTable = () => {
   const fetchData = async () => {
     try {
       // Fetch data from the /allAccounts API endpoint
-      const result = await axios.get("http://localhost:8800/allAccounts");
+      const result = await axios.get(`${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/allAccounts`);
       setRowData(result.data);
     } catch (error) {
       console.error("Error fetching data:", error);

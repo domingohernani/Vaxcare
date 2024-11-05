@@ -20,7 +20,7 @@ export default function BMITracking() {
   useEffect(() => {
     const fetchAllChild = async () => {
       try {
-        const response = await axios.get("http://localhost:8800/activeBMI");
+        const response = await axios.get(`${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/activeBMI`);
         setChildren(response.data);
         setFilteredChildren(response.data); // Setting the initial filtered children
       } catch (error) {
@@ -40,11 +40,11 @@ export default function BMITracking() {
     try {
       let response;
       if (event.target.value === "active") {
-        response = await axios.get("http://localhost:8800/activeBMI");
+        response = await axios.get(`${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/activeBMI`);
       } else if (event.target.value === "inactive") {
-        response = await axios.get("http://localhost:8800/inactiveBMI");
+        response = await axios.get(`${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/inactiveBMI`);
       } else {
-        response = await axios.get("http://localhost:8800/completedBMI");
+        response = await axios.get(`${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/completedBMI`);
       }
       setFilteredChildren(response.data);
     } catch (error) {

@@ -20,7 +20,7 @@ export default function EnterId() {
     console.log(id);
     try {
       const response = await axios.get(
-        `http://localhost:8800/getAllChild/${id}`
+        `${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/getAllChild/${id}`
       );
       console.log(response);
       if (response.data.length === 0) {

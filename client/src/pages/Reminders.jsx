@@ -14,7 +14,7 @@ export default function RemindersView() {
   useEffect(() => {
     const fetchAllReminder = async () => {
       try {
-        const response = await axios.get("http://localhost:8800/allAccounts");
+        const response = await axios.get(`${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/allAccounts`);
         console.log(response.data);
         setReminders(response.data);
       } catch (error) {

@@ -14,7 +14,7 @@ const LoginParent = () => {
   const handleLogin = async () => {
     try {
       const response = await axios.get(
-        "http://localhost:8800/getAllChildOfParent",
+        `${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/getAllChildOfParent`,
         {
           params: { username, password },
         }

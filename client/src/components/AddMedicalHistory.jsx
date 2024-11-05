@@ -42,7 +42,7 @@ export default function AddMedicalHistory() {
     const fetchChildDetails = async () => {
       try {
         const { data } = await axios.get(
-          `http://localhost:8800/viewbmitracking/addbmi/${childId}`
+          `${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/viewbmitracking/addbmi/${childId}`
         );
         setChildDetails(data.childDetails[0]);
       } catch (error) {
@@ -55,7 +55,7 @@ export default function AddMedicalHistory() {
   const addButton = async () => {
     try {
       const response = await axios.put(
-        `http://localhost:8800/addHistoryAndRecord`,
+        `${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/addHistoryAndRecord`,
         {
           childId,
           heartrate,

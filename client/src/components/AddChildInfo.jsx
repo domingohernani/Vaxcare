@@ -98,7 +98,7 @@ export default function AddChildInfo() {
     try {
       let response = "";
       if (!isExistingParent) {
-        response = await axios.put(`http://localhost:8800/addchildinfo`, {
+        response = await axios.put(`${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/addchildinfo`, {
           name: fullName,
           birthdate,
           sex,
@@ -111,7 +111,7 @@ export default function AddChildInfo() {
         });
       } else {
         response = await axios.put(
-          `http://localhost:8800/addchildinfoexistingparent`,
+          `${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/addchildinfoexistingparent`,
           {
             name: fullName,
             birthdate,

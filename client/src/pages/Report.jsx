@@ -24,7 +24,7 @@ export const Report = () => {
     const fetchVaccinationData = async () => {
       try {
         const { data } = await axios.get(
-          "http://localhost:8800/getVaccinatedCounts"
+          `${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/getVaccinatedCounts`
         );
         const transformedData = Object.entries(data).map(
           ([vaccineName, counts]) => ({

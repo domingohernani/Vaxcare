@@ -87,7 +87,7 @@ export default function ViewImmunization() {
     birthdate = formatDateForInput(birthdate);
     try {
       const response = await axios.put(
-        "http://localhost:8800/updateChildDetailsFromImmu",
+        `${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/updateChildDetailsFromImmu`,
         {
           name,
           birthdate,
@@ -108,7 +108,7 @@ export default function ViewImmunization() {
       console.log(error);
     }
     try {
-      const response = await axios.put("http://localhost:8800/updateParents", {
+      const response = await axios.put(`${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/updateParents`, {
         childID,
         fathersname,
         mothersname,
@@ -172,7 +172,7 @@ export default function ViewImmunization() {
     const fetchAllChild = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:8800/viewbmitracking/${childId}`
+          `${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/viewbmitracking/${childId}`
         );
         setChildDetails(response.data.childDetails[0]);
         setName(response.data.childDetails[0].name);
@@ -186,7 +186,7 @@ export default function ViewImmunization() {
         // console.log(response.data.childDetails[0]);
 
         const response1 = await axios.get(
-          `http://localhost:8800/getChildImmunization/${childId}`
+          `${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/getChildImmunization/${childId}`
         );
 
         console.log(response1.data.BCGVaccine);
@@ -199,7 +199,7 @@ export default function ViewImmunization() {
         setMeaslesMumpsRubella(response1.data.MeaslesMumpsRubella);
 
         const response2 = await axios.get(
-          `http://localhost:8800/showRemarks/${childId}`
+          `${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/showRemarks/${childId}`
         );
 
         setBCGVaccineRemarks(response2.data.BCGVaccine);
@@ -215,7 +215,7 @@ export default function ViewImmunization() {
       }
       try {
         const response = await axios.get(
-          `http://localhost:8800/prescribeMedicines/${childId}`
+          `${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/prescribeMedicines/${childId}`
         );
         setMedicineTaken(response.data);
         prescribeUsingMedicines();
@@ -277,7 +277,7 @@ export default function ViewImmunization() {
   const childdDoseTaken = async (vaccine) => {
     try {
       const response = await axios.get(
-        `http://localhost:8800/dosesTaken/${childId}?vaccine=${vaccine}`
+        `${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/dosesTaken/${childId}?vaccine=${vaccine}`
       );
       return response.data[0].dose_taken;
     } catch (error) {

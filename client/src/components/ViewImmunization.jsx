@@ -25,12 +25,12 @@ export default function ViewImmunization() {
     const fetchChildData = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:8800/viewbmitracking/${childId}`
+          `${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/viewbmitracking/${childId}`
         );
         setChildDetails(response.data.childDetails[0]);
 
         const vaccineResponse = await axios.get(
-          `http://localhost:8800/getChildImmunization/${childId}`
+          `${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/getChildImmunization/${childId}`
         );
         setVaccines(vaccineResponse.data || {});
       } catch (error) {
@@ -53,7 +53,7 @@ export default function ViewImmunization() {
   const applyChanges = async (childID) => {
     try {
       const response = await axios.put(
-        "http://localhost:8800/updateChildDetailsFromImmu",
+        `${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/updateChildDetailsFromImmu`,
         {
           ...childDetails,
           birthdate: formatDateForInput(childDetails.date_of_birth),
@@ -95,7 +95,7 @@ export default function ViewImmunization() {
       if (result.isConfirmed) {
         try {
           const response = await axios.put(
-            `http://localhost:8800/updateStatus/${childId}`,
+            `${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/updateStatus/${childId}`,
             { status: newStatus }
           );
 

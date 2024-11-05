@@ -17,7 +17,7 @@ const ViewMessage = () => {
     const fetchParentName = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:8800/getParentName/${parentID}`
+          `${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/getParentName/${parentID}`
         );
         setParentName(response.data[0].name);
       } catch (error) {
@@ -33,7 +33,7 @@ const ViewMessage = () => {
     const fetchAllMessages = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:8800/getAllMessages/${parentID}`
+          `${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/getAllMessages/${parentID}`
         );
         setReminder(response.data);
       } catch (error) {
@@ -67,7 +67,7 @@ const ViewMessage = () => {
     };
 
     try {
-      const response = axios.post("http://localhost:8800/message", {
+      const response = axios.post(`${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/message`, {
         message,
       });
       console.log(response);
@@ -90,7 +90,7 @@ const ViewMessage = () => {
       let willReload = false;
       try {
         const response = await axios.put(
-          "http://localhost:8800/insertReminder",
+          `${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/insertReminder`,
           {
             message,
             currentDate,

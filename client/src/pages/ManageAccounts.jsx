@@ -28,7 +28,7 @@ export default function ManageAccounts() {
       // If already reloaded, fetch the admin data
       const fetchAdmins = async () => {
         try {
-          const result = await axios.get("http://localhost:8800/allAdmin");
+          const result = await axios.get(`${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/allAdmin`);
           setAdmins(result.data);
         } catch (error) {
           console.log(error);
