@@ -15,7 +15,7 @@ const app = express();
 const db = mysql.createConnection({
   host: process.env.DB_HOST,
   user: process.env.DB_USERNAME,
-  password:process.env.DB_PASSWORD,
+  password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
 });
 
@@ -1770,12 +1770,12 @@ app.get("/getAllChildOfParent", (req, res) => {
 
           const childrenQuery = `
             SELECT
-              c.*, -- Select all columns from Child
-              p.parent_id -- Select parent_id from Parent
+              c.*,  
+              p.parent_id
             FROM
-              Child c
+              child c
             JOIN
-              Parent p
+              parent p
             ON (c.mother_id = p.parent_id OR c.father_id = p.parent_id)
             WHERE
               p.username = ?
