@@ -5,12 +5,14 @@ import { Link, useNavigate } from "react-router-dom";
 import logo from "../assets/vaxcare_logo.png";
 import ParentNavigation from "../components/ParentNavigation";
 import loginImage from "../assets/loginassets/login-image.webp";
+import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
 
 const LoginParent = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [deferredPrompt, setDeferredPrompt] = useState(null); // State to store the install prompt event
   const navigate = useNavigate();
+  const [isOpenPassword, setIsOpenPassword] = useState(false);
 
   useEffect(() => {
     const handleBeforeInstallPrompt = (e) => {
@@ -168,13 +170,29 @@ const LoginParent = () => {
                 <div className="relative flex items-center">
                   <input
                     name="password"
-                    type="password"
+                    type={`${isOpenPassword ? "text" : "password"}`}
                     required
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     className="w-full px-4 py-3 text-sm text-gray-800 border border-gray-300 rounded-lg outline-blue-600"
                     placeholder="Enter password"
                   />
+
+                  {isOpenPassword ? (
+                    <EyeIcon
+                      className="absolute w-5 h-5 right-4"
+                      onClick={() => {
+                        setIsOpenPassword(!isOpenPassword);
+                      }}
+                    />
+                  ) : (
+                    <EyeSlashIcon
+                      className="absolute w-5 h-5 right-4"
+                      onClick={() => {
+                        setIsOpenPassword(!isOpenPassword);
+                      }}
+                    />
+                  )}
                 </div>
               </div>
 

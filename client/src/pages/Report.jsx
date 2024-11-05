@@ -18,6 +18,7 @@ export const Report = () => {
   const [vaccinationData, setVaccinationData] = useState([]);
   const [csvContent, setCsvContent] = useState("");
   const [toggleShowCSV, setToggleShowCSV] = useState(false);
+  const [reportTitle, setReportTitle] = useState("");
   const gridRef = useRef();
 
   useEffect(() => {
@@ -40,6 +41,13 @@ export const Report = () => {
     };
 
     fetchVaccinationData();
+  }, []);
+
+  useEffect(() => {
+    const today = new Date();
+    const month = today.toLocaleString("default", { month: "long" });
+    const year = today.getFullYear();
+    setReportTitle(`Vaccination Report (1st to 20th of ${month} ${year})`);
   }, []);
 
   const columnDefs = [
@@ -91,7 +99,7 @@ export const Report = () => {
     <section>
       <div className="flex items-center justify-between mb-2">
         <h3 className="px-6 py-2 font-semibold bg-white rounded-lg">
-          Report
+          {reportTitle}
         </h3>
         <div className="flex items-center gap-4">
           <button

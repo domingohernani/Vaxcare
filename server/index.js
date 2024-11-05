@@ -670,7 +670,7 @@ app.post("/addBMIRecord/:childId", (req, res) => {
 
   console.log(details);
   const query = `INSERT INTO historical_bmi_tracking (ht_date, height, weight, child_id) VALUES ( '${details.currentDate}', '${details.height}', '${details.weight}', '${details.childId}')`;
-  
+
   db.query(query, (err, data) => {
     if (err) {
       console.error("Error executing the query:", err);
@@ -1090,15 +1090,18 @@ app.get("/administeredVaccines", (req, res) => {
 
 app.get("/getVaccinatedCounts", (req, res) => {
   const query = `
-   SELECT 
+  SELECT 
   v.vaccine_id, 
   v.name AS vaccine_name, 
   c.sex, 
-  COUNT(vc.vaccinaction_id) AS total_vaccinated
+  COUNT(DISTINCT vc.child_id) AS total_vaccinated  -- Count unique child IDs per vaccine
 FROM 
   vaccine AS v
 LEFT JOIN 
-  vaccinations AS vc ON v.vaccine_id = vc.vaccine_id
+  vaccinations AS vc ON v.vaccine_id = vc.vaccine_id 
+  AND DAY(vc.date_administered) BETWEEN 1 AND 20
+  AND MONTH(vc.date_administered) = MONTH(CURDATE())
+  AND YEAR(vc.date_administered) = YEAR(CURDATE())
 LEFT JOIN 
   child AS c ON vc.child_id = c.child_id
 WHERE 
