@@ -668,8 +668,8 @@ app.get("/viewbmitracking/addbmi/:childId", async (req, res) => {
 app.post("/addBMIRecord/:childId", (req, res) => {
   const details = req.body;
 
+  console.log(details);
   const query = `INSERT INTO historical_bmi_tracking (ht_date, height, weight, child_id) VALUES ( '${details.currentDate}', '${details.height}', '${details.weight}', '${details.childId}')`;
-  console.log(query);
   
   db.query(query, (err, data) => {
     if (err) {
