@@ -42,7 +42,9 @@ export default function AddMedicalHistory() {
     const fetchChildDetails = async () => {
       try {
         const { data } = await axios.get(
-          `${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/viewbmitracking/addbmi/${childId}`
+          `${
+            import.meta.env.VITE_REACT_APP_BACKEND_BASEURL
+          }/viewbmitracking/addbmi/${childId}`
         );
         setChildDetails(data.childDetails[0]);
       } catch (error) {

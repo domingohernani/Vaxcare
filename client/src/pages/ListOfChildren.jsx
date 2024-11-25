@@ -46,19 +46,20 @@ export default function ListOfChildren() {
       filter: true,
     },
     {
-      headerName: "Age",
+      headerName: "Number of months",
       field: "age",
       flex: 1,
       sortable: true,
       filter: true,
       valueGetter: (params) => {
         const ageInMonths = calculateAge(params.data.date_of_birth); // Assuming this returns age in months
-        if (ageInMonths >= 12) {
-          const years = Math.floor(ageInMonths / 12);
-          return `${years} year/s`;
-        } else {
-          return `${ageInMonths} month/s`;
-        }
+        // if (ageInMonths >= 12) {
+        //   const years = Math.floor(ageInMonths / 12);
+        //   return `${years} year/s`;
+        // } else {
+        //   return `${ageInMonths} month/s`;
+        // }
+        return ageInMonths + " month/s";
       },
     },
     { headerName: "Sex", field: "sex", flex: 1, sortable: true, filter: true },
@@ -132,7 +133,9 @@ export default function ListOfChildren() {
   const onDelete = async (childId) => {
     try {
       const response = await axios.delete(
-        `${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/deleteChild/${childId}`
+        `${
+          import.meta.env.VITE_REACT_APP_BACKEND_BASEURL
+        }/deleteChild/${childId}`
       );
       console.log(response);
       if (response.data.refresh) {

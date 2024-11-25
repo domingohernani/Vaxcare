@@ -98,20 +98,25 @@ export default function AddChildInfo() {
     try {
       let response = "";
       if (!isExistingParent) {
-        response = await axios.put(`${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/addchildinfo`, {
-          name: fullName,
-          birthdate,
-          sex,
-          placeOfBirth,
-          address: fullAddress,
-          mother,
-          father,
-          mothersNo,
-          fathersNo,
-        });
+        response = await axios.put(
+          `${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/addchildinfo`,
+          {
+            name: fullName,
+            birthdate,
+            sex,
+            placeOfBirth,
+            address: fullAddress,
+            mother,
+            father,
+            mothersNo,
+            fathersNo,
+          }
+        );
       } else {
         response = await axios.put(
-          `${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/addchildinfoexistingparent`,
+          `${
+            import.meta.env.VITE_REACT_APP_BACKEND_BASEURL
+          }/addchildinfoexistingparent`,
           {
             name: fullName,
             birthdate,
@@ -285,7 +290,7 @@ export default function AddChildInfo() {
             className="inline-block pl-[0.15rem] hover:cursor-pointer"
             htmlFor="flexSwitchCheckDefault"
           >
-            Existing Parent
+            Existing Registered Parent
           </label>
         </div>
         {!isExistingParent ? (

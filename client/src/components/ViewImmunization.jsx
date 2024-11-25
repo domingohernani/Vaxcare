@@ -25,12 +25,16 @@ export default function ViewImmunization() {
     const fetchChildData = async () => {
       try {
         const response = await axios.get(
-          `${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/viewbmitracking/${childId}`
+          `${
+            import.meta.env.VITE_REACT_APP_BACKEND_BASEURL
+          }/viewbmitracking/${childId}`
         );
         setChildDetails(response.data.childDetails[0]);
 
         const vaccineResponse = await axios.get(
-          `${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/getChildImmunization/${childId}`
+          `${
+            import.meta.env.VITE_REACT_APP_BACKEND_BASEURL
+          }/getChildImmunization/${childId}`
         );
         setVaccines(vaccineResponse.data || {});
       } catch (error) {
@@ -53,7 +57,9 @@ export default function ViewImmunization() {
   const applyChanges = async (childID) => {
     try {
       const response = await axios.put(
-        `${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/updateChildDetailsFromImmu`,
+        `${
+          import.meta.env.VITE_REACT_APP_BACKEND_BASEURL
+        }/updateChildDetailsFromImmu`,
         {
           ...childDetails,
           birthdate: formatDateForInput(childDetails.date_of_birth),
@@ -95,7 +101,9 @@ export default function ViewImmunization() {
       if (result.isConfirmed) {
         try {
           const response = await axios.put(
-            `${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/updateStatus/${childId}`,
+            `${
+              import.meta.env.VITE_REACT_APP_BACKEND_BASEURL
+            }/updateStatus/${childId}`,
             { status: newStatus }
           );
 
@@ -236,8 +244,8 @@ export default function ViewImmunization() {
           )}
         </div>
         <div className="flex flex-col">
-          <span>Age</span>
-          <span className="font-bold">{childDetails.age}</span>
+          <span>Number of months</span>
+          <span className="font-bold">{childDetails.age} month/s</span>
         </div>
         <div className="flex flex-col">
           <span>Gender</span>
@@ -445,7 +453,7 @@ export default function ViewImmunization() {
                 {vaccines[vaccineName]?.dosesTaken ===
                 vaccines[vaccineName]?.dosesRequired
                   ? "Vaccinated"
-                  : "On process"}
+                  : "On-going"}
               </div>
             </React.Fragment>
           ))

@@ -21,13 +21,18 @@ export default function ImmunizationTable({ childId }) {
     const fetchChildData = async () => {
       try {
         const response = await axios.get(
-          `${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/viewbmitracking/${childId}`
+          `${
+            import.meta.env.VITE_REACT_APP_BACKEND_BASEURL
+          }/viewbmitracking/${childId}`
         );
         setChildDetails(response.data.childDetails[0]);
 
         const vaccineResponse = await axios.get(
-          `${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/getChildImmunization/${childId}`
+          `${
+            import.meta.env.VITE_REACT_APP_BACKEND_BASEURL
+          }/getChildImmunization/${childId}`
         );
+
         setVaccines(vaccineResponse.data || {});
       } catch (error) {
         console.error(error);
@@ -124,7 +129,7 @@ export default function ImmunizationTable({ childId }) {
           )}
         </div>
         <div className="flex flex-col">
-          <span>Age</span>
+          <span>Number of months</span>
           <span className="font-bold">{childDetails.age}</span>
         </div>
         <div className="flex flex-col">
@@ -235,7 +240,7 @@ export default function ImmunizationTable({ childId }) {
                 {vaccines[vaccineName]?.dosesTaken ===
                 vaccines[vaccineName]?.dosesRequired
                   ? "Vaccinated"
-                  : "On process"}
+                  : "On-going"}
               </div>
             </React.Fragment>
           ))

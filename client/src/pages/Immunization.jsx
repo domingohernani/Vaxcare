@@ -15,9 +15,13 @@ export default function Immunization() {
   useEffect(() => {
     const fetchFilteredChildren = async () => {
       try {
-        let url = `${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/activeImmu`; // Default to active
+        let url = `${
+          import.meta.env.VITE_REACT_APP_BACKEND_BASEURL
+        }/activeImmu`; // Default to active
         if (filterStatus === "completedImmu") {
-          url = `${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/completedImmu`;
+          url = `${
+            import.meta.env.VITE_REACT_APP_BACKEND_BASEURL
+          }/completedImmu`;
         }
         const response = await axios.get(url);
         setChildren(response.data);
@@ -57,19 +61,20 @@ export default function Immunization() {
       flex: 1,
     },
     {
-      headerName: "Age",
+      headerName: "Number of months",
       field: "age_in_months",
       flex: 1,
       sortable: true,
       filter: true,
       cellRenderer: (params) => {
         const months = params.data.age_in_months;
-        if (months >= 12) {
-          const years = Math.floor(months / 12);
-          return <p>{years} year/s</p>;
-        } else {
-          return <p>{months} month/s</p>;
-        }
+        // if (months >= 12) {
+        //   const years = Math.floor(months / 12);
+        //   return <p>{years} year/s</p>;
+        // } else {
+        //   return <p>{months} month/s</p>;
+        // }
+        return params.data.age_in_months + " month/s";
       },
     },
 

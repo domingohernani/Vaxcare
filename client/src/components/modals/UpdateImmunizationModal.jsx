@@ -31,7 +31,9 @@ export default function UpdateImmunizationModal({ onClose, childId }) {
       const vaccine = "BCG Vaccine";
       try {
         const response = await axios.get(
-          `${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/dosesTaken/${childId}?vaccine=${vaccine}`
+          `${
+            import.meta.env.VITE_REACT_APP_BACKEND_BASEURL
+          }/dosesTaken/${childId}?vaccine=${vaccine}`
         );
         console.log(response.data[0].dose_taken);
         setDoseLeft(response.data[0].dose_left);
@@ -52,7 +54,9 @@ export default function UpdateImmunizationModal({ onClose, childId }) {
     setSelectedVaccineId(selectedOption.dataset.info);
     try {
       const response = await axios.get(
-        `${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/dosesTaken/${childId}?vaccine=${e.target.value}`
+        `${
+          import.meta.env.VITE_REACT_APP_BACKEND_BASEURL
+        }/dosesTaken/${childId}?vaccine=${e.target.value}`
       );
       console.log(response.data[0]);
       setDoseLeft(response.data[0].dose_left);
@@ -84,7 +88,9 @@ export default function UpdateImmunizationModal({ onClose, childId }) {
       onClose();
       try {
         const response = await axios.put(
-          `${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/updateImmunization`,
+          `${
+            import.meta.env.VITE_REACT_APP_BACKEND_BASEURL
+          }/updateImmunization`,
           {
             childId,
             selectedVaccineId,

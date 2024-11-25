@@ -270,10 +270,9 @@ export default function ViewBMITracking() {
             )}
           </div>
 
-          {/* Age */}
-          <div className="flex flex-col">
-            <span>Age</span>
-            <span className="font-bold">{childDetails.age}</span>
+          <div className="flex flex-col ">
+            <span>Number of months</span>
+            <span className="font-bold">{childDetails.age} month/s</span>
           </div>
 
           {/* Gender Input */}

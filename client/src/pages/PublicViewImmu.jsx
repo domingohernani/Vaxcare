@@ -87,7 +87,9 @@ export default function ViewImmunization() {
     birthdate = formatDateForInput(birthdate);
     try {
       const response = await axios.put(
-        `${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/updateChildDetailsFromImmu`,
+        `${
+          import.meta.env.VITE_REACT_APP_BACKEND_BASEURL
+        }/updateChildDetailsFromImmu`,
         {
           name,
           birthdate,
@@ -108,11 +110,14 @@ export default function ViewImmunization() {
       console.log(error);
     }
     try {
-      const response = await axios.put(`${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/updateParents`, {
-        childID,
-        fathersname,
-        mothersname,
-      });
+      const response = await axios.put(
+        `${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/updateParents`,
+        {
+          childID,
+          fathersname,
+          mothersname,
+        }
+      );
       console.log(response);
       if (response.data.reloadPage) {
         window.location.reload();
@@ -172,7 +177,9 @@ export default function ViewImmunization() {
     const fetchAllChild = async () => {
       try {
         const response = await axios.get(
-          `${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/viewbmitracking/${childId}`
+          `${
+            import.meta.env.VITE_REACT_APP_BACKEND_BASEURL
+          }/viewbmitracking/${childId}`
         );
         setChildDetails(response.data.childDetails[0]);
         setName(response.data.childDetails[0].name);
@@ -186,7 +193,9 @@ export default function ViewImmunization() {
         // console.log(response.data.childDetails[0]);
 
         const response1 = await axios.get(
-          `${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/getChildImmunization/${childId}`
+          `${
+            import.meta.env.VITE_REACT_APP_BACKEND_BASEURL
+          }/getChildImmunization/${childId}`
         );
 
         console.log(response1.data.BCGVaccine);
@@ -199,7 +208,9 @@ export default function ViewImmunization() {
         setMeaslesMumpsRubella(response1.data.MeaslesMumpsRubella);
 
         const response2 = await axios.get(
-          `${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/showRemarks/${childId}`
+          `${
+            import.meta.env.VITE_REACT_APP_BACKEND_BASEURL
+          }/showRemarks/${childId}`
         );
 
         setBCGVaccineRemarks(response2.data.BCGVaccine);
@@ -215,7 +226,9 @@ export default function ViewImmunization() {
       }
       try {
         const response = await axios.get(
-          `${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/prescribeMedicines/${childId}`
+          `${
+            import.meta.env.VITE_REACT_APP_BACKEND_BASEURL
+          }/prescribeMedicines/${childId}`
         );
         setMedicineTaken(response.data);
         prescribeUsingMedicines();
@@ -277,7 +290,9 @@ export default function ViewImmunization() {
   const childdDoseTaken = async (vaccine) => {
     try {
       const response = await axios.get(
-        `${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/dosesTaken/${childId}?vaccine=${vaccine}`
+        `${
+          import.meta.env.VITE_REACT_APP_BACKEND_BASEURL
+        }/dosesTaken/${childId}?vaccine=${vaccine}`
       );
       return response.data[0].dose_taken;
     } catch (error) {
@@ -395,7 +410,7 @@ export default function ViewImmunization() {
             )}
           </div>
           <div className="p-3 bg-white border-2 rounded-md">
-            {BCGVaccineRemarks.length === 1 ? "Vaccinated" : "On process"}
+            {BCGVaccineRemarks.length === 1 ? "Vaccinated" : "On-going"}
           </div>
           {/* ----- */}
 
@@ -425,9 +440,7 @@ export default function ViewImmunization() {
             )}
           </div>
           <div className="p-3 bg-white border-2 rounded-md ">
-            {HepatitisBVaccineRemarks.length === 1
-              ? "Vaccinated"
-              : "On process"}
+            {HepatitisBVaccineRemarks.length === 1 ? "Vaccinated" : "On-going"}
           </div>
           {/* ----- */}
 
@@ -475,7 +488,7 @@ export default function ViewImmunization() {
             </div>
           </div>
           <div className="p-3 bg-white border-2 rounded-md">
-            {PentavalentRemarks.length === 3 ? "Vaccinated" : "On process"}
+            {PentavalentRemarks.length === 3 ? "Vaccinated" : "On-going"}
           </div>
           {/* ----- */}
 
@@ -523,7 +536,7 @@ export default function ViewImmunization() {
             </div>
           </div>
           <div className="p-3 bg-white border-2 rounded-md">
-            {OralPolioVaccineRemarks.length === 3 ? "Vaccinated" : "On process"}
+            {OralPolioVaccineRemarks.length === 3 ? "Vaccinated" : "On-going"}
           </div>
           {/* ----- */}
 
@@ -564,7 +577,7 @@ export default function ViewImmunization() {
             </div>
           </div>
           <div className="p-3 bg-white border-2 rounded-md">
-            {InactivatedPolioRemarks.length === 2 ? "Vaccinated" : "On process"}
+            {InactivatedPolioRemarks.length === 2 ? "Vaccinated" : "On-going"}
           </div>
           {/* ----- */}
 
@@ -620,7 +633,7 @@ export default function ViewImmunization() {
           <div className="p-3 bg-white border-2 rounded-md">
             {PneumococcalConjugateRemarks.length === 3
               ? "Vaccinated"
-              : "On process"}
+              : "On-going"}
           </div>
           {/* ----- */}
 
@@ -667,7 +680,7 @@ export default function ViewImmunization() {
           <div className="p-3 bg-white border-2 rounded-md">
             {MeaslesMumpsRubellaRemarks.length === 2
               ? "Vaccinated"
-              : "On process"}
+              : "On-going"}
           </div>
           {/* ----- */}
         </div>

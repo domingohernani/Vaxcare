@@ -19,6 +19,13 @@ const db = mysql.createConnection({
   database: process.env.DB_NAME,
 });
 
+// const db = mysql.createConnection({
+//   host: "localhost",
+//   user: "root",
+//   password: "",
+//   database: "vaxcare",
+// });
+
 app.use(express.json());
 app.use(cors());
 
@@ -393,18 +400,12 @@ app.get("/viewbmitracking/:childId", async (req, res) => {
   const childId = req.params.childId;
 
   const childDetailsQ = `
-    SELECT 
+SELECT 
     child.child_id, 
     child.name, 
     child.address, 
     DATE_FORMAT(child.date_of_birth, '%M %d, %Y') AS date_of_birth, 
-    CONCAT(
-      IF(TIMESTAMPDIFF(DAY, child.date_of_birth, CURDATE()) <= 365, 
-        TIMESTAMPDIFF(MONTH, child.date_of_birth, CURDATE()), 
-        TIMESTAMPDIFF(YEAR, child.date_of_birth, CURDATE())
-      ), 
-      IF(TIMESTAMPDIFF(DAY, child.date_of_birth, CURDATE()) <= 365, ' month/s', ' year/s')
-    ) AS age, 
+    TIMESTAMPDIFF(MONTH, child.date_of_birth, CURDATE()) AS age, 
     child.sex, 
     child.status, 
     child.family_number, 
@@ -416,11 +417,11 @@ app.get("/viewbmitracking/:childId", async (req, res) => {
     mother.parent_id AS mother_id,  -- Added mother parent_id
     mother.name AS mother, 
     mother.phoneNo AS mother_phoneNo
-  FROM 
+FROM 
     child
-  LEFT JOIN parent AS father ON child.father_id = father.parent_id 
-  LEFT JOIN parent AS mother ON child.mother_id = mother.parent_id
-  WHERE 
+LEFT JOIN parent AS father ON child.father_id = father.parent_id 
+LEFT JOIN parent AS mother ON child.mother_id = mother.parent_id
+WHERE 
     child.child_id = ?;
   `;
 
