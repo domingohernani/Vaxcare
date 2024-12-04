@@ -412,55 +412,64 @@ export default function ViewImmunization() {
       </div>
 
       {/* Vaccine Table */}
-      <div className="grid grid-cols-4 p-4 text-sm font-semibold text-center bg-white rounded-md gap-x-4 gap-y-3">
-        <div className="p-3 text-white bg-gray-500 rounded-md">Vaccine</div>
-        <div className="p-3 text-white bg-gray-500 rounded-md">
-          Required Doses
+      <div className="p-4 bg-white rounded-md">
+        {/* Table Headers */}
+        <div className="grid grid-cols-6 gap-2 text-sm font-semibold text-center">
+          <div className="p-3 text-white bg-gray-500 rounded-md">Vaccines</div>
+          <div className="p-3 text-white bg-red-500 rounded-md">1st Dose</div>
+          <div className="p-3 text-white bg-yellow-500 rounded-md">
+            2nd Dose
+          </div>
+          <div className="p-3 text-white bg-green-500 rounded-md">3rd Dose</div>
+          <div className="p-3 text-white bg-blue-500 rounded-md">
+            4th Dose (Booster 1)
+          </div>
+          <div className="p-3 text-white bg-indigo-500 rounded-md">
+            5th Dose (Booster 2)
+          </div>
         </div>
-        <div className="p-3 text-white bg-gray-500 rounded-md">
-          Date Administered
-        </div>
-        <div className="p-3 text-white bg-gray-500 rounded-md">Remarks</div>
 
+        {/* Vaccine Rows */}
         {Object.keys(vaccines).length > 0 ? (
           Object.keys(vaccines).map((vaccineName) => (
-            <React.Fragment key={vaccineName}>
+            <div
+              key={vaccineName}
+              className="grid grid-cols-6 gap-2 mt-2 text-sm text-center"
+            >
+              {/* Vaccine Name */}
               <div className="p-3 bg-gray-100 rounded-md">{vaccineName}</div>
-              <div className="p-3 bg-gray-100 rounded-md">
-                {vaccines[vaccineName]?.dosesTaken} of{" "}
-                {vaccines[vaccineName]?.dosesRequired}
-              </div>
-              <div className="p-3 bg-gray-100 rounded-md">
-                {vaccines[vaccineName]?.administeredDates?.map(
-                  (date, index) => (
+
+              {/* Doses */}
+              {[...Array(5)].map((_, doseIndex) => (
+                <div key={doseIndex} className="p-3 bg-gray-100 rounded-md">
+                  {vaccines[vaccineName]?.administeredDates?.[doseIndex] ? (
                     <input
-                      key={index}
-                      type="date"
-                      value={new Date(date).toISOString().split("T")[0]}
+                      type="text"
+                      value={
+                        new Date(
+                          vaccines[vaccineName].administeredDates[doseIndex]
+                        )
+                          .toISOString()
+                          .split("T")[0]
+                      }
                       onChange={(e) =>
                         handleVaccineDateChange(
                           vaccineName,
-                          index,
+                          doseIndex,
                           e.target.value
                         )
                       }
-                      className="w-full text-center rounded-md"
+                      className="w-full h-full text-center border-none rounded-md"
                     />
-                  )
-                )}
-              </div>
-              <div className="p-3 bg-gray-100 rounded-md">
-                {vaccines[vaccineName]?.dosesTaken ===
-                vaccines[vaccineName]?.dosesRequired
-                  ? "Vaccinated"
-                  : "On-going"}
-              </div>
-            </React.Fragment>
+                  ) : (
+                    <span className="text-gray-400">On-going</span>
+                  )}
+                </div>
+              ))}
+            </div>
           ))
         ) : (
-          <div className="col-span-4 p-3 text-center">
-            No vaccine data available
-          </div>
+          <div className="mt-4 text-center">No vaccine data available</div>
         )}
       </div>
     </section>
