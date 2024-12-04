@@ -17,7 +17,9 @@ const ViewMessage = () => {
     const fetchParentName = async () => {
       try {
         const response = await axios.get(
-          `${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/getParentName/${parentID}`
+          `${
+            import.meta.env.VITE_REACT_APP_BACKEND_BASEURL
+          }/getParentName/${parentID}`
         );
         setParentName(response.data[0].name);
       } catch (error) {
@@ -33,7 +35,9 @@ const ViewMessage = () => {
     const fetchAllMessages = async () => {
       try {
         const response = await axios.get(
-          `${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/getAllMessages/${parentID}`
+          `${
+            import.meta.env.VITE_REACT_APP_BACKEND_BASEURL
+          }/getAllMessages/${parentID}`
         );
         setReminder(response.data);
       } catch (error) {
@@ -67,9 +71,12 @@ const ViewMessage = () => {
     };
 
     try {
-      const response = axios.post(`${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/message`, {
-        message,
-      });
+      const response = axios.post(
+        `${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/message`,
+        {
+          message,
+        }
+      );
       console.log(response);
       showSuccessAlert();
     } catch (error) {

@@ -14,7 +14,9 @@ export default function RemindersView() {
   useEffect(() => {
     const fetchAllReminder = async () => {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/allAccounts`);
+        const response = await axios.get(
+          `${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/allAccounts`
+        );
         console.log(response.data);
         setReminders(response.data);
       } catch (error) {
@@ -63,7 +65,10 @@ export default function RemindersView() {
   };
 
   return (
-    <div className="ag-theme-quartz" style={{ height: 600, width: "100%" }}>
+    <div
+      className="mb-20 ag-theme-quartz"
+      style={{ height: 600, width: "100%" }}
+    >
       <div className="flex items-center mb-4 justify-left">
         <h3 className="px-6 py-2 font-semibold bg-white rounded-lg">
           Reminder

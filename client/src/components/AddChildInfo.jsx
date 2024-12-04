@@ -153,7 +153,7 @@ export default function AddChildInfo() {
   };
 
   return (
-    <section className="w-9/12 mx-auto ">
+    <section className="w-9/12 h-screen mx-auto">
       <section className="p-3 text-center bg-white border border-C0076BE text-blue-950">
         <p className="text-3xl">Child Information Form</p>
         <p>Please provide the child's information below</p>

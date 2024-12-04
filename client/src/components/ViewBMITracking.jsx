@@ -451,7 +451,7 @@ export default function ViewBMITracking() {
         </div>
       </section>
 
-      <section className="flex items-center gap-4">
+      <section className="flex items-center gap-4 bg-primary pb-28">
         {/* BMI History Table */}
         <div className="ag-theme-quartz" style={{ height: 400, width: "100%" }}>
           <h3 className="my-2 font-semibold">BMI History</h3>
