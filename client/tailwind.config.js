@@ -16,6 +16,7 @@ export default {
         C869EAC: "#869EAC",
         C5FA9D6: "#5FA9D6",
         C2AA8F5: "#2AA8F5",
+        primary: "#FFBD59",
       },
     },
   },

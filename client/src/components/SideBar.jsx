@@ -75,7 +75,7 @@ export default function SideBar() {
   };
 
   return (
-    <section className="flex flex-col h-full gap-5 px-5 py-5 bg-white ">
+    <section className="flex flex-col h-full gap-5 px-5 py-5 bg-primary ">
       <NavLink to={"/dashboard"} className={sideBarLinkColor}>
         <div className="flex items-center gap-2 px-6 py-3 rounded-lg ">
           <img src={dashboard} alt="" className="h-6 w-7" />

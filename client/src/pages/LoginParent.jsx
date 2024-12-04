@@ -4,7 +4,7 @@ import Swal from "sweetalert2";
 import { Link, useNavigate } from "react-router-dom";
 import logo from "../assets/vaxcare_logo.png";
 import ParentNavigation from "../components/ParentNavigation";
-import loginImage from "../assets/loginassets/login-image.webp";
+import loginImage from "../assets/loginassets/login-image.png";
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
 
 const LoginParent = () => {
@@ -118,7 +118,7 @@ const LoginParent = () => {
   };
 
   return (
-    <div>
+    <div className="relative min-h-screen bg-primary">
       <div className="px-10 pt-4">
         <section className="flex items-center justify-between">
           <img src={logo} className="w-20 h-auto" />
@@ -134,7 +134,7 @@ const LoginParent = () => {
       </div>
       <div className="flex items-center justify-center px-4 py-20">
         <div className="grid items-center w-full max-w-6xl gap-4 md:grid-cols-2">
-          <div className="border border-gray-300 rounded-lg p-6 max-w-md shadow-[0_2px_22px_-4px_rgba(93,96,127,0.2)] max-md:mx-auto">
+          <div className="border bg-white z-10 rounded-lg p-6 max-w-md shadow-[0_2px_22px_-4px_rgba(93,96,127,0.2)] max-md:mx-auto">
             <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
               <div className="mb-8">
                 <h3 className="text-3xl font-extrabold text-gray-800">
@@ -200,7 +200,7 @@ const LoginParent = () => {
                 <button
                   type="button"
                   onClick={handleLogin}
-                  className="w-full px-4 py-3 text-sm tracking-wide text-white bg-blue-600 rounded-lg shadow-xl hover:bg-blue-700 focus:outline-none"
+                  className="w-full px-4 py-3 text-sm tracking-wide text-white rounded-lg shadow-xl bg-primary hover:bg-orange-400 focus:outline-none"
                 >
                   Log in
                 </button>
@@ -213,7 +213,7 @@ const LoginParent = () => {
             </form>
           </div>
 
-          <div className="lg:h-[400px] md:h-[300px] max-md:mt-8">
+          <div className="absolute bottom-0 hidden h-full md:block right-40 max-md:mt-8">
             <img
               src={loginImage}
               className="block object-cover w-full h-full mx-auto max-md:w-4/5"

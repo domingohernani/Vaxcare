@@ -27,13 +27,15 @@ export default function Login() {
     }
     console.log(username);
     console.log(password);
-    
 
     try {
-      const response = await axios.post(`${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/api/login`, {
-        username,
-        password,
-      });
+      const response = await axios.post(
+        `${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/api/login`,
+        {
+          username,
+          password,
+        }
+      );
 
       if (response.data.success) {
         localStorage.setItem("isLoggedIn", "true");
@@ -56,36 +58,29 @@ export default function Login() {
 
   return (
     <div className="absolute top-0 left-0 z-10 flex flex-col w-screen h-screen mx-auto bg-white">
-      <div className="mt-10">
+      {/* <div className="mt-10 bg-blue-300">
         <h3 className="mx-auto text-xl font-bold text-center">
           Barangay Child Health Center Immunization System
         </h3>
-      </div>
-      <div className="flex w-3/4 m-auto bg-white logInContainer h-3/4 max-w-7xl">
-        <div className="flex items-center justify-center w-5/6 h-full bg-opacity-30 bg-C2AA8F5">
-          <img
-            src={loginIllustration}
-            className="object-cover w-full h-full m-auto"
-          />
-        </div>
-        <div className="flex flex-col justify-center w-3/4 gap-5 px-12 py-10">
-          <h6 className="mx-auto mb-2 font-bold logo w-fit">
-            <img src={logo} className="h-auto w-28" />
-          </h6>
-          <h3 className="mx-auto text-xl text-center text-blue-800 loginHeader">
-            Please log in
-          </h3>
+      </div> */}
+      <h6 className="absolute font-bold logo left-5 top-5 w-fit">
+        <img src={logo} className="w-20 h-auto" />
+      </h6>
+      <div className="flex w-full h-screen m-auto logInContainer">
+        <div className="flex flex-col justify-center flex-1 w-3/4 gap-5 px-12 py-10 bg-white">
+          <h3 className="text-4xl font-semibold text-gray-800">Welcome!</h3>
+          <p>Pleae enter you details</p>
           <input
             type="text"
             placeholder="Username"
-            className="px-3 py-2 border-2 border-blue-800 rounded-3xl"
+            className="px-3 py-2 border-2 rounded-lg"
             onChange={(e) => setUsername(e.target.value)}
           />
           <div className="relative ">
             <input
               type={hidePassword ? "password" : "text"}
               placeholder="Password"
-              className="w-full px-3 py-2 border-2 border-blue-800 rounded-3xl"
+              className="w-full px-3 py-2 border-2 rounded-lg"
               onChange={(e) => setPassword(e.target.value)}
             />
             {hidePassword ? (
@@ -107,7 +102,7 @@ export default function Login() {
                 width="20"
                 viewBox="0 0 576 512"
                 fill="blue"
-                className="absolute cursor-pointer right-6 bottom-3"
+                className="absolute text-black cursor-pointer right-6 bottom-3"
                 onClick={() => setHidePassword(true)}
               >
                 <path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM144 256a144 144 0 1 1 288 0 144 144 0 1 1 -288 0zm144-64c0 35.3-28.7 64-64 64c-7.1 0-13.9-1.2-20.3-3.3c-5.5-1.8-11.9 1.6-11.7 7.4c.3 6.9 1.3 13.8 3.2 20.7c13.7 51.2 66.4 81.6 117.6 67.9s81.6-66.4 67.9-117.6c-11.1-41.5-47.8-69.4-88.6-71.1c-5.8-.2-9.2 6.1-7.4 11.7c2.1 6.4 3.3 13.2 3.3 20.3z" />
@@ -115,7 +110,7 @@ export default function Login() {
             )}
           </div>
           <button
-            className="w-2/5 py-1 mx-auto text-white bg-blue-700"
+            className="w-2/5 py-3 mx-auto text-white bg-primary"
             onClick={handleLogin}
           >
             Log In
@@ -125,6 +120,12 @@ export default function Login() {
               Login as Parent
             </Link>
           </div>
+        </div>
+        <div className="flex items-center justify-center flex-1 h-full bg-primary">
+          <img
+            src={loginIllustration}
+            className="object-contain w-full h-full m-auto"
+          />
         </div>
       </div>
     </div>

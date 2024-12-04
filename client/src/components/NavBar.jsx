@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import logo from "../assets/vaxcare_logo.png"
+import logo from "../assets/vaxcare_logo.png";
 
 export default function NavBar() {
   console.log("NavBar was rendered");
@@ -34,7 +34,7 @@ export default function NavBar() {
   };
 
   return (
-    <nav className="flex flex-row items-center px-8 py-3 bg-white border-b ">
+    <nav className="flex flex-row items-center px-8 py-3 border-b bg-primary ">
       <div className="w-1/6 logo">
         <img src={logo} alt="Vaxcare" className="w-16 h-2w-16" />
       </div>

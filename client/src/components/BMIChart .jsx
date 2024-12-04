@@ -13,7 +13,9 @@ const BMIChart = () => {
   useEffect(() => {
     const fetchBmi = async () => {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/getBmi`);
+        const response = await axios.get(
+          `${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/getBmi`
+        );
         const bmiData = response.data;
 
         // Reset state variables
@@ -89,9 +91,10 @@ const BMIChart = () => {
         config={{
           responsive: true,
           displayModeBar: false,
-          staticPlot: true, // Disable zooming and all interactions
+          staticPlot: true,
         }}
-        style={{ width: "95%", maxWidth: "100%" }}
+        style={{ width: "98%", maxWidth: "100%" }}
+        className="mx-auto rounded-lg bg-primary"
       />
     </div>
   );
