@@ -1829,6 +1829,30 @@ app.get("/getAllParents", (req, res) => {
   });
 });
 
+app.put("/updateStock/:vaccineId", (req, res) => {
+  const { vaccineId } = req.params;
+  const { stock } = req.body;
+
+  if (stock == null || isNaN(stock)) {
+    return res.status(400).json({ error: "Invalid stock value provided" });
+  }
+
+  const updateStockQuery = `UPDATE vaccine SET stock = ? WHERE vaccine_id = ?`;
+
+  db.query(updateStockQuery, [stock, vaccineId], (err, result) => {
+    if (err) {
+      console.error("Error updating stock: ", err);
+      return res.status(500).json({ error: "Database error" });
+    }
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ error: "Vaccine not found" });
+    }
+
+    res.status(200).json({ message: "Stock updated successfully" });
+  });
+});
+
 app.listen(8800, () => {
   console.log("Connected to backend");
 });

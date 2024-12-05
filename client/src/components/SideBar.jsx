@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import dashboard from "../assets/primaryIcon/chart-pie-alt.svg";
 import bmi from "../assets/primaryIcon/scale.svg";
@@ -15,6 +15,7 @@ const isAdmin = () => {
 
 export default function SideBar() {
   const location = useLocation();
+  const [isVaccinesExpanded, setIsVaccinesExpanded] = useState(false);
 
   const sideBarLinkColor = ({ isActive }) => {
     return isActive ? " rounded-lg bg-C0076BE" : "rounded-lg";
@@ -74,6 +75,10 @@ export default function SideBar() {
     }
   };
 
+  const toggleVaccinesMenu = () => {
+    setIsVaccinesExpanded(!isVaccinesExpanded);
+  };
+
   return (
     <section className="flex flex-col h-full gap-5 px-5 py-5 bg-primary ">
       <NavLink to={"/dashboard"} className={sideBarLinkColor}>
@@ -100,12 +105,47 @@ export default function SideBar() {
           <span className="font-medium text-black">Immunization</span>
         </div>
       </NavLink>
-      <NavLink to={"/vaccines"} className={sideBarLinkColor}>
-        <div className="flex items-center gap-2 px-6 py-3 rounded-lg">
+
+      {/* Expandable Vaccines Menu */}
+      <div>
+        <div
+          className="flex items-center gap-2 px-6 py-3 rounded-lg cursor-pointer"
+          onClick={toggleVaccinesMenu}
+        >
           <img src={medicine} alt="" className="w-6 h-6" />
           <span className="font-medium text-black">Vaccines</span>
+          <span className="ml-auto">
+            {isVaccinesExpanded ? "▲" : "▼"} {/* Arrow Icon */}
+          </span>
         </div>
-      </NavLink>
+
+        {/* Sub-menu for Vaccines */}
+        {isVaccinesExpanded && (
+          <div className="mt-2 ml-8 space-y-2">
+            <NavLink
+              to="/vaccines/listing"
+              className={({ isActive }) =>
+                isActive
+                  ? "flex items-center gap-2 px-6 py-3 hover:text-black rounded-lg bg-C0076BE text-black"
+                  : "flex items-center gap-2 px-6 py-3 hover:text-black rounded-lg text-black"
+              }
+            >
+              <span className="font-medium">Listing</span>
+            </NavLink>
+            <NavLink
+              to="/vaccines/inventory"
+              className={({ isActive }) =>
+                isActive
+                  ? "flex items-center gap-2 px-6 py-3 hover:text-black rounded-lg bg-C0076BE text-black"
+                  : "flex items-center gap-2 px-6 py-3 hover:text-black rounded-lg text-black"
+              }
+            >
+              <span className="font-medium">Inventory</span>
+            </NavLink>
+          </div>
+        )}
+      </div>
+
       <NavLink to={"/report"} className={sideBarLinkColor}>
         <div className="flex items-center gap-2 px-6 py-3 rounded-lg">
           <img src={report} alt="" className="w-6 h-6" />

@@ -26,14 +26,16 @@ import LoginParent from "./pages/LoginParent";
 import ImmunizationViewing from "./pages/ImmunizationViewing";
 import { Report } from "./pages/Report";
 import PublicViewing from "./pages/PublicViewing";
+import VaccinesInventory from "./pages/VaccinesInventory";
+import VaccinesListing from "./pages/VaccinesListing";
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
         {/* publicViewing outside of the main structure */}
-        
-        <Route path="/publicViewing" element={<PublicViewing/>} />
+
+        <Route path="/publicViewing" element={<PublicViewing />} />
         <Route path="/enterId" element={<EnterId />} />
         <Route path="/publicviewImmu/:childId" element={<PublicViewImmu />} />
         <Route path="/" element={<LoginParent />} />
@@ -86,7 +88,12 @@ function App() {
                       path="/addimmunization"
                       element={<AddImmunization />}
                     />
-                    <Route path="/vaccines" element={<Vaccines />} />
+                    <Route path="/vaccines" element={<Vaccines />}>
+                      {/* Nested routes for Vaccines */}
+                      <Route path="listing" element={<VaccinesListing />} />
+                      <Route path="inventory" element={<VaccinesInventory />} />
+                    </Route>
+
                     <Route path="/messages" element={<Reminders />} />
                     <Route path="/addMessage" element={<AddMessage />} />
                     <Route path="/remindersView" element={<RemindersView />} />
@@ -95,10 +102,7 @@ function App() {
                       element={<ViewMessage />}
                     />
 
-                    <Route
-                      path="/report"
-                      element={<Report />}
-                    />
+                    <Route path="/report" element={<Report />} />
                     {/* Manage Accounts */}
                     <Route
                       path="/manageaccounts"
