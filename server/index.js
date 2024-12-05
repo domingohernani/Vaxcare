@@ -1802,6 +1802,21 @@ app.get("/getAllChildOfParent", (req, res) => {
   });
 });
 
+app.get("/getChildBirthdate/:childID", async (req, res) => {
+  const childID = req.params.childID;
+
+  const query = `SELECT date_of_birth FROM child WHERE child_id = ?`;
+  db.query(query, [childID], (error, data) => {
+    if (error) {
+      return res.status(500).json({ error: "Internal Server Error" });
+    }
+    if (data.length === 0) {
+      return res.status(404).json({ error: "Child not found" });
+    }
+    return res.json({ birthdate: data[0].date_of_birth });
+  });
+});
+
 app.get("/getAllParents", (req, res) => {
   const query = `SELECT * FROM parent;`;
 

@@ -232,7 +232,7 @@ export default function ImmunizationTable({ childId }) {
               <div className="p-3 bg-gray-100 rounded-md">
                 {vaccines[vaccineName]?.administeredDates?.map(
                   (date, index) => (
-                    <p>{new Date(date).toISOString().split("T")[0]}</p>
+                    <p key={index}>{date.split("T")[0]}</p>
                   )
                 )}
               </div>

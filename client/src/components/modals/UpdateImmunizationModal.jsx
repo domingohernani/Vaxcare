@@ -3,19 +3,52 @@ import React, { useState, useEffect } from "react";
 import ReactDOM from "react-dom";
 import Swal from "sweetalert2";
 
+const vaccineSchedule = {
+  BCG: 0, // "At birth" (0 days after birthdate)
+  HepB: 0, // "At birth" (0 days after birthdate)
+  "Dpt-HIB-HepB": [45, 75, 105], // Days for 1 1/2 months, 2 1/2 months, 3 1/2 months
+  Opv: [45, 75, 105],
+  IPV: [105, 270], // Days for 3 1/2 months, 9 months
+  PCV: [45, 75, 105],
+  MCV: [270, 365], // Days for 9-11 months, 12 months
+  FIC: 365, // 12 months
+  CIC: 395, // More than 12 months
+};
+
+const calculateDate = (birthdate, daysOffset) => {
+  const date = new Date(birthdate);
+  date.setDate(date.getDate() + daysOffset);
+
+  const formattedYear = date.getFullYear();
+  const formattedMonth = String(date.getMonth() + 1).padStart(2, "0");
+  const formattedDay = String(date.getDate()).padStart(2, "0");
+
+  return `${formattedYear}-${formattedMonth}-${formattedDay}`;
+};
+
 export default function UpdateImmunizationModal({ onClose, childId }) {
-  const [selectedVaccine, setSelectedVaccine] = useState("BCG Vaccine");
-  const [date, setDate] = useState();
-  const [remarks, setRemarks] = useState("");
+  const [selectedVaccine, setSelectedVaccine] = useState("BCG");
+  const [date, setDate] = useState("");
   const [selectedVaccineId, setSelectedVaccineId] = useState("1");
-  const [doses, setDoses] = useState("");
   const [doseLeft, setDoseLeft] = useState(0);
-  const [doseMax, setDoseMax] = useState(0);
   const [doseTaken, setDoseTaken] = useState(0);
   const [vaccines, setVaccines] = useState([]);
+  const [birthdate, setBirthdate] = useState("");
 
   useEffect(() => {
-    // Fetch all vaccines when component mounts
+    const fetchChildBirthdate = async () => {
+      try {
+        const response = await axios.get(
+          `${
+            import.meta.env.VITE_REACT_APP_BACKEND_BASEURL
+          }/getChildBirthdate/${childId}`
+        );
+        setBirthdate(response.data.birthdate);
+      } catch (error) {
+        console.error("Error fetching birthdate:", error);
+      }
+    };
+
     const fetchVaccines = async () => {
       try {
         const response = await axios.get(
@@ -23,92 +56,104 @@ export default function UpdateImmunizationModal({ onClose, childId }) {
         );
         setVaccines(response.data);
       } catch (error) {
-        console.log("Error fetching vaccines:", error);
+        console.error("Error fetching vaccines:", error);
       }
     };
 
-    const fetchDate = async () => {
-      const vaccine = "BCG Vaccine";
+    const fetchDefaultDate = async () => {
+      if (!birthdate) return;
+
+      const vaccine = "BCG";
       try {
         const response = await axios.get(
           `${
             import.meta.env.VITE_REACT_APP_BACKEND_BASEURL
           }/dosesTaken/${childId}?vaccine=${vaccine}`
         );
-        console.log(response.data[0].dose_taken);
         setDoseLeft(response.data[0].dose_left);
-        setDoseMax(response.data[0].doses_required);
         setDoseTaken(response.data[0].dose_taken);
+
+        const schedule = vaccineSchedule[vaccine];
+        if (Array.isArray(schedule)) {
+          setDate(
+            calculateDate(birthdate, schedule[response.data[0].dose_taken])
+          ); // Use dose index
+        } else {
+          setDate(calculateDate(birthdate, schedule)); // Single dose vaccines
+        }
       } catch (error) {
-        console.log(error);
+        console.error(error);
       }
     };
 
+    fetchChildBirthdate();
     fetchVaccines();
-    fetchDate();
-  }, [childId]);
+    fetchDefaultDate();
+  }, [childId, birthdate]);
 
   const handleVaccineSelect = async (e) => {
-    setSelectedVaccine(e.target.value);
+    const vaccineName = e.target.value;
+    setSelectedVaccine(vaccineName);
+
     const selectedOption = e.target.options[e.target.selectedIndex];
     setSelectedVaccineId(selectedOption.dataset.info);
+
     try {
       const response = await axios.get(
         `${
           import.meta.env.VITE_REACT_APP_BACKEND_BASEURL
-        }/dosesTaken/${childId}?vaccine=${e.target.value}`
+        }/dosesTaken/${childId}?vaccine=${vaccineName}`
       );
-      console.log(response.data[0]);
       setDoseLeft(response.data[0].dose_left);
       setDoseTaken(response.data[0].dose_taken);
+
+      const schedule = vaccineSchedule[vaccineName];
+      if (Array.isArray(schedule)) {
+        setDate(
+          calculateDate(birthdate, schedule[response.data[0].dose_taken])
+        ); // Use dose index
+      } else {
+        setDate(calculateDate(birthdate, schedule)); // Single dose vaccines
+      }
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   };
 
   const appyUpdate = async () => {
-    let doseValid = doseLeft !== 0;
-
-    // console.log("Remarks:", doseVdaalid);
-    console.log("date: ", date === "");
-
-    if (
-      selectedVaccine.length === 0 ||
-      date === undefined ||
-      date === "" ||
-      !date ||
-      doseValid === false
-    ) {
+    if (!selectedVaccine || !date) {
       Swal.fire({
         icon: "error",
         title: "Oops!",
-        text: "It looks like there's an issue with the input. Please check and try again.",
+        text: "Please ensure all fields are filled correctly.",
       });
-    } else {
+      return;
+    }
+
+    try {
+      await axios.put(
+        `${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/updateImmunization`,
+        {
+          childId,
+          selectedVaccineId,
+          date,
+        }
+      );
+      Swal.fire({
+        icon: "success",
+        title: "Success!",
+        text: "Immunization record updated successfully.",
+      });
       onClose();
-      try {
-        const response = await axios.put(
-          `${
-            import.meta.env.VITE_REACT_APP_BACKEND_BASEURL
-          }/updateImmunization`,
-          {
-            childId,
-            selectedVaccineId,
-            date,
-            remarks,
-          }
-        );
-        window.location.reload();
-      } catch (error) {
-        console.log(error);
-      }
+      window.location.reload();
+    } catch (error) {
+      console.error("Error updating immunization:", error);
     }
   };
 
   const getMaxDate = () => {
     const currentDate = new Date();
-    const formattedMaxDate = currentDate.toISOString().split("T")[0];
-    return formattedMaxDate;
+    return currentDate.toISOString().split("T")[0];
   };
 
   return ReactDOM.createPortal(
@@ -136,9 +181,9 @@ export default function UpdateImmunizationModal({ onClose, childId }) {
           </select>
         </div>
 
-        <div className="flex gap-4">
+        <div className="flex gap-4 mt-4">
           <div className="flex-1">
-            <label>Date: </label>
+            <label>Date: (dd/mm/yyyy)</label>
             <input
               type="date"
               className="w-full px-2 py-3 border-2 rounded-lg"
@@ -149,29 +194,26 @@ export default function UpdateImmunizationModal({ onClose, childId }) {
           </div>
           <div className="flex flex-col items-center flex-1">
             <label>Dose Taken: </label>
-            {doseLeft !== 0 ? (
-              <span className="mt-2 text-center">{doseTaken}</span>
-            ) : (
-              <span className="mt-2 text-center">
-                Required Doses Have Been Reached
-              </span>
-            )}
+            <span className="mt-2 text-center">{doseTaken}</span>
           </div>
         </div>
 
-        <div className="flex items-center justify-end gap-3 mt-3">
+        <div className="flex items-center justify-end gap-3 mt-6">
           <button
             onClick={onClose}
-            className="bg-white border-2 border-C0D3E5A text-C0D3E5A"
+            className="px-4 py-2 text-gray-600 bg-white border-2 border-gray-300 rounded-lg"
           >
             Close
           </button>
-          <button onClick={appyUpdate} className="text-white">
+          <button
+            onClick={appyUpdate}
+            className="px-4 py-2 text-white bg-blue-600 rounded-lg"
+          >
             Update
           </button>
         </div>
       </div>
     </div>,
-    updateImmuModal
+    document.getElementById("updateImmuModal")
   );
 }
