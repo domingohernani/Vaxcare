@@ -189,12 +189,26 @@ export default function UpdateImmunizationModal({ onClose, childId }) {
               className="w-full px-2 py-3 border-2 rounded-lg"
               value={date}
               max={getMaxDate()}
+              min={
+                doseTaken === 0
+                  ? calculateDate(birthdate, 0)
+                  : calculateDate(
+                      birthdate,
+                      vaccineSchedule[selectedVaccine][doseTaken - 1]
+                    )
+              }
               onChange={(e) => setDate(e.target.value)}
             />
           </div>
           <div className="flex flex-col items-center flex-1">
             <label>Dose Taken: </label>
-            <span className="mt-2 text-center">{doseTaken}</span>
+            {doseLeft !== 0 ? (
+              <span className="mt-2 text-center">{doseTaken}</span>
+            ) : (
+              <span className="mt-2 text-center">
+                Recommended Doses Have Been Reached
+              </span>
+            )}
           </div>
         </div>
 
