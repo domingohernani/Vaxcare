@@ -6,7 +6,7 @@
   /* font-family: 'Inter', sans-serif; */
   /* font-family: "Poppins", sans-serif; */
   /* font-family: 'Syne', sans-serif; */
-  font-family: 'Montserrat', sans-serif;
+  font-family: "Montserrat", sans-serif;
   /* font-family: 'Be Vietnam Pro', sans-serif; */
   font-size: 0.84rem;
   line-height: 1.5;
@@ -113,12 +113,6 @@ textarea {
 }
 .logoPublic {
   font-size: 3rem;
-}
-
-.reminderScreen {
-  height: 36rem;
-  position: fixed;
-  width: 80vw;
 }
 
 .bg {

@@ -1,10 +1,13 @@
 import express from "express";
 import mysql from "mysql";
 import cors from "cors";
+import dotenv from "dotenv";
+dotenv.config();
 
 import twilio from "twilio";
 import bodyParser from "body-parser";
 const { MessagingResponse } = twilio.twiml;
+import axios from "axios";
 
 const app = express();
 
@@ -37,18 +40,31 @@ app.use(cors());
 //   })
 // );
 
-app.post("/message", (req, res) => {
-  const { message } = req.body;
+app.post("/message", async (req, res) => {
+  const { message, recipient } = req.body;
 
-  client.messages
-    .create({
-      body: message,
-      from: "+12058756787",
-      to: "+639457099101",
-    })
-    .then((message) => console.log(message.sid))
-    .done();
-  res.send("Message sent successfully");
+  if (!message || !recipient) {
+    return res
+      .status(400)
+      .json({ error: "Message and recipient are required" });
+  }
+
+  try {
+    const response = await axios.post(process.env.SMS_API_URL, {
+      apikey: process.env.SMS_API_KEY,
+      message,
+      number: recipient,
+    });
+
+    console.log("SMS Response:", response.data);
+    return res.status(200).json({ success: true, data: response.data });
+  } catch (error) {
+    console.error("Error sending SMS:", error.response?.data || error.message);
+    return res.status(500).json({
+      success: false,
+      error: error.response?.data?.error || "Failed to send SMS.",
+    });
+  }
 });
 
 app.get("/", (req, res) => {
@@ -1272,7 +1288,7 @@ app.get("/getChildId/:name", (req, res) => {
 
 app.put("/insertReminder", async (req, res) => {
   try {
-    const { message, currentDate, parentID, childID } = req.body;
+    const { message, currentDate, parentID } = req.body;
 
     const query = `
       INSERT INTO reminder (message, dateSend, parent_id, child_id) VALUES (?, ?, ?, ?)
@@ -1289,14 +1305,10 @@ app.put("/insertReminder", async (req, res) => {
       "0"
     )}-${day.padStart(2, "0")} ${hour}:${minute}:00`;
 
-    console.log(
-      `Message ${message}: Date: ${formattedDateString} ParentID: ${parentID} ChildID: ${childID}`
-    );
-
     const results = await new Promise((resolve, reject) => {
       db.query(
         query,
-        [message, formattedDateString, parentID, childID],
+        [message, formattedDateString, parentID, parentID],
         (error, results) => {
           if (error) {
             console.error("Error inserting reminder:", error);
@@ -1520,7 +1532,7 @@ WHERE r.parent_id = ?`;
 app.get("/getParentName/:parentID", async (req, res) => {
   const parentID = req.params.parentID;
 
-  const query = `SELECT name FROM parent WHERE parent_id = ?`;
+  const query = `SELECT name, phoneNo FROM parent WHERE parent_id = ?`;
   db.query(query, parentID, (error, data) => {
     if (error) {
       return res.status(500).json({ error: "Internal Server Error" });

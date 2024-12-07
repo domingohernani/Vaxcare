@@ -1,15 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import axios from "axios";
 import Swal from "sweetalert2";
 import empty from "../assets/empty.png";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const ViewMessage = () => {
   const { parentID } = useParams();
   const [reminder, setReminder] = useState([]);
   const [message, setMessage] = useState("");
   const [parentName, setParentName] = useState("");
+  const [parentNumber, setParentNumber] = useState("");
   const navigate = useNavigate();
 
   // Fetch the parent's name separately
@@ -22,6 +23,7 @@ const ViewMessage = () => {
           }/getParentName/${parentID}`
         );
         setParentName(response.data[0].name);
+        setParentNumber(response.data[0].phoneNo);
       } catch (error) {
         console.error("Error fetching parent name:", error);
       }
@@ -71,10 +73,11 @@ const ViewMessage = () => {
     };
 
     try {
-      const response = axios.post(
+      const response = await axios.post(
         `${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/message`,
         {
           message,
+          recipient: parentNumber,
         }
       );
       console.log(response);
@@ -121,10 +124,7 @@ const ViewMessage = () => {
   };
 
   return (
-    <section
-      className="relative z-40 flex flex-col px-3 overflow-y-auto rounded-md reminderScreen"
-      style={{ height: "600px" }}
-    >
+    <section className="relative !bg-white h-screen w-full flex flex-col px-3 overflow-y-auto rounded-md">
       <div className="flex items-center w-full gap-3 ">
         <div
           className="w-10 h-10 p-1 cursor-pointer"
@@ -173,7 +173,7 @@ const ViewMessage = () => {
           ))
         )}
       </div>
-      <div className="flex items-center justify-center w-full gap-3 bg-white bottom-3 textInputMessage">
+      <div className="flex items-center justify-center w-full gap-3 px-5 mb-5 bottom-3 textInputMessage">
         <input
           type="text "
           className="w-full px-3 py-3 bg-white border rounded-lg"
