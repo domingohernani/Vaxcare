@@ -121,14 +121,24 @@ export default function UpdateImmunizationModal({ onClose, childId }) {
   };
 
   const appyUpdate = async () => {
-    if (!selectedVaccine || !date) {
+    const isOutOfStock =
+      vaccines.find(
+        (vaccine) => vaccine.vaccine_id === parseInt(selectedVaccineId, 10)
+      )?.stock === 0;
+
+    if (isOutOfStock) {
       Swal.fire({
         icon: "error",
-        title: "Oops!",
-        text: "Please ensure all fields are filled correctly.",
+        title: "Out of Stock",
+        text: "This vaccine is currently out of stock. Please restock before proceeding.",
+        confirmButtonText: "OK",
       });
       return;
     }
+
+    const vaccine = vaccines.find(
+      (vaccine) => vaccine.vaccine_id == parseInt(selectedVaccineId, 10)
+    );
 
     try {
       await axios.put(
@@ -139,11 +149,12 @@ export default function UpdateImmunizationModal({ onClose, childId }) {
           date,
         }
       );
-      Swal.fire({
-        icon: "success",
-        title: "Success!",
-        text: "Immunization record updated successfully.",
-      });
+      await axios.put(
+        `${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/updateStock/${
+          vaccine.vaccine_id
+        }`,
+        { stock: vaccine.stock - 1 }
+      );
       onClose();
       window.location.reload();
     } catch (error) {
@@ -181,6 +192,15 @@ export default function UpdateImmunizationModal({ onClose, childId }) {
           </select>
         </div>
 
+        <div className="mt-4">
+          <span>
+            Stock:{" "}
+            {vaccines.find(
+              (vaccine) =>
+                vaccine.vaccine_id === parseInt(selectedVaccineId, 10)
+            )?.stock ?? 0}
+          </span>
+        </div>
         <div className="flex gap-4 mt-4">
           <div className="flex-1">
             <label>Date: (dd/mm/yyyy)</label>
