@@ -1829,6 +1829,37 @@ app.get("/getAllParents", (req, res) => {
   });
 });
 
+app.get("/getVaccinationData", (req, res) => {
+  const query = `
+    SELECT 
+      v.vaccine_id,
+      v.name AS vaccine_name,
+      v.doses_required,
+      v.stock,
+      v.recommended_schedule,
+      vc.vaccinaction_id,
+      vc.child_id,
+      vc.date_administered,
+      vc.remarks
+    FROM 
+      vaccine v
+    LEFT JOIN 
+      vaccinations vc
+    ON 
+      v.vaccine_id = vc.vaccine_id
+    ORDER BY 
+      vc.date_administered DESC;
+  `;
+
+  db.query(query, (err, data) => {
+    if (err) {
+      console.error("Error executing the query:", err);
+      return res.status(500).json({ error: "Internal Server Error" });
+    }
+    return res.json(data);
+  });
+});
+
 app.put("/updateStock/:vaccineId", (req, res) => {
   const { vaccineId } = req.params;
   const { stock } = req.body;

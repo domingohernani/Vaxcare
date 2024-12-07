@@ -3,6 +3,7 @@ import WelcomeIllustration from "../assets/dashboardassets/welcomeillustration.s
 import baby from "../assets/baby.png";
 import axios from "axios";
 import BMIChart from "../components/BMIChart ";
+import AdministeredVaccinesChart from "../components/AdministeredVaccinesChart";
 
 export default function Dashboard() {
   const [actives, setActives] = useState(0);
@@ -59,7 +60,7 @@ export default function Dashboard() {
   }, []);
 
   return (
-    <main className="bg-primary">
+    <main className="!bg-primary">
       <div className="flex gap-5 mb-5">
         <div
           className="flex flex-1 rounded-lg"
@@ -105,9 +106,14 @@ export default function Dashboard() {
           <p>Total number of children with complete immunization</p>
         </div>
       </div>
-      <div className="w-full">
-        <BMIChart />
-      </div>
+      <section className="flex gap-6 bg-primary">
+        <section className="flex-1">
+          <BMIChart />
+        </section>
+        <section className="flex-1">
+          <AdministeredVaccinesChart />
+        </section>
+      </section>
     </main>
   );
 }

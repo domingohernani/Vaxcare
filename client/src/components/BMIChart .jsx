@@ -58,6 +58,10 @@ const BMIChart = () => {
                 "rgb(248 113 113)",
                 "#183A37",
               ],
+              line: {
+                color: "white", // Border color to simulate rounded corners
+                width: 2, // Border width
+              },
             },
           },
         ];
@@ -71,6 +75,8 @@ const BMIChart = () => {
               color: "black",
             },
           },
+          paper_bgcolor: "white",
+          plot_bgcolor: "white",
         };
 
         setData(chartData);
@@ -81,22 +87,19 @@ const BMIChart = () => {
     };
 
     fetchBmi();
-  }, [underweight, normal, overweight, obese]); // Include state variables in the dependency array
+  }, [underweight, normal, overweight, obese]);
 
   return (
-    <div className="rounded-md">
-      <Plot
-        data={data}
-        layout={layout}
-        config={{
-          responsive: true,
-          displayModeBar: false,
-          staticPlot: true,
-        }}
-        style={{ width: "98%", maxWidth: "100%" }}
-        className="mx-auto rounded-lg bg-primary"
-      />
-    </div>
+    <Plot
+      data={data}
+      layout={layout}
+      config={{
+        responsive: true,
+        displayModeBar: false,
+        staticPlot: true,
+      }}
+      style={{ width: "100%" }}
+    />
   );
 };
 
