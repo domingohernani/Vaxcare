@@ -1896,6 +1896,162 @@ app.put("/updateStock/:vaccineId", (req, res) => {
   });
 });
 
+app.get("/getScheduledVaccinations", (req, res) => {
+  const currentDate = new Date();
+
+  const query = `
+    SELECT 
+      c.child_id,
+      c.name AS child_name,
+      c.date_of_birth,
+      v.name AS vaccine_name,
+      v.vaccine_id,
+      v.doses_required
+    FROM 
+      child c
+    CROSS JOIN
+      vaccine v
+  `;
+
+  db.query(query, (err, data) => {
+    if (err) {
+      console.error("Error executing the query:", err);
+      return res.status(500).json({ error: "Internal Server Error" });
+    }
+
+    const vaccineSchedule = {
+      BCG: 0,
+      HepB: 0,
+      "Dpt-HIB-HepB": [45, 75, 105],
+      Opv: [45, 75, 105],
+      IPV: [105, 270],
+      PCV: [45, 75, 105],
+      MCV: [270, 365],
+      FIC: 365,
+      CIC: 395,
+    };
+
+    const scheduledVaccinations = [];
+
+    data.forEach((row) => {
+      const birthDate = new Date(row.date_of_birth);
+      const ageInDays = Math.floor(
+        (currentDate - birthDate) / (1000 * 60 * 60 * 24)
+      );
+
+      // Check if the vaccine is due today based on the schedule
+      const schedule = vaccineSchedule[row.vaccine_name];
+      if (Array.isArray(schedule)) {
+        if (schedule.includes(ageInDays)) {
+          scheduledVaccinations.push({
+            child_id: row.child_id,
+            child_name: row.child_name,
+            vaccine_id: row.vaccine_id,
+            vaccine_name: row.vaccine_name,
+            date_scheduled: currentDate.toISOString().split("T")[0],
+          });
+        }
+      } else if (schedule === ageInDays) {
+        scheduledVaccinations.push({
+          child_id: row.child_id,
+          child_name: row.child_name,
+          vaccine_id: row.vaccine_id,
+          vaccine_name: row.vaccine_name,
+          date_scheduled: currentDate.toISOString().split("T")[0],
+        });
+      }
+    });
+
+    return res.json(scheduledVaccinations);
+  });
+});
+
+app.get("/getCompletedVaccinations", (req, res) => {
+  const query = `
+    SELECT 
+        vc.vaccinaction_id,
+        vc.child_id,
+        c.name AS child_name,
+        vc.vaccine_id,
+        v.name AS vaccine_name,
+        vc.date_administered,
+        vc.remarks
+    FROM 
+        vaccinations vc
+    JOIN 
+        child c ON vc.child_id = c.child_id
+    JOIN 
+        vaccine v ON vc.vaccine_id = v.vaccine_id
+    WHERE 
+        vc.date_administered = CURDATE();
+  `;
+
+  db.query(query, (err, data) => {
+    if (err) {
+      console.error("Error executing the query:", err);
+      return res.status(500).json({ error: "Internal Server Error" });
+    }
+    return res.json(data);
+  });
+});
+app.get("/getCompletedVaccinations", (req, res) => {
+  const query = `
+    SELECT 
+        vc.vaccinaction_id,
+        vc.child_id,
+        c.name AS child_name,
+        vc.vaccine_id,
+        v.name AS vaccine_name,
+        vc.date_administered,
+        vc.remarks
+    FROM 
+        vaccinations vc
+    JOIN 
+        child c ON vc.child_id = c.child_id
+    JOIN 
+        vaccine v ON vc.vaccine_id = v.vaccine_id
+    WHERE 
+        vc.date_administered = CURDATE();
+  `;
+
+  db.query(query, (err, data) => {
+    if (err) {
+      console.error("Error executing the query:", err);
+      return res.status(500).json({ error: "Internal Server Error" });
+    }
+    return res.json(data);
+  });
+});
+
+app.get("/getAllCompletedVaccinations", (req, res) => {
+  const query = `
+    SELECT 
+        vc.vaccinaction_id,
+        vc.child_id,
+        c.name AS child_name,
+        vc.vaccine_id,
+        v.name AS vaccine_name,
+        vc.date_administered,
+        vc.remarks
+    FROM 
+        vaccinations vc
+    JOIN 
+        child c ON vc.child_id = c.child_id
+    JOIN 
+        vaccine v ON vc.vaccine_id = v.vaccine_id
+    ORDER BY 
+        vc.date_administered DESC;
+  `;
+
+  db.query(query, (err, data) => {
+    if (err) {
+      console.error("Error executing the query:", err);
+      return res.status(500).json({ error: "Internal Server Error" });
+    }
+    return res.json(data);
+  });
+});
+
 app.listen(8800, () => {
   console.log("Connected to backend");
 });

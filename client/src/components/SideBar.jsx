@@ -146,7 +146,7 @@ export default function SideBar() {
         )}
       </div>
 
-      <NavLink to={"/report"} className={sideBarLinkColor}>
+      <NavLink to={"/report/summary"} className={sideBarLinkColor}>
         <div className="flex items-center gap-2 px-6 py-3 rounded-lg">
           <img src={report} alt="" className="w-6 h-6" />
           <span className="font-medium text-black">Report</span>

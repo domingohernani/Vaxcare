@@ -28,6 +28,9 @@ import { Report } from "./pages/Report";
 import PublicViewing from "./pages/PublicViewing";
 import VaccinesInventory from "./pages/VaccinesInventory";
 import VaccinesListing from "./pages/VaccinesListing";
+import { Every20Days } from "./components/Every20Days";
+import ScheduledCompletedVaccination from "./components/ScheduledCompletedVaccination";
+import VaccinationsSummary from "./components/VaccinationsSummary";
 
 function App() {
   return (
@@ -102,7 +105,21 @@ function App() {
                       element={<ViewMessage />}
                     />
 
-                    <Route path="/report" element={<Report />} />
+                    <Route path="/report" element={<Report />}>
+                      <Route
+                        index
+                        path="summary"
+                        element={<VaccinationsSummary />}
+                      />
+                      <Route
+                        path="every-twenty-days"
+                        element={<Every20Days />}
+                      />
+                      <Route
+                        path="completed-and-completed-immunization"
+                        element={<ScheduledCompletedVaccination />}
+                      />
+                    </Route>
                     {/* Manage Accounts */}
                     <Route
                       path="/manageaccounts"

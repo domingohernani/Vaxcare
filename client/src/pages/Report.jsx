@@ -1,153 +1,78 @@
-import React, { useEffect, useState, useRef } from "react";
-import axios from "axios";
-import { AgGridReact } from "@ag-grid-community/react";
-import { ClientSideRowModelModule } from "@ag-grid-community/client-side-row-model";
-import { CsvExportModule } from "@ag-grid-community/csv-export";
-import { ModuleRegistry } from "@ag-grid-community/core";
-import {
-  ArrowDownOnSquareStackIcon,
-  EyeIcon,
-  EyeSlashIcon,
-} from "@heroicons/react/24/outline";
-import "ag-grid-community/styles/ag-grid.css";
-import "ag-grid-community/styles/ag-theme-quartz.css";
-
-ModuleRegistry.registerModules([ClientSideRowModelModule, CsvExportModule]);
+import React, { useEffect } from "react";
+import { useNavigate, Outlet, useLocation } from "react-router-dom";
 
 export const Report = () => {
-  const [vaccinationData, setVaccinationData] = useState([]);
-  const [csvContent, setCsvContent] = useState("");
-  const [toggleShowCSV, setToggleShowCSV] = useState(false);
-  const [reportTitle, setReportTitle] = useState("");
-  const gridRef = useRef();
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  // Determine the active tab based on the current URL
+  const activeTab = location.pathname.includes(
+    "completed-and-completed-immunization"
+  )
+    ? "completed-and-completed-immunization"
+    : location.pathname.includes("every-twenty-days")
+    ? "every-twenty-days"
+    : "summary";
 
   useEffect(() => {
-    const fetchVaccinationData = async () => {
-      try {
-        const { data } = await axios.get(
-          `${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/getVaccinatedCounts`
-        );
-        const transformedData = Object.entries(data).map(
-          ([vaccineName, counts]) => ({
-            vaccine_name: vaccineName,
-            male: counts.male,
-            female: counts.female,
-          })
-        );
-        setVaccinationData(transformedData);
-      } catch (error) {
-        console.log("Error fetching vaccination data:", error);
-      }
-    };
-
-    fetchVaccinationData();
-  }, []);
-
-  useEffect(() => {
-    const today = new Date();
-    const month = today.toLocaleString("default", { month: "long" });
-    const year = today.getFullYear();
-    setReportTitle(`Vaccination Report (1st to 20th of ${month} ${year})`);
-  }, []);
-
-  const columnDefs = [
-    {
-      headerName: "Vaccine Name",
-      field: "vaccine_name",
-      flex: 1,
-      sortable: true,
-      filter: true,
-    },
-    {
-      headerName: "Male Vaccinated",
-      field: "male",
-      flex: 1,
-      sortable: true,
-      filter: true,
-    },
-    {
-      headerName: "Female Vaccinated",
-      field: "female",
-      flex: 1,
-      sortable: true,
-      filter: true,
-    },
-  ];
-
-  const defaultColDef = {
-    filter: true,
-    sortable: true,
-    floatingFilter: true,
-  };
-
-  const handleExport = () => {
-    gridRef.current.api.exportDataAsCsv();
-  };
-
-  const handleToggleCsvContent = () => {
-    if (toggleShowCSV) {
-      setCsvContent("");
-      setToggleShowCSV(false);
-    } else {
-      const csvData = gridRef.current.api.getDataAsCsv();
-      setCsvContent(csvData);
-      setToggleShowCSV(true);
+    // Redirect to default tab if no sub-route is specified
+    if (location.pathname === "/report") {
+      navigate("/report/summary");
     }
-  };
+  }, [location.pathname, navigate]);
 
   return (
-    <section>
-      <div className="flex items-center justify-between mb-2">
-        <h3 className="px-6 py-2 font-semibold bg-white rounded-lg">
-          {reportTitle}
-        </h3>
-        <div className="flex items-center gap-4">
-          <button
-            onClick={handleToggleCsvContent}
-            className="flex items-center justify-center gap-2 px-4 py-4 text-black bg-gray-200 border rounded-none"
-          >
-            {toggleShowCSV ? (
-              <>
-                <EyeSlashIcon className="w-5 h-5 text-black" />
-                <span>Hide CSV</span>
-              </>
-            ) : (
-              <>
-                <EyeIcon className="w-5 h-5 text-black" />
-                <span>Show CSV</span>
-              </>
-            )}
-          </button>
-          <button
-            onClick={handleExport}
-            className="flex items-center justify-center gap-2 px-4 py-4 text-white rounded-none"
-          >
-            <ArrowDownOnSquareStackIcon className="w-5 h-5 text-white" />
-            <span>Download CSV</span>
-          </button>
-        </div>
+    <section className="px-5 pt-2">
+      <div className="mb-4 border-gray-200">
+        <ul
+          className="flex flex-wrap -mb-px text-sm text-center"
+          role="tablist"
+        >
+          <li className="me-2">
+            <button
+              onClick={() => navigate("/report/summary")}
+              className={`inline-block p-4 rounded-none font-medium bg-transparent border-b-2 ${
+                activeTab === "summary"
+                  ? "border-b-black text-black"
+                  : "border-transparent text-black"
+              }`}
+            >
+              Summary
+            </button>
+          </li>
+          <li className="me-2">
+            <button
+              onClick={() => navigate("/report/every-twenty-days")}
+              className={`inline-block p-4 rounded-none font-medium bg-transparent border-b-2 ${
+                activeTab === "every-twenty-days"
+                  ? "border-b-black text-black"
+                  : "border-transparent text-black"
+              }`}
+            >
+              Every 20 Days
+            </button>
+          </li>
+          <li className="me-2">
+            <button
+              onClick={() =>
+                navigate("/report/completed-and-completed-immunization")
+              }
+              className={`inline-block p-4 rounded-none font-medium bg-transparent border-b-2 ${
+                activeTab === "completed-and-completed-immunization"
+                  ? "border-b-black text-black"
+                  : "border-transparent text-black"
+              }`}
+            >
+              Scheduled and Completed Immunization
+            </button>
+          </li>
+        </ul>
       </div>
-      <div className="ag-theme-quartz" style={{ height: 600, width: "100%" }}>
-        <AgGridReact
-          ref={gridRef}
-          rowData={vaccinationData}
-          columnDefs={columnDefs}
-          defaultColDef={defaultColDef}
-          pagination={true}
-          paginationPageSize={10}
-          paginationPageSizeSelector={[10, 25, 50]}
-        />
+
+      {/* Render nested route content */}
+      <div className="mt-4">
+        <Outlet />
       </div>
-      {toggleShowCSV && (
-        <div className="mt-4">
-          <textarea
-            value={csvContent}
-            readOnly
-            placeholder="CSV content will appear here when you click 'Show CSV'"
-            className="h-40 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg w-full p-2.5"
-          />
-        </div>
-      )}
     </section>
   );
 };
