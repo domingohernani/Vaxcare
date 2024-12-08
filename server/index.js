@@ -1107,26 +1107,41 @@ app.get("/administeredVaccines", (req, res) => {
 
 app.get("/getVaccinatedCounts", (req, res) => {
   const query = `
-  SELECT 
-  v.vaccine_id, 
-  v.name AS vaccine_name, 
-  c.sex, 
-  COUNT(DISTINCT vc.child_id) AS total_vaccinated  -- Count unique child IDs per vaccine
-FROM 
-  vaccine AS v
-LEFT JOIN 
-  vaccinations AS vc ON v.vaccine_id = vc.vaccine_id 
-  AND DAY(vc.date_administered) BETWEEN 1 AND 20
-  AND MONTH(vc.date_administered) = MONTH(CURDATE())
-  AND YEAR(vc.date_administered) = YEAR(CURDATE())
-LEFT JOIN 
-  child AS c ON vc.child_id = c.child_id
-WHERE 
-  v.is_deleted = 0
-GROUP BY 
-  v.vaccine_id, v.name, c.sex
-ORDER BY 
-  v.vaccine_id;
+    WITH interval_dates AS (
+      SELECT
+        CASE
+          WHEN DAY(CURDATE()) <= 20 THEN
+            DATE_FORMAT(DATE_SUB(CURDATE(), INTERVAL DAY(CURDATE()) - 1 DAY), '%Y-%m-%d') -- Start of the interval (1st of the month)
+          ELSE
+            DATE_FORMAT(DATE_ADD(LAST_DAY(CURDATE() - INTERVAL 1 MONTH), INTERVAL 1 DAY), '%Y-%m-%d') -- Start of interval if > 20th
+        END AS interval_start,
+        CASE
+          WHEN DAY(CURDATE()) <= 20 THEN
+            DATE_FORMAT(DATE_ADD(DATE_SUB(CURDATE(), INTERVAL DAY(CURDATE()) - 1 DAY), INTERVAL 19 DAY), '%Y-%m-%d') -- End of interval (20th of the month)
+          ELSE
+            DATE_FORMAT(DATE_ADD(LAST_DAY(CURDATE() - INTERVAL 1 MONTH), INTERVAL 20 DAY), '%Y-%m-%d') -- End of interval if > 20th
+        END AS interval_end
+    )
+    SELECT 
+      v.vaccine_id, 
+      v.name AS vaccine_name, 
+      COALESCE(c.sex, 'Unknown') AS sex, 
+      COUNT(DISTINCT vc.child_id) AS total_vaccinated
+    FROM 
+      vaccine AS v
+    LEFT JOIN 
+      interval_dates ON TRUE
+    LEFT JOIN 
+      vaccinations AS vc ON v.vaccine_id = vc.vaccine_id 
+      AND vc.date_administered BETWEEN interval_dates.interval_start AND interval_dates.interval_end
+    LEFT JOIN 
+      child AS c ON vc.child_id = c.child_id
+    WHERE 
+      v.is_deleted = 0
+    GROUP BY 
+      v.vaccine_id, v.name, c.sex
+    ORDER BY 
+      v.vaccine_id;
   `;
 
   db.query(query, (err, data) => {
@@ -1966,7 +1981,7 @@ app.get("/getScheduledVaccinations", (req, res) => {
   });
 });
 
-app.get("/getCompletedVaccinations", (req, res) => {
+app.get("/getAllVaccinations", (req, res) => {
   const query = `
     SELECT 
         vc.vaccinaction_id,
@@ -1974,16 +1989,14 @@ app.get("/getCompletedVaccinations", (req, res) => {
         c.name AS child_name,
         vc.vaccine_id,
         v.name AS vaccine_name,
-        vc.date_administered,
+        DATE_FORMAT(vc.date_administered, '%Y-%m-%d') AS date_administered, 
         vc.remarks
     FROM 
         vaccinations vc
     JOIN 
         child c ON vc.child_id = c.child_id
     JOIN 
-        vaccine v ON vc.vaccine_id = v.vaccine_id
-    WHERE 
-        vc.date_administered = CURDATE();
+        vaccine v ON vc.vaccine_id = v.vaccine_id;
   `;
 
   db.query(query, (err, data) => {
@@ -1994,6 +2007,7 @@ app.get("/getCompletedVaccinations", (req, res) => {
     return res.json(data);
   });
 });
+
 app.get("/getCompletedVaccinations", (req, res) => {
   const query = `
     SELECT 

@@ -152,14 +152,24 @@ const ScheduledCompletedVaccination = () => {
     <section>
       {/* Scheduled Vaccinations Table */}
       <div className="mb-6">
-        <div className="flex items-center justify-between mb-2">
-          <h3 className="px-6 py-2 font-semibold bg-white rounded-lg">
-            Scheduled Vaccinations for Today
-          </h3>
+        <div className="flex items-center justify-between gap-5 mb-4">
+          <section className="flex flex-col flex-1 gap-3">
+            <h3 className="px-6 py-2 font-semibold bg-white rounded-lg w-fit">
+              Scheduled Vaccinations for Today
+            </h3>
+            <p className="px-6 py-2 leading-relaxed bg-white rounded-lg">
+              This table provides a comprehensive overview of all vaccinations
+              scheduled for today. It includes details such as the child's name,
+              the name of the vaccine, and the scheduled date for
+              administration. You can use the filters and sorting options to
+              organize the data as needed. Additionally, the data can be
+              exported as a CSV file for easy reporting and tracking.
+            </p>
+          </section>
           <div className="flex items-center gap-4">
             <button
               onClick={handleToggleCsvScheduled}
-              className="flex items-center justify-center gap-2 px-4 py-4 text-black bg-gray-200 border rounded-none"
+              className="flex items-center justify-center gap-2 px-4 py-4 text-black bg-gray-200 border rounded-lg"
             >
               {toggleShowCSVScheduled ? (
                 <>
@@ -175,7 +185,7 @@ const ScheduledCompletedVaccination = () => {
             </button>
             <button
               onClick={handleExportScheduled}
-              className="flex items-center justify-center gap-2 px-4 py-4 text-white rounded-none"
+              className="flex items-center justify-center gap-2 px-4 py-4 text-white rounded-lg"
             >
               <ArrowDownOnSquareStackIcon className="w-5 h-5 text-white" />
               <span>Download CSV</span>
@@ -190,6 +200,7 @@ const ScheduledCompletedVaccination = () => {
             defaultColDef={defaultColDef}
             pagination={true}
             paginationPageSize={10}
+            paginationPageSizeSelector={[10, 25, 50]}
           />
         </div>
         {toggleShowCSVScheduled && (
@@ -206,14 +217,23 @@ const ScheduledCompletedVaccination = () => {
 
       {/* Completed Vaccinations Table */}
       <div>
-        <div className="flex items-center justify-between mb-2">
-          <h3 className="px-6 py-2 font-semibold bg-white rounded-lg">
-            Completed Vaccinations for Today
-          </h3>
+        <div className="flex items-center justify-between gap-5 mb-4">
+          <section className="flex flex-col flex-1 gap-3">
+            <h3 className="px-6 py-2 font-semibold bg-white rounded-lg w-fit">
+              Completed Vaccinations for Today
+            </h3>
+            <p className="px-6 py-2 leading-relaxed bg-white rounded-lg">
+              This table displays all vaccinations that have been successfully
+              administered today. It includes information on the child's name,
+              the vaccine administered, and the date of administration. The
+              table allows for filtering and sorting of data, and you can export
+              the records as a CSV file for record-keeping and analysis.
+            </p>
+          </section>
           <div className="flex items-center gap-4">
             <button
               onClick={handleToggleCsvCompleted}
-              className="flex items-center justify-center gap-2 px-4 py-4 text-black bg-gray-200 border rounded-none"
+              className="flex items-center justify-center gap-2 px-4 py-4 text-black bg-gray-200 border rounded-lg"
             >
               {toggleShowCSVCompleted ? (
                 <>
@@ -229,7 +249,7 @@ const ScheduledCompletedVaccination = () => {
             </button>
             <button
               onClick={handleExportCompleted}
-              className="flex items-center justify-center gap-2 px-4 py-4 text-white rounded-none"
+              className="flex items-center justify-center gap-2 px-4 py-4 text-white rounded-lg"
             >
               <ArrowDownOnSquareStackIcon className="w-5 h-5 text-white" />
               <span>Download CSV</span>
@@ -244,6 +264,7 @@ const ScheduledCompletedVaccination = () => {
             defaultColDef={defaultColDef}
             pagination={true}
             paginationPageSize={10}
+            paginationPageSizeSelector={[10, 25, 50]}
           />
         </div>
         {toggleShowCSVCompleted && (

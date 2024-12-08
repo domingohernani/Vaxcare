@@ -24,20 +24,10 @@ const VaccinationsSummary = () => {
     const fetchVaccinationData = async () => {
       try {
         const { data } = await axios.get(
-          `${
-            import.meta.env.VITE_REACT_APP_BACKEND_BASEURL
-          }/getCompletedVaccinations`
+          `${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/getAllVaccinations`
         );
 
-        // Format the `date_administered` to "YYYY-MM-DD"
-        const formattedData = data.map((item) => ({
-          ...item,
-          date_administered: new Date(item.date_administered)
-            .toISOString()
-            .split("T")[0], // Converts to "YYYY-MM-DD"
-        }));
-
-        setCompletedVaccinationData(formattedData);
+        setCompletedVaccinationData(data);
       } catch (error) {
         console.error("Error fetching completed vaccination data:", error);
       }
@@ -95,15 +85,27 @@ const VaccinationsSummary = () => {
     <section>
       {/* Completed Vaccinations Table */}
       <div>
-        <div className="flex items-center justify-between mb-2">
-          <h3 className="px-6 py-2 font-semibold bg-white rounded-lg">
-            Completed Vaccinations Summary
-          </h3>
-          <div className="flex items-center gap-4">
+        <div className="flex items-center justify-between gap-5 mb-4">
+          <section className="flex flex-col flex-1 gap-3">
+            <h3 className="px-6 py-2 font-semibold bg-white rounded-lg w-fit">
+              Completed Vaccinations Summary
+            </h3>
+            <p className="px-6 py-2 leading-relaxed bg-white rounded-lg">
+              On this page, you can view a comprehensive summary of all
+              completed vaccinations. The table provides detailed information,
+              including the child's name, the name of the vaccine administered,
+              and the date it was administered. You can also export the data in
+              CSV format for reporting or archival purposes. Use the available
+              filters and sorting options to quickly locate specific records.
+              This summary serves as a centralized view of vaccination records
+              for monitoring and analysis.
+            </p>
+          </section>
+          <div className="flex items-center justify-end gap-4 bg-red-300 w-max">
             {/* Show/Hide CSV */}
             <button
               onClick={handleToggleCsvCompleted}
-              className="flex items-center justify-center gap-2 px-4 py-4 text-black bg-gray-200 border rounded-none"
+              className="flex items-center justify-center gap-2 px-4 py-4 text-black bg-gray-200 border rounded-lg"
             >
               {toggleShowCSVCompleted ? (
                 <>
@@ -120,7 +122,7 @@ const VaccinationsSummary = () => {
             {/* Export CSV */}
             <button
               onClick={handleExportCompleted}
-              className="flex items-center justify-center gap-2 px-4 py-4 text-white rounded-none"
+              className="flex items-center justify-center gap-2 px-4 py-4 text-white rounded-lg"
             >
               <ArrowDownOnSquareStackIcon className="w-5 h-5 text-white" />
               <span>Download CSV</span>
@@ -135,6 +137,7 @@ const VaccinationsSummary = () => {
             defaultColDef={defaultColDef}
             pagination={true}
             paginationPageSize={10}
+            paginationPageSizeSelector={[10, 25, 50]}
           />
         </div>
         {toggleShowCSVCompleted && (

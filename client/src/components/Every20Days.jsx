@@ -46,10 +46,35 @@ export const Every20Days = () => {
   }, []);
 
   useEffect(() => {
-    const today = new Date();
-    const month = today.toLocaleString("default", { month: "long" });
-    const year = today.getFullYear();
-    setReportTitle(`Vaccination Report (1st to 20th of ${month} ${year})`);
+    const calculateInterval = () => {
+      const today = new Date();
+      const dayOfMonth = today.getDate();
+
+      let intervalStart, intervalEnd;
+
+      if (dayOfMonth <= 20) {
+        intervalStart = new Date(today.getFullYear(), today.getMonth(), 1);
+        intervalEnd = new Date(today.getFullYear(), today.getMonth(), 20);
+      } else {
+        intervalStart = new Date(today.getFullYear(), today.getMonth(), 21);
+        intervalEnd = new Date(today.getFullYear(), today.getMonth() + 1, 9);
+      }
+
+      const formatDate = (date) =>
+        date.toLocaleDateString("en-US", {
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+        });
+
+      setReportTitle(
+        `Vaccination Report (${formatDate(intervalStart)} to ${formatDate(
+          intervalEnd
+        )})`
+      );
+    };
+
+    calculateInterval();
   }, []);
 
   const columnDefs = [
@@ -99,14 +124,25 @@ export const Every20Days = () => {
 
   return (
     <section>
-      <div className="flex items-center justify-between mb-2">
-        <h3 className="px-6 py-2 font-semibold bg-white rounded-lg">
-          {reportTitle}
-        </h3>
+      <div className="flex items-center justify-between gap-5 mb-4">
+        <section className="flex flex-col flex-1 gap-3">
+          <h3 className="px-6 py-2 font-semibold bg-white rounded-lg w-fit">
+            {reportTitle}
+          </h3>
+          <p className="px-6 py-2 leading-relaxed bg-white rounded-lg">
+            On this page, you can view a detailed vaccination report for the
+            current 20-day interval. The report includes the number of males and
+            females vaccinated for each vaccine type during this period. The
+            data is dynamically updated based on the interval. Use the provided
+            tools to filter, sort, and export the data as a CSV file for further
+            analysis. This report provides valuable insights into vaccination
+            trends within the specified time frame
+          </p>
+        </section>
         <div className="flex items-center gap-4">
           <button
             onClick={handleToggleCsvContent}
-            className="flex items-center justify-center gap-2 px-4 py-4 text-black bg-gray-200 border rounded-none"
+            className="flex items-center justify-center gap-2 px-4 py-4 text-black bg-gray-200 border rounded-lg"
           >
             {toggleShowCSV ? (
               <>
@@ -122,7 +158,7 @@ export const Every20Days = () => {
           </button>
           <button
             onClick={handleExport}
-            className="flex items-center justify-center gap-2 px-4 py-4 text-white rounded-none"
+            className="flex items-center justify-center gap-2 px-4 py-4 text-white rounded-lg"
           >
             <ArrowDownOnSquareStackIcon className="w-5 h-5 text-white" />
             <span>Download CSV</span>

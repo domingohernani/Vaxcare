@@ -49,7 +49,7 @@ export const Report = () => {
                   : "border-transparent text-black"
               }`}
             >
-              Every 20 Days
+              20-Day Vaccination Report
             </button>
           </li>
           <li className="me-2">
