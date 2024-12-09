@@ -25,6 +25,7 @@ export default function ImmunizationTable({ childId }) {
             import.meta.env.VITE_REACT_APP_BACKEND_BASEURL
           }/viewbmitracking/${childId}`
         );
+
         setChildDetails(response.data.childDetails[0]);
 
         const vaccineResponse = await axios.get(
@@ -41,30 +42,14 @@ export default function ImmunizationTable({ childId }) {
     fetchChildData();
   }, [childId]);
 
-  const handleVaccineDateChange = (vaccineName, doseIndex, date) => {
-    setUpdateVaccines((prev) => ({
-      ...prev,
-      [vaccineName]: {
-        ...prev[vaccineName],
-        [doseIndex]: date,
-      },
-    }));
+  const formatDate = (dateString) => {
+    if (!dateString) return "On-going";
+    const date = new Date(dateString);
+    return isNaN(date) ? "On-going" : date.toISOString().split("T")[0];
   };
 
-  const formatDateForInput = (serverDate) => {
-    const date = new Date(serverDate);
-    const year = date.getFullYear();
-    let month = (date.getMonth() + 1).toString().padStart(2, "0");
-    let day = date.getDate().toString().padStart(2, "0");
-    return `${year}-${month}-${day}`;
-  };
-
-  const updateRecord = () => {
-    setUpdateButtonClicked(!updateButtonClicked);
-  };
-
-  if (!childDetails) {
-    return <p>Loading child details...</p>;
+  if (!childDetails || !vaccines) {
+    return <p>Loading immunization data...</p>;
   }
 
   return (
@@ -106,7 +91,6 @@ export default function ImmunizationTable({ childId }) {
             alt="icon"
             width={"18px"}
             className="cursor-pointer"
-            onClick={updateRecord}
           />
         </span>
         <div className="flex flex-col ">
@@ -129,8 +113,20 @@ export default function ImmunizationTable({ childId }) {
           )}
         </div>
         <div className="flex flex-col">
-          <span>Number of months</span>
-          <span className="font-bold">{childDetails.age}</span>
+          <span>Age</span>
+          <span className="font-bold">
+            {(() => {
+              const ageInMonths = childDetails.age;
+              if (ageInMonths >= 12) {
+                const years = Math.floor(ageInMonths / 12);
+                const months = ageInMonths % 12;
+                return months > 0
+                  ? `${years} year/s & ${months} month/s`
+                  : `${years} year/s`;
+              }
+              return `${ageInMonths} month/s`;
+            })()}
+          </span>
         </div>
         <div className="flex flex-col">
           <span>Gender</span>
@@ -211,43 +207,54 @@ export default function ImmunizationTable({ childId }) {
       </div>
 
       {/* Vaccine Table */}
-      <div className="grid grid-cols-4 p-4 text-xs font-semibold text-center bg-white rounded-md md:text-sm gap-x-4 gap-y-3">
-        <div className="p-3 text-white bg-gray-500 rounded-md">Vaccine</div>
-        <div className="p-3 text-white bg-gray-500 rounded-md">
-          Required Doses
+      <div className="p-4 bg-white rounded-md">
+        {/* Table Headers */}
+        <div className="grid grid-cols-6 gap-2 text-sm font-semibold text-center">
+          <div className="p-3 text-white bg-gray-500 rounded-md">Vaccines</div>
+          <div className="p-3 text-white bg-red-500 rounded-md">1st Dose</div>
+          <div className="p-3 text-white bg-yellow-500 rounded-md">
+            2nd Dose
+          </div>
+          <div className="p-3 text-white bg-green-500 rounded-md">3rd Dose</div>
+          <div className="p-3 text-white bg-blue-500 rounded-md">
+            4th Dose (Booster 1)
+          </div>
+          <div className="p-3 text-white bg-indigo-500 rounded-md">
+            5th Dose (Booster 2)
+          </div>
         </div>
-        <div className="p-3 text-white bg-gray-500 rounded-md">
-          Date Administered
-        </div>
-        <div className="p-3 text-white bg-gray-500 rounded-md">Remarks</div>
 
+        {/* Vaccine Rows */}
         {Object.keys(vaccines).length > 0 ? (
           Object.keys(vaccines).map((vaccineName) => (
-            <React.Fragment key={vaccineName}>
+            <div
+              key={vaccineName}
+              className="grid grid-cols-6 gap-2 mt-2 text-sm text-center"
+            >
+              {/* Vaccine Name */}
               <div className="p-3 bg-gray-100 rounded-md">{vaccineName}</div>
-              <div className="p-3 bg-gray-100 rounded-md">
-                {vaccines[vaccineName]?.dosesTaken} of{" "}
-                {vaccines[vaccineName]?.dosesRequired}
-              </div>
-              <div className="p-3 bg-gray-100 rounded-md">
-                {vaccines[vaccineName]?.administeredDates?.map(
-                  (date, index) => (
-                    <p key={index}>{date.split("T")[0]}</p>
-                  )
-                )}
-              </div>
-              <div className="p-3 text-xs bg-gray-100 rounded-md sm:text-sm">
-                {vaccines[vaccineName]?.dosesTaken ===
-                vaccines[vaccineName]?.dosesRequired
-                  ? "Vaccinated"
-                  : "On-going"}
-              </div>
-            </React.Fragment>
+
+              {/* Doses */}
+              {[...Array(5)].map((_, doseIndex) => (
+                <div
+                  key={doseIndex}
+                  className={`p-3 rounded-md ${
+                    vaccines[vaccineName]?.administeredDates?.[doseIndex]
+                      ? "bg-green-200 text-green-700 font-bold"
+                      : "bg-gray-100 text-gray-500"
+                  }`}
+                >
+                  {vaccines[vaccineName]?.administeredDates?.[doseIndex]
+                    ? formatDate(
+                        vaccines[vaccineName]?.administeredDates?.[doseIndex]
+                      )
+                    : "On-going"}
+                </div>
+              ))}
+            </div>
           ))
         ) : (
-          <div className="col-span-4 p-3 text-center">
-            No vaccine data available
-          </div>
+          <div className="mt-4 text-center">No vaccine data available</div>
         )}
       </div>
     </section>

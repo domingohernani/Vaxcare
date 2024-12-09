@@ -270,9 +270,24 @@ export default function ViewBMITracking() {
             )}
           </div>
 
-          <div className="flex flex-col ">
-            <span>Number of months</span>
-            <span className="font-bold">{childDetails.age} month/s</span>
+          <div className="flex flex-col">
+            <span>Age</span>
+            <span className="font-bold">
+              {(() => {
+                const ageInMonths = childDetails.age;
+                if (ageInMonths >= 12) {
+                  const years = Math.floor(ageInMonths / 12);
+                  const months = ageInMonths % 12;
+                  if (months > 0) {
+                    return `${years} year/s & ${months} month/s`;
+                  } else {
+                    return `${years} year/s`;
+                  }
+                } else {
+                  return `${ageInMonths} month/s`;
+                }
+              })()}
+            </span>
           </div>
 
           {/* Gender Input */}

@@ -32,7 +32,7 @@ const db = mysql.createConnection({
 app.use(express.json());
 app.use(
   cors({
-    origin: "https://vaxcaretalogtog.vercel.app",
+    origin: ["http://localhost:5173", "https://vaxcaretalogtog.vercel.app"],
     methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
     credentials: true,
   })
@@ -1864,24 +1864,26 @@ app.get("/getAllParents", (req, res) => {
 
 app.get("/getVaccinationData", (req, res) => {
   const query = `
-    SELECT 
-      v.vaccine_id,
-      v.name AS vaccine_name,
-      v.doses_required,
-      v.stock,
-      v.recommended_schedule,
-      vc.vaccinaction_id,
-      vc.child_id,
-      vc.date_administered,
-      vc.remarks
-    FROM 
-      vaccine v
-    LEFT JOIN 
-      vaccinations vc
-    ON 
-      v.vaccine_id = vc.vaccine_id
-    ORDER BY 
-      vc.date_administered DESC;
+SELECT 
+  v.vaccine_id, 
+  v.name AS vaccine_name, 
+  v.doses_required, 
+  v.stock, 
+  v.recommended_schedule, 
+  vc.vaccinaction_id, 
+  vc.child_id, 
+  vc.date_administered, 
+  vc.remarks 
+FROM 
+  vaccine v
+LEFT JOIN 
+  vaccinations vc
+ON 
+  v.vaccine_id = vc.vaccine_id
+WHERE 
+  v.is_deleted = 0 
+ORDER BY 
+  vc.date_administered DESC;
   `;
 
   db.query(query, (err, data) => {

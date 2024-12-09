@@ -136,20 +136,26 @@ export default function BMITracking() {
       filter: true,
     },
     {
-      headerName: "Number of months",
+      headerName: "Age",
       field: "age_in_months",
       flex: 1,
       sortable: true,
       filter: true,
       valueGetter: (params) => {
-        const months = params.data.age_in_months;
-        // if (months >= 12) {
-        //   const years = Math.floor(months / 12);
-        //   return `${years} year/s`;
-        // } else {
-        //   return `${months} month/s`;
-        // }
-        return params.data.age_in_months + " month/s";
+        const ageInMonths = params.data.age_in_months;
+
+        if (ageInMonths >= 12) {
+          const years = Math.floor(ageInMonths / 12);
+          const months = ageInMonths % 12;
+
+          if (months > 0) {
+            return `${years} year/s & ${months} month/s`;
+          } else {
+            return `${years} year/s`;
+          }
+        } else {
+          return `${ageInMonths} month/s`;
+        }
       },
     },
 

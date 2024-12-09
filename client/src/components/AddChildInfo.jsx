@@ -41,9 +41,7 @@ export default function AddChildInfo() {
   };
 
   const addButton = async () => {
-    const fullName = `${firstName} ${middleInitial}. ${
-      secondName || ""
-    }`.trim();
+    const fullName = `${firstName} ${middleInitial} ${secondName || ""}`.trim();
     const fullAddress = `Zone ${zone || ""}, ${barangay || ""}, ${
       cityTown || ""
     }, ${province || ""}`.trim();
@@ -138,8 +136,8 @@ export default function AddChildInfo() {
 
   const getMaxDate = () => {
     const currentDate = new Date();
+    currentDate.setDate(currentDate.getDate() + 1);
 
-    // Format the date to be compatible with the "date" input type
     const formattedMaxDate = currentDate.toISOString().split("T")[0];
     return formattedMaxDate;
   };
@@ -192,10 +190,9 @@ export default function AddChildInfo() {
               />
             </div>
             <div className="flex-1">
-              <label className="font-semibold">Middle Initial</label>
+              <label className="font-semibold">Middle Name</label>
               <input
                 type="text"
-                maxLength="1"
                 value={middleInitial}
                 className="w-full px-1 py-2 pl-3 bg-white border border-blue-950"
                 onChange={(e) => setMiddleInitial(e.target.value)}

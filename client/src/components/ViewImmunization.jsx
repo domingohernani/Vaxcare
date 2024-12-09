@@ -258,7 +258,7 @@ export default function ViewImmunization() {
           )}
         </div>
         <div className="flex flex-col">
-          <span>Number of months</span>
+          <span>Age</span>
           <span className="font-bold">{childDetails.age} month/s</span>
         </div>
         <div className="flex flex-col">

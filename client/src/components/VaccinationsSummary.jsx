@@ -57,6 +57,7 @@ const VaccinationsSummary = () => {
       flex: 1,
       sortable: true,
       filter: true,
+      sort: "desc",
     },
   ];
 
