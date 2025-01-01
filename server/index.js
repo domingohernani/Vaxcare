@@ -1880,6 +1880,16 @@ LEFT JOIN
   vaccinations vc
 ON 
   v.vaccine_id = vc.vaccine_id
+  AND vc.date_administered BETWEEN 
+    CASE 
+      WHEN DAY(CURDATE()) <= 20 THEN DATE_FORMAT(CURDATE(), '%Y-%m-01')
+      ELSE DATE_FORMAT(DATE_ADD(LAST_DAY(CURDATE() - INTERVAL 1 MONTH), INTERVAL 21 DAY), '%Y-%m-%d')
+    END 
+    AND 
+    CASE 
+      WHEN DAY(CURDATE()) <= 20 THEN DATE_FORMAT(DATE_ADD(DATE_FORMAT(CURDATE(), '%Y-%m-01'), INTERVAL 19 DAY), '%Y-%m-%d')
+      ELSE DATE_FORMAT(DATE_ADD(LAST_DAY(CURDATE() - INTERVAL 1 MONTH), INTERVAL 40 DAY), '%Y-%m-%d')
+    END
 WHERE 
   v.is_deleted = 0 
 ORDER BY 
