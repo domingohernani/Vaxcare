@@ -85,6 +85,16 @@ const ScheduledCompletedVaccination = () => {
       flex: 1,
       sortable: true,
       filter: true,
+      valueFormatter: (params) => {
+        const date = new Date(params.value);
+        const formattedDate = `${(date.getMonth() + 1)
+          .toString()
+          .padStart(2, "0")}/${date
+          .getDate()
+          .toString()
+          .padStart(2, "0")}/${date.getFullYear()}`;
+        return formattedDate;
+      },
     },
   ];
 
@@ -109,6 +119,16 @@ const ScheduledCompletedVaccination = () => {
       flex: 1,
       sortable: true,
       filter: true,
+      valueFormatter: (params) => {
+        const date = new Date(params.value);
+        const formattedDate = `${(date.getMonth() + 1)
+          .toString()
+          .padStart(2, "0")}/${date
+          .getDate()
+          .toString()
+          .padStart(2, "0")}/${date.getFullYear()}`;
+        return formattedDate;
+      },
     },
   ];
 

@@ -45,7 +45,11 @@ export default function ImmunizationTable({ childId }) {
   const formatDate = (dateString) => {
     if (!dateString) return "On-going";
     const date = new Date(dateString);
-    return isNaN(date) ? "On-going" : date.toISOString().split("T")[0];
+    if (isNaN(date)) return "On-going";
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    const year = date.getFullYear();
+    return `${month}/${day}/${year}`;
   };
 
   if (!childDetails || !vaccines) {

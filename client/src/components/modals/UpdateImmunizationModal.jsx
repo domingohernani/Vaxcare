@@ -208,15 +208,7 @@ export default function UpdateImmunizationModal({ onClose, childId }) {
               type="date"
               className="w-full px-2 py-3 border-2 rounded-lg"
               value={date}
-              max={getMaxDate()}
-              min={
-                doseTaken === 0
-                  ? calculateDate(birthdate, 0)
-                  : calculateDate(
-                      birthdate,
-                      vaccineSchedule[selectedVaccine][doseTaken - 1]
-                    )
-              }
+              min={date}
               onChange={(e) => setDate(e.target.value)}
             />
           </div>
