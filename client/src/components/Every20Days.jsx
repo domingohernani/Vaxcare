@@ -52,8 +52,11 @@ export const Every20Days = () => {
 
       let intervalStart, intervalEnd;
 
-      if (dayOfMonth <= 20) {
-        intervalStart = new Date(today.getFullYear(), today.getMonth(), 1);
+      if (dayOfMonth <= 9) {
+        intervalStart = new Date(today.getFullYear(), today.getMonth() - 1, 21);
+        intervalEnd = new Date(today.getFullYear(), today.getMonth(), 9);
+      } else if (dayOfMonth <= 20) {
+        intervalStart = new Date(today.getFullYear(), today.getMonth(), 10);
         intervalEnd = new Date(today.getFullYear(), today.getMonth(), 20);
       } else {
         intervalStart = new Date(today.getFullYear(), today.getMonth(), 21);
