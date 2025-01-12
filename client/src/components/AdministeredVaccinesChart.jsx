@@ -92,6 +92,8 @@ const AdministeredVaccinesChart = () => {
           title: "Number of Doses",
           showticklabels: true,
           automargin: true,
+          tickmode: "linear",
+          dtick: 1,
         },
         yaxis: {
           showticklabels: true,

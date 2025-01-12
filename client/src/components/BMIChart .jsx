@@ -77,6 +77,10 @@ const BMIChart = () => {
           },
           paper_bgcolor: "white",
           plot_bgcolor: "white",
+          yaxis: {
+            tickmode: "linear",
+            dtick: 1,
+          },
         };
 
         setData(chartData);
