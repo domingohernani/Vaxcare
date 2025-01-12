@@ -49,6 +49,20 @@ export default function AddChildInfo() {
     setName(fullName);
     setAddress(fullAddress);
 
+    // Check if birthdate is valid (not older than one year from the current date)
+    const oneYearAgo = new Date();
+    oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
+    if (new Date(birthdate) < oneYearAgo) {
+      Swal.fire({
+        icon: "warning",
+        title: "Invalid Birthdate",
+        text: "The birthdate cannot be older than one year from today.",
+        confirmButtonColor: "#3085d6",
+        confirmButtonText: "OK",
+      });
+      return;
+    }
+
     if (!isExistingParent) {
       // Validation for new parents
       if (
@@ -212,6 +226,11 @@ export default function AddChildInfo() {
                 setBirthdate(formattedDate);
               }}
               max={getMaxDate()}
+              min={new Date(
+                new Date().setFullYear(new Date().getFullYear() - 1)
+              )
+                .toISOString()
+                .slice(0, 10)}
             />
           </div>
           <div className="flex flex-col flex-1">
