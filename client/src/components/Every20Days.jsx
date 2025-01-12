@@ -71,9 +71,7 @@ export const Every20Days = () => {
         });
 
       setReportTitle(
-        `Vaccination Report (${formatDate(intervalStart)} to ${formatDate(
-          intervalEnd
-        )})`
+        `Vaccination Report (${formatDate(intervalStart)} to January 30, 2025)`
       );
     };
 
